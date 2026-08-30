@@ -37,12 +37,9 @@ export const CTASection = () => {
             </div>
           </div>
 
-          {/* Middle: Smiling Indian Farmer Portrait */}
+          {/* Middle: Indian Farmer Partnership Box */}
           <div className="lg:col-span-3 flex justify-center z-10">
             <div className="relative w-44 h-56 rounded-3xl bg-emerald-950/80 border-2 border-emerald-600/60 overflow-hidden shadow-xl flex flex-col items-center justify-center text-center p-4 space-y-2">
-              <div className="w-20 h-20 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center text-4xl shadow-md">
-                👨‍🌾
-              </div>
               <span className="text-xs font-bold text-white block">Indian Farmer Partnership</span>
               <span className="text-[10px] text-emerald-200 block">Empowered via Village Mitras</span>
             </div>
