@@ -911,7 +911,7 @@ export const VolunteerDashboard = () => {
               <Sprout className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-sm font-black text-white block leading-none tracking-tight">AgriProcure Platform</span>
+              <span className="text-sm font-black text-white block leading-none tracking-tight">Smart &amp; Fair Platform</span>
               <span className="text-[9px] text-emerald-200 uppercase tracking-widest font-bold mt-0.5 block">
                 {selectedFarmerForDashboard ? `Farmer Dashboard • ${selectedFarmerForDashboard.name}` : activeTab === 'Dashboard' ? 'Dashboard Overview' : 'Farmers Directory'}
               </span>

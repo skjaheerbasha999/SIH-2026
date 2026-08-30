@@ -50,7 +50,7 @@ export const Navbar = () => {
             </div>
             <div className="flex flex-col">
               <span className="text-base font-black tracking-tight text-slate-900 leading-none">
-                AgriProcure Portal
+                Smart &amp; Fair
               </span>
               <span className="text-[10px] font-bold uppercase tracking-widest text-[#00a86b] mt-0.5">
                 National MSP Crop Category &amp; Procurement System
