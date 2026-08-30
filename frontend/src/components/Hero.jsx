@@ -20,7 +20,6 @@ export const Hero = () => {
 
             {/* Small Pill Badge */}
             <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-emerald-100/70 border border-emerald-300/70 text-[#00a86b] text-xs font-bold uppercase tracking-wider">
-              <span>🌾</span>
               <span>SMART AGRICULTURAL PROCUREMENT</span>
             </div>
 

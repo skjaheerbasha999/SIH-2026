@@ -921,8 +921,8 @@ export const VolunteerDashboard = () => {
           {/* TOP-LEVEL TABS */}
           <div className="hidden sm:flex items-center space-x-1 text-xs font-bold bg-[#008f5a] p-1.5 rounded-2xl border border-white/20 shadow-inner">
             {[
-              { id: 'Dashboard', label: '📊 Dashboard Overview' },
-              { id: 'Farmers', label: '👨‍🌾 Farmers Directory' }
+              { id: 'Dashboard', label: 'Dashboard Overview' },
+              { id: 'Farmers', label: 'Farmers Directory' }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -964,8 +964,8 @@ export const VolunteerDashboard = () => {
       {/* MOBILE HEADER TABS */}
       <div className="sm:hidden bg-[#008f5a] text-white px-2 py-2 flex items-center justify-center space-x-2 text-xs font-bold shadow-xs">
         {[
-          { id: 'Dashboard', label: '📊 Dashboard Overview' },
-          { id: 'Farmers', label: '👨‍🌾 Farmers Directory' }
+          { id: 'Dashboard', label: 'Dashboard Overview' },
+          { id: 'Farmers', label: 'Farmers Directory' }
         ].map((tab) => (
           <button
             key={tab.id}

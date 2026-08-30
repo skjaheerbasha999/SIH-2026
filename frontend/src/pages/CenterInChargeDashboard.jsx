@@ -484,8 +484,8 @@ export const CenterInChargeDashboard = () => {
           {/* MAIN NAVIGATION TABS */}
           <div className="hidden sm:flex items-center space-x-1 text-xs font-bold bg-[#008f5a] p-1.5 rounded-2xl border border-white/20 shadow-inner">
             {[
-              { id: 'dispatch', label: '📦 Crop Details & Dispatch' },
-              { id: 'storage', label: '📊 Crop Analysis & Storage' }
+              { id: 'dispatch', label: 'Crop Details & Dispatch' },
+              { id: 'storage', label: 'Crop Analysis & Storage' }
             ].map((tab) => (
               <button
                 key={tab.id}

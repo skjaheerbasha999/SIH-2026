@@ -19,7 +19,6 @@ export const Navbar = () => {
       <div className="bg-[#008f5a] text-emerald-100 py-1.5 px-4 text-[11px] font-semibold border-b border-emerald-900">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-1 text-center sm:text-left">
           <div className="flex items-center space-x-2">
-            <span className="text-base">🇮🇳</span>
             <span>Rashtriya Krishi Procurement Portal • Ministry of Agriculture &amp; Farmers Welfare</span>
           </div>
           <div className="flex items-center space-x-4">

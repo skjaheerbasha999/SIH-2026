@@ -374,9 +374,9 @@ export const HeadOfficeDashboard = () => {
               {/* DRILL-DOWN SUB TABS */}
               <div className="flex items-center space-x-2 border-b border-slate-200 text-xs font-extrabold pb-3">
                 {[
-                  { id: 'farmers', label: `🌾 Registered Farmers (${filteredFarmers.length})` },
-                  { id: 'volunteers', label: `👨‍🌾 Volunteers (${filteredVolunteers.length})` },
-                  { id: 'centers', label: `🏢 Center-in-Charges & Hubs (${filteredCenters.length})` }
+                  { id: 'farmers', label: `Registered Farmers (${filteredFarmers.length})` },
+                  { id: 'volunteers', label: `Volunteers (${filteredVolunteers.length})` },
+                  { id: 'centers', label: `Center-in-Charges & Hubs (${filteredCenters.length})` }
                 ].map((tab) => (
                   <button
                     key={tab.id}

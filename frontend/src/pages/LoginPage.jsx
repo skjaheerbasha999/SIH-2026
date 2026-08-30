@@ -113,9 +113,9 @@ export const LoginPage = () => {
           </label>
           <div className="grid grid-cols-3 gap-1 bg-slate-100 p-1 rounded-2xl border border-slate-200 text-xs font-bold">
             {[
-              { id: 'Volunteer', label: '👨‍🌾 Volunteer' },
-              { id: 'Center in Charge', label: '🏢 Center Hub' },
-              { id: 'Head Office', label: '🏛️ Head Office' }
+              { id: 'Volunteer', label: 'Volunteer' },
+              { id: 'Center in Charge', label: 'Center Hub' },
+              { id: 'Head Office', label: 'Head Office' }
             ].map((roleItem) => (
               <button
                 key={roleItem.id}
@@ -144,7 +144,7 @@ export const LoginPage = () => {
         {/* FAST 1-CLICK DEMO LOGIN BUTTONS */}
         <div className="p-3 bg-[#00a86b]/5 rounded-2xl border border-emerald-200 space-y-2">
           <span className="text-[10px] font-black text-[#00a86b] uppercase tracking-wider block text-center">
-            ⚡ Quick 1-Click Portal Demo Logins
+            Quick 1-Click Portal Demo Logins
           </span>
           <div className="grid grid-cols-3 gap-1.5">
             <button
@@ -152,21 +152,21 @@ export const LoginPage = () => {
               onClick={() => handleDemoLogin('Volunteer')}
               className="py-2.5 px-1 bg-[#00a86b] text-white text-[10px] font-black rounded-xl hover:bg-[#008f5a] transition-all shadow-xs text-center"
             >
-              👨‍🌾 Volunteer →
+              Volunteer →
             </button>
             <button
               type="button"
               onClick={() => handleDemoLogin('Center in Charge')}
               className="py-2.5 px-1 bg-[#00a86b] text-white text-[10px] font-black rounded-xl hover:bg-[#008f5a] transition-all shadow-xs text-center"
             >
-              🏢 Center Hub →
+              Center Hub →
             </button>
             <button
               type="button"
               onClick={() => handleDemoLogin('Head Office')}
               className="py-2.5 px-1 bg-[#00a86b] text-white text-[10px] font-black rounded-xl hover:bg-[#008f5a] transition-all shadow-xs text-center"
             >
-              🏛️ Head Office →
+              Head Office →
             </button>
           </div>
         </div>
