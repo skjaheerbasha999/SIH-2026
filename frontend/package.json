@@ -23,8 +23,11 @@
     "vite": "6.2.0"
   },
   "optionalDependencies": {
-    "@rolldown/binding-linux-x64-gnu": "^1.0.0-beta.1",
-    "@rolldown/binding-linux-x64-musl": "^1.0.0-beta.1",
-    "@rolldown/binding-win32-x64-msvc": "^1.0.0-beta.1"
+    "lightningcss-linux-x64-gnu": "^1.29.0",
+    "lightningcss-linux-x64-musl": "^1.29.0",
+    "lightningcss-win32-x64-msvc": "^1.29.0",
+    "@tailwindcss/oxide-linux-x64-gnu": "^4.0.9",
+    "@tailwindcss/oxide-linux-x64-musl": "^4.0.9",
+    "@tailwindcss/oxide-win32-x64-msvc": "^4.0.9"
   }
 }
