@@ -6,7 +6,7 @@ import { apiClient } from '../api/client';
 
 export const LoginPage = () => {
   const { navigateTo, setUserSession, showToast } = useApp();
-  
+
   const [selectedRole, setSelectedRole] = useState('Volunteer'); // Default or selectable
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
@@ -74,7 +74,7 @@ export const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-slate-100 flex flex-col justify-between py-12 px-4 sm:px-6 lg:px-8">
-      
+
       {/* Top Bar with Back Link */}
       <div className="max-w-md w-full mx-auto flex items-center justify-between">
         <button
@@ -95,7 +95,7 @@ export const LoginPage = () => {
 
       {/* Main Card Container */}
       <div className="max-w-md w-full mx-auto my-auto bg-white rounded-3xl p-8 shadow-xl border border-slate-200/90 space-y-6">
-        
+
         {/* Header Title */}
         <div className="text-center space-y-1">
           <h1 className="text-2xl font-black text-slate-900 tracking-tight">
@@ -121,11 +121,10 @@ export const LoginPage = () => {
                 key={roleItem.id}
                 type="button"
                 onClick={() => setSelectedRole(roleItem.id)}
-                className={`py-2 px-1 rounded-xl transition-all text-center text-[11px] ${
-                  selectedRole === roleItem.id
+                className={`py-2 px-1 rounded-xl transition-all text-center text-[11px] ${selectedRole === roleItem.id
                     ? 'bg-[#00a86b] text-white shadow-xs font-black'
                     : 'text-slate-600 hover:text-slate-900'
-                }`}
+                  }`}
               >
                 {roleItem.label}
               </button>
@@ -141,39 +140,11 @@ export const LoginPage = () => {
           </div>
         )}
 
-        {/* FAST 1-CLICK DEMO LOGIN BUTTONS */}
-        <div className="p-3 bg-[#00a86b]/5 rounded-2xl border border-emerald-200 space-y-2">
-          <span className="text-[10px] font-black text-[#00a86b] uppercase tracking-wider block text-center">
-            Quick 1-Click Portal Demo Logins
-          </span>
-          <div className="grid grid-cols-3 gap-1.5">
-            <button
-              type="button"
-              onClick={() => handleDemoLogin('Volunteer')}
-              className="py-2.5 px-1 bg-[#00a86b] text-white text-[10px] font-black rounded-xl hover:bg-[#008f5a] transition-all shadow-xs text-center"
-            >
-              Volunteer →
-            </button>
-            <button
-              type="button"
-              onClick={() => handleDemoLogin('Center in Charge')}
-              className="py-2.5 px-1 bg-[#00a86b] text-white text-[10px] font-black rounded-xl hover:bg-[#008f5a] transition-all shadow-xs text-center"
-            >
-              Center Hub →
-            </button>
-            <button
-              type="button"
-              onClick={() => handleDemoLogin('Head Office')}
-              className="py-2.5 px-1 bg-[#00a86b] text-white text-[10px] font-black rounded-xl hover:bg-[#008f5a] transition-all shadow-xs text-center"
-            >
-              Head Office →
-            </button>
-          </div>
-        </div>
+
 
         {/* Login Form */}
         <form onSubmit={handleLogin} className="space-y-4">
-          
+
           {/* Mobile Number / Email Field */}
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1.5">
