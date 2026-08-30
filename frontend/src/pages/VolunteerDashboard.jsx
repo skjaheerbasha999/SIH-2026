@@ -521,10 +521,10 @@ export const VolunteerDashboard = () => {
       updated.C.fillPercentage = Math.round((updated.C.currentStockKg / updated.C.capacityKg) * 100);
       updated.C.status = updated.C.availableKg === 0 ? 'FULL' : (updated.C.fillPercentage > 90 ? 'LIMITED' : 'AVAILABLE');
     } else {
-      assignedCategory = 'WAITING';
-      assignedName = 'Waiting Queue';
-      statusMessage = 'All Collection Centers Full';
-      notificationText = `Dear Farmer, All Collection Centers are currently full. You have been added to the priority waiting list. Procurement Mitra has been notified.`;
+      assignedCategory = 'FULL';
+      assignedName = 'All Centers Full';
+      statusMessage = 'All Centers Full';
+      notificationText = `Dear Farmer, All Centers Full. You have been placed on the priority waiting queue. Procurement Mitra has been notified.`;
     }
 
     setCenterCapacities(updated);
@@ -794,7 +794,8 @@ export const VolunteerDashboard = () => {
       setTrackings([newTrk, ...trackings]);
     }
 
-    showToast(`Proposal ${propId} Accepted! Center In-Charge details unlocked.`);
+    setShowTrackingTimeline(true);
+    showToast(`Proposal ${propId} Accepted! Live Crop Tracking System activated below.`);
   };
 
   // Advance Crop Tracking Stage Simulator (Module 4)
@@ -901,7 +902,7 @@ export const VolunteerDashboard = () => {
                   navigateTo('home');
                 }
               }}
-              className="p-1.5 rounded-xl bg-emerald-900/70 hover:bg-emerald-900 text-white transition-colors"
+              className="p-1.5 rounded-xl bg-[#008f5a] hover:bg-[#007d4f] text-white transition-colors"
               title="Return"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -918,7 +919,7 @@ export const VolunteerDashboard = () => {
           </div>
 
           {/* TOP-LEVEL TABS */}
-          <div className="hidden sm:flex items-center space-x-1 text-xs font-bold bg-emerald-950/70 p-1.5 rounded-2xl border border-emerald-800/80">
+          <div className="hidden sm:flex items-center space-x-1 text-xs font-bold bg-[#008f5a] p-1.5 rounded-2xl border border-white/20 shadow-inner">
             {[
               { id: 'Dashboard', label: '📊 Dashboard Overview' },
               { id: 'Farmers', label: '👨‍🌾 Farmers Directory' }
@@ -931,7 +932,7 @@ export const VolunteerDashboard = () => {
                 }}
                 className={`px-4 py-2 rounded-xl transition-all ${activeTab === tab.id
                   ? 'bg-white text-[#00a86b] shadow-sm font-extrabold'
-                  : 'text-emerald-100 hover:text-white hover:bg-emerald-900/50'
+                  : 'text-emerald-100 hover:text-white hover:bg-[#007d4f]'
                   }`}
               >
                 {tab.label}
@@ -950,7 +951,7 @@ export const VolunteerDashboard = () => {
                 showToast('Logged out of Volunteer session');
                 navigateTo('login');
               }}
-              className="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-emerald-900/80 hover:bg-emerald-900 text-white text-xs font-bold transition-colors"
+              className="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-[#008f5a] hover:bg-[#007d4f] text-white text-xs font-bold transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Logout</span>
@@ -961,7 +962,7 @@ export const VolunteerDashboard = () => {
       </header>
 
       {/* MOBILE HEADER TABS */}
-      <div className="sm:hidden bg-emerald-900 text-white px-2 py-2 flex items-center justify-center space-x-2 text-xs font-bold shadow-xs">
+      <div className="sm:hidden bg-[#008f5a] text-white px-2 py-2 flex items-center justify-center space-x-2 text-xs font-bold shadow-xs">
         {[
           { id: 'Dashboard', label: '📊 Dashboard Overview' },
           { id: 'Farmers', label: '👨‍🌾 Farmers Directory' }
@@ -1537,8 +1538,8 @@ export const VolunteerDashboard = () => {
                             type="submit"
                             className="px-6 py-3 rounded-2xl bg-[#00a86b] text-white font-black text-xs shadow-md hover:bg-[#008f5a] transition-all flex items-center justify-center space-x-2"
                           >
-                            <Save className="w-4 h-4" />
-                            <span>Save &amp; Update Registration Info</span>
+                            <Send className="w-4 h-4" />
+                            <span>Send Registration Info</span>
                           </button>
                         </div>
                       </form>
@@ -2017,7 +2018,7 @@ export const VolunteerDashboard = () => {
 
       {/* FOOTER */}
       <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
-        © 2026 Smart Agricultural Crop Quality &amp; Tracking Management Platform • Authorized Volunteer Portal
+        © 2026 Smart Agricultural Crop Category &amp; Center Management System • Authorized Volunteer Portal
       </footer>
 
     </div>

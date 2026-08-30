@@ -27,46 +27,47 @@ export const Hero = () => {
             {/* Large Desktop Headline */}
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.08]">
               <span className="text-[#00a86b]">Fair Prices.</span> <br />
-              <span className="text-slate-900">Better Quality.</span> <br />
-              <span className="text-slate-900">Trusted Procurement.</span>
+              <span className="text-slate-900">Better Category Routing.</span> <br />
+              <span className="text-emerald-500 underline decoration-[#00a86b]/40 underline-offset-8">
+                Trusted Procurement.
+              </span>
             </h1>
 
-            {/* Description */}
-            <p className="text-base sm:text-lg text-slate-600 font-normal leading-relaxed max-w-xl mx-auto lg:mx-0">
-              A transparent platform connecting farmers, Procurement Mitras and village collection centers.
+            {/* Subtitle Paragraph */}
+            <p className="text-[#3b4252] text-sm sm:text-base md:text-lg leading-relaxed max-w-xl font-semibold mx-auto lg:mx-0">
+              A transparent platform connecting farmers, Procurement Mitras and village collection centers with real-time capacity routing.
             </p>
 
-            {/* Primary Action Button: Sign In / Login */}
-            <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-3">
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start items-stretch sm:items-center gap-3 pt-2">
               <button
                 onClick={() => navigateTo('login')}
-                className="px-8 py-3.5 rounded-xl bg-[#00a86b] text-white font-bold text-sm shadow-lg shadow-[#00a86b]/20 hover:bg-[#008f5a] hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-2.5"
+                className="group px-7 py-3.5 rounded-2xl bg-[#00a86b] hover:bg-[#008f5a] text-white text-sm font-extrabold shadow-md hover:shadow-lg transition-all transform active:scale-98 flex items-center justify-center space-x-2"
               >
                 <span>Login</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 text-emerald-200 group-hover:translate-x-1 transition-transform" />
               </button>
-
               <button
-                onClick={() => navigateTo('create-account')}
-                className="px-6 py-3.5 rounded-xl bg-white text-slate-800 font-bold text-sm border border-slate-300 hover:border-[#00a86b] hover:text-[#00a86b] shadow-xs transition-all"
+                onClick={() => navigateTo('register')}
+                className="px-7 py-3.5 rounded-2xl bg-white hover:bg-slate-100 text-slate-800 text-sm font-extrabold border border-slate-300 shadow-xs hover:border-slate-400 transition-all text-center"
               >
                 Sign In / Create Account
               </button>
             </div>
 
-            {/* 3 Tiny Trust Bullet Points */}
-            <div className="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 text-xs font-semibold text-slate-600">
-              <span className="flex items-center space-x-1.5">
-                <CheckCircle2 className="w-4 h-4 text-[#00a86b]" />
-                <span>Farmers don&apos;t need smartphones</span>
-              </span>
-              <span className="flex items-center space-x-1.5">
-                <CheckCircle2 className="w-4 h-4 text-[#00a86b]" />
-                <span>Transparent quality grading</span>
-              </span>
-              <div className="flex items-center space-x-2 flex-shrink-0">
+            {/* Key Trust Signals */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-bold text-[#4c566a] pt-3 justify-items-center lg:justify-items-start">
+              <div className="flex items-center space-x-2">
+                <CheckCircle2 className="w-4 h-4 text-[#00a86b] flex-shrink-0" />
+                <span>Farmers don't need smartphones</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <CheckCircle2 className="w-4 h-4 text-[#00a86b] flex-shrink-0" />
+                <span>Transparent category allocation</span>
+              </div>
+              <div className="flex items-center space-x-2 flex-shrink-0 sm:col-span-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                <span className="text-emerald-200 uppercase tracking-widest text-[10px] font-black">LIVE MANDI MSP RATES 2026</span>
+                <span className="text-emerald-400 uppercase tracking-widest text-[10px] font-black">LIVE MANDI MSP RATES 2026</span>
               </div>
             </div>
 

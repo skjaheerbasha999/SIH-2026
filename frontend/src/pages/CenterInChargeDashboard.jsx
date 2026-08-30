@@ -181,37 +181,37 @@ const AVAILABLE_VOLUNTEERS = [
 const STORAGE_INVENTORY_BY_CROP = [
   {
     cropName: 'Wheat (PBW 550 & Sharbati)',
-    totalStockKg: 18500,
-    gradeA: 14200,
-    gradeB: 3100,
-    gradeC: 1200,
+    totalStockKg: 23000,
+    catA: 3800,   // Total from ≤ 5,000 kg batches
+    catB: 6700,   // Total from 5,001 - 10,000 kg batches
+    catC: 12500,  // Total from > 10,000 kg batches
     lastUpdate: '2026-08-29 11:30 AM',
     sources: ['Ramesh Kumar (Sonipat Khas)', 'Gurpreet Singh (Kotla)', 'Harpreet Singh (Sonipat)']
   },
   {
     cropName: 'Mustard (Sarson Oilseed)',
     totalStockKg: 8900,
-    gradeA: 7800,
-    gradeB: 900,
-    gradeC: 200,
+    catA: 2800,   // Total from ≤ 5,000 kg batches
+    catB: 6100,   // Total from 5,001 - 10,000 kg batches
+    catC: 0,
     lastUpdate: '2026-08-28 04:45 PM',
     sources: ['Sujata Devi (Rampur)', 'Devinder Singh (Rampur)']
   },
   {
     cropName: 'Paddy Basmati (1121 & PB 1)',
     totalStockKg: 11200,
-    gradeA: 6500,
-    gradeB: 3900,
-    gradeC: 800,
+    catA: 4500,   // Total from ≤ 5,000 kg batches
+    catB: 6700,   // Total from 5,001 - 10,000 kg batches
+    catC: 0,
     lastUpdate: '2026-08-29 10:15 AM',
     sources: ['Mahesh Patel (Sonipat East)', 'Karan Sharma (Grama Ward 3)']
   },
   {
     cropName: 'Maize & Cotton Industrial',
-    totalStockKg: 4200,
-    gradeA: 0,
-    gradeB: 1200,
-    gradeC: 3000,
+    totalStockKg: 14200,
+    catA: 1200,   // Total from ≤ 5,000 kg batches
+    catB: 0,
+    catC: 13000,  // Total from > 10,000 kg batches
     lastUpdate: '2026-08-27 02:00 PM',
     sources: ['Sunita Yadav (Kisan Nagar)', 'Vikram Choudhary (Bishanpur)']
   }
@@ -221,10 +221,18 @@ export const CenterInChargeDashboard = () => {
   const { userSession, navigateTo, showToast } = useApp();
 
   const officerName = userSession?.name || 'Dr. Vikram Sharma';
-  const officerRole = 'A-Quality Center In-Charge';
-  const centerName = 'A-Grade National Grain Silo & Storage Hub';
+  const officerRole = 'Category A Center In-Charge';
+  const centerName = 'Category A National Grain Silo & Storage Hub';
   const centerLocation = 'Plot 42, Agro-Logistics Park, Sonipat, Haryana';
   const totalStorageCapacityKg = 50000; // in MT or 50,000 kg demo capacity
+
+  // Category Helper Function
+  const getCategoryFromQuantity = (qtyVal) => {
+    const num = typeof qtyVal === 'number' ? qtyVal : parseFloat(String(qtyVal).replace(/[^0-9.]/g, '')) || 0;
+    if (num <= 5000) return 'Category A';
+    if (num >= 5001 && num <= 10000) return 'Category B';
+    return 'Category C';
+  };
 
   // TOP LEVEL MAIN TABS: 'dispatch' | 'storage'
   const [activeTab, setActiveTab] = useState('dispatch');
@@ -256,23 +264,18 @@ export const CenterInChargeDashboard = () => {
   const capacityUsedPercent = Math.round((currentTotalStockKg / totalStorageCapacityKg) * 100);
   const availableCapacityKg = totalStorageCapacityKg - currentTotalStockKg;
 
-  const totalGradeAStock = STORAGE_INVENTORY_BY_CROP.reduce((sum, item) => sum + item.gradeA, 0);
-  const totalGradeBStock = STORAGE_INVENTORY_BY_CROP.reduce((sum, item) => sum + item.gradeB, 0);
-  const totalGradeCStock = STORAGE_INVENTORY_BY_CROP.reduce((sum, item) => sum + item.gradeC, 0);
+  const totalGradeAStock = STORAGE_INVENTORY_BY_CROP.reduce((sum, item) => sum + (item.catA || 0), 0);
+  const totalGradeBStock = STORAGE_INVENTORY_BY_CROP.reduce((sum, item) => sum + (item.catB || 0), 0);
+  const totalGradeCStock = STORAGE_INVENTORY_BY_CROP.reduce((sum, item) => sum + (item.catC || 0), 0);
 
-  const getCategoryBadge = (grade) => {
-    switch (grade) {
-      case 'A':
-      case 'Grade A':
-        return 'bg-emerald-100 text-[#00a86b] border-emerald-300';
-      case 'B':
-      case 'Grade B':
-        return 'bg-amber-100 text-amber-900 border-amber-300';
-      case 'C':
-      case 'Grade C':
-        return 'bg-rose-100 text-rose-900 border-rose-300';
-      default:
-        return 'bg-slate-100 text-slate-700 border-slate-300';
+  const getCategoryBadge = (cat) => {
+    const str = String(cat || '');
+    if (str.includes('A')) {
+      return 'bg-emerald-100 text-[#00a86b] border-emerald-300';
+    } else if (str.includes('B')) {
+      return 'bg-amber-100 text-amber-900 border-amber-300';
+    } else {
+      return 'bg-rose-100 text-rose-900 border-rose-300';
     }
   };
 
@@ -334,15 +337,22 @@ export const CenterInChargeDashboard = () => {
   const handleSimulateVolunteerAccept = (cropId) => {
     setCrops(crops.map(c => {
       if (c.id === cropId) {
+        const volunteer = c.assignedVolunteer || {
+          name: 'Gurpreet Singh',
+          mobile: '9876543210',
+          vehicle: 'Mahindra Bolero Pickup (HR-10-AB-4321)',
+          location: 'Volunteer accepted pickup order. Traveling to farmer field.'
+        };
         return {
           ...c,
           status: 'Assigned',
+          offeredPricePerKg: c.offeredPricePerKg || 24.50,
           assignedVolunteer: {
-            ...c.assignedVolunteer,
+            ...volunteer,
             location: 'Volunteer accepted pickup order. Traveling to farmer field.'
           },
           transportTimeline: c.transportTimeline.map((log, idx) => {
-            if (idx === 0) return { ...log, status: 'Completed', detail: `Accepted by ${c.assignedVolunteer?.name}` };
+            if (idx === 0) return { ...log, status: 'Completed', detail: `Accepted by ${volunteer.name}` };
             if (idx === 1) return { ...log, status: 'Active', time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), detail: 'En route to pickup point' };
             return log;
           })
@@ -351,7 +361,7 @@ export const CenterInChargeDashboard = () => {
       return c;
     }));
 
-    showToast(`Volunteer accepted pickup for ${cropId}!`);
+    showToast(`Volunteer accepted proposal for ${cropId}! Live crop tracking active below.`);
   };
 
   // Advance Transport Stage Simulator
@@ -455,7 +465,7 @@ export const CenterInChargeDashboard = () => {
           <div className="flex items-center space-x-3">
             <button
               onClick={() => navigateTo('home')}
-              className="p-1.5 rounded-xl bg-emerald-900/70 hover:bg-emerald-900 text-white transition-colors"
+              className="p-1.5 rounded-xl bg-[#008f5a] hover:bg-[#007d4f] text-white transition-colors"
               title="Return"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -472,7 +482,7 @@ export const CenterInChargeDashboard = () => {
           </div>
 
           {/* MAIN NAVIGATION TABS */}
-          <div className="hidden sm:flex items-center space-x-1 text-xs font-bold bg-emerald-950/70 p-1.5 rounded-2xl border border-emerald-800/80">
+          <div className="hidden sm:flex items-center space-x-1 text-xs font-bold bg-[#008f5a] p-1.5 rounded-2xl border border-white/20 shadow-inner">
             {[
               { id: 'dispatch', label: '📦 Crop Details & Dispatch' },
               { id: 'storage', label: '📊 Crop Analysis & Storage' }
@@ -482,7 +492,7 @@ export const CenterInChargeDashboard = () => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-4 py-2 rounded-xl transition-all ${activeTab === tab.id
                     ? 'bg-white text-[#00a86b] shadow-sm font-extrabold'
-                    : 'text-emerald-100 hover:text-white hover:bg-emerald-900/50'
+                    : 'text-emerald-100 hover:text-white hover:bg-[#007d4f]'
                   }`}
               >
                 {tab.label}
@@ -501,7 +511,7 @@ export const CenterInChargeDashboard = () => {
                 showToast('Logged out of Center In-Charge session');
                 navigateTo('login');
               }}
-              className="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-emerald-900/80 hover:bg-emerald-900 text-white text-xs font-bold transition-colors"
+              className="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-[#008f5a] hover:bg-[#007d4f] text-white text-xs font-bold transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Logout</span>
@@ -512,7 +522,7 @@ export const CenterInChargeDashboard = () => {
       </header>
 
       {/* MOBILE HEADER TABS */}
-      <div className="sm:hidden bg-emerald-900 text-white px-2 py-2 flex items-center justify-center space-x-2 text-xs font-bold shadow-xs">
+      <div className="sm:hidden bg-[#008f5a] text-white px-2 py-2 flex items-center justify-center space-x-2 text-xs font-bold shadow-xs">
         {[
           { id: 'dispatch', label: '📦 Crop Dispatch' },
           { id: 'storage', label: '📊 Storage Overview' }
@@ -536,7 +546,7 @@ export const CenterInChargeDashboard = () => {
           <div className="space-y-1">
             <div className="flex items-center space-x-2">
               <span className="text-[10px] font-black text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                QUALITY CENTER COMMAND HUB
+                CATEGORY CENTER COMMAND HUB
               </span>
               <span className="text-xs text-slate-400 font-semibold">• {centerLocation}</span>
             </div>
@@ -639,7 +649,7 @@ export const CenterInChargeDashboard = () => {
                     <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px]">
                       <th className="py-3.5 px-3">Crop ID &amp; Name</th>
                       <th className="py-3.5 px-3">Quantity</th>
-                      <th className="py-3.5 px-3">Quality Grade &amp; Metrics</th>
+                      <th className="py-3.5 px-3">CATEGORY ALLOCATION &amp; METRICS</th>
                       <th className="py-3.5 px-3">Farmer &amp; Source Location</th>
                       <th className="py-3.5 px-3">Offered Price</th>
                       <th className="py-3.5 px-3">Assigned Volunteer</th>
@@ -662,12 +672,14 @@ export const CenterInChargeDashboard = () => {
                         </td>
 
                         <td className="py-4 px-3 space-y-1">
-                          <span className={`inline-block text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${crop.qualityGrade === 'A' ? 'bg-emerald-100 text-[#00a86b] border-emerald-300' :
-                              crop.qualityGrade === 'B' ? 'bg-amber-100 text-amber-900 border-amber-300' :
-                                'bg-rose-100 text-rose-900 border-rose-300'
-                            }`}>
-                            Grade {crop.qualityGrade} ({crop.qualityLevel})
-                          </span>
+                          {(() => {
+                            const catName = getCategoryFromQuantity(crop.quantityKg);
+                            return (
+                              <span className={`inline-block text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${getCategoryBadge(catName)}`}>
+                                {catName}
+                              </span>
+                            );
+                          })()}
                           <div className="text-[10px] text-slate-500 font-medium">
                             Moisture: {crop.moisturePercent} • Purity: {crop.purityPercent}
                           </div>
@@ -790,8 +802,12 @@ export const CenterInChargeDashboard = () => {
                       <div>
                         <div className="flex items-center space-x-2">
                           <span className="font-mono font-black text-[#00a86b] text-xs">{crop.id}</span>
-                          <span className={`text-[9px] font-black px-2 py-0.5 rounded-full border ${getCategoryBadge(crop.qualityGrade)}`}>
-                            Grade {crop.qualityGrade}
+                          <span className={`text-[9px] font-black px-2 py-0.5 rounded-full border ${getCategoryBadge(getCategoryFromQuantity(crop.quantityKg))}`}>
+                            {getCategoryFromQuantity(crop.quantityKg)}
+                          </span>
+                          <span className="text-[9px] font-bold text-[#00a86b] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center space-x-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping inline-block" />
+                            <span>LIVE TRACKING</span>
                           </span>
                         </div>
                         <h4 className="text-base font-extrabold text-slate-900 mt-0.5">{crop.cropName} ({crop.quantityKg.toLocaleString()} kg)</h4>
@@ -802,20 +818,39 @@ export const CenterInChargeDashboard = () => {
                         <span className="text-xs font-bold text-slate-400 uppercase block">Assigned Volunteer</span>
                         <span className="text-sm font-extrabold text-slate-900 block">{crop.assignedVolunteer.name}</span>
                         <span className="text-[10px] text-slate-500">+91 {crop.assignedVolunteer.mobile}</span>
+                        {crop.assignedVolunteer.vehicle && (
+                          <span className="text-[9px] font-semibold text-slate-600 block bg-slate-100 px-2 py-0.5 rounded-md mt-1 border border-slate-200">
+                            🚚 {crop.assignedVolunteer.vehicle}
+                          </span>
+                        )}
                       </div>
                     </div>
 
                     <div className="bg-white p-3.5 rounded-2xl border border-slate-200 text-xs space-y-1">
-                      <div className="flex items-center space-x-1.5 text-[#00a86b] font-bold">
-                        <MapPin className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                        <span>Live Location / Status:</span>
+                      <div className="flex items-center justify-between text-[#00a86b] font-bold">
+                        <div className="flex items-center space-x-1.5">
+                          <MapPin className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                          <span>Live Location &amp; Transport Status:</span>
+                        </div>
+                        <span className="text-[10px] text-slate-400 font-normal">GPS Active</span>
                       </div>
-                      <p className="text-slate-700 font-semibold pl-5">{crop.assignedVolunteer.location}</p>
+                      <p className="text-slate-800 font-bold pl-5">{crop.assignedVolunteer.location}</p>
                     </div>
 
                     {/* TIMELINE STAGES */}
                     <div className="space-y-2 pt-2">
-                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">Shipment Stage Timeline</span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">Shipment Stage Timeline</span>
+                        {(crop.status === 'Assigned' || crop.status === 'In Transit') && (
+                          <button
+                            onClick={() => handleAdvanceTransportStage(crop.id)}
+                            className="text-[10px] font-bold text-white bg-[#00a86b] hover:bg-[#008f5a] px-2.5 py-1 rounded-lg transition-colors flex items-center space-x-1"
+                          >
+                            <Truck className="w-3 h-3" />
+                            <span>Advance Stage →</span>
+                          </button>
+                        )}
+                      </div>
                       <div className="grid grid-cols-5 gap-1 text-center">
                         {crop.transportTimeline.map((step, idx) => (
                           <div key={step.stage} className="space-y-1">
@@ -947,7 +982,7 @@ export const CenterInChargeDashboard = () => {
               <div className="pb-3 border-b border-slate-100 flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-black text-slate-900">Crop-Wise Warehouse Breakdown Table</h3>
-                  <p className="text-xs text-slate-500 font-medium">Complete list of stored crop varieties, quality grade distribution, and source contributors.</p>
+                  <p className="text-xs text-slate-500 font-medium">Complete list of stored crop varieties, Category breakdown, and source contributors.</p>
                 </div>
                 <span className="text-xs font-bold text-[#00a86b] bg-emerald-100 px-3 py-1 rounded-full border border-emerald-200">
                   Total {STORAGE_INVENTORY_BY_CROP.length} Crop Categories
@@ -960,7 +995,7 @@ export const CenterInChargeDashboard = () => {
                     <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px]">
                       <th className="py-3.5 px-3">Crop Name &amp; Variety</th>
                       <th className="py-3.5 px-3">Quantity in Stock</th>
-                      <th className="py-3.5 px-3">Quality Grade Distribution</th>
+                      <th className="py-3.5 px-3">Category Breakdown</th>
                       <th className="py-3.5 px-3">Last Stock Update</th>
                       <th className="py-3.5 px-3">Source Contributors (Farmers/Volunteers)</th>
                     </tr>
@@ -979,16 +1014,16 @@ export const CenterInChargeDashboard = () => {
 
                         <td className="py-4 px-3 space-y-1.5">
                           <div className="flex items-center space-x-2">
-                            <span className="w-20 text-[10px] text-slate-500 font-bold">Grade A:</span>
-                            <span className="font-extrabold text-[#00a86b]">{inv.gradeA.toLocaleString()} kg</span>
+                            <span className="w-32 text-[10px] text-slate-500 font-bold">Category A (&le;5k kg):</span>
+                            <span className="font-extrabold text-[#00a86b]">{inv.catA.toLocaleString()} kg</span>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <span className="w-20 text-[10px] text-slate-500 font-bold">Grade B:</span>
-                            <span className="font-extrabold text-amber-700">{inv.gradeB.toLocaleString()} kg</span>
+                            <span className="w-32 text-[10px] text-slate-500 font-bold">Category B (5k-10k kg):</span>
+                            <span className="font-extrabold text-amber-700">{inv.catB.toLocaleString()} kg</span>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <span className="w-20 text-[10px] text-slate-500 font-bold">Grade C:</span>
-                            <span className="font-extrabold text-rose-700">{inv.gradeC.toLocaleString()} kg</span>
+                            <span className="w-32 text-[10px] text-slate-500 font-bold">Category C (&gt;10k kg):</span>
+                            <span className="font-extrabold text-rose-700">{inv.catC.toLocaleString()} kg</span>
                           </div>
                         </td>
 
@@ -1039,7 +1074,7 @@ export const CenterInChargeDashboard = () => {
             <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs space-y-1.5">
               <div className="flex justify-between"><span className="text-slate-500">Crop Variety:</span><strong className="text-slate-900">{selectedCropForOffer.cropName} ({selectedCropForOffer.variety})</strong></div>
               <div className="flex justify-between"><span className="text-slate-500">Quantity Available:</span><strong className="text-slate-900">{selectedCropForOffer.quantityKg.toLocaleString()} kg</strong></div>
-              <div className="flex justify-between"><span className="text-slate-500">Quality Grade:</span><strong className="text-emerald-800">Grade {selectedCropForOffer.qualityGrade} ({selectedCropForOffer.qualityLevel})</strong></div>
+              <div className="flex justify-between"><span className="text-slate-500">Category Allocation:</span><strong className="text-emerald-800">{getCategoryFromQuantity(selectedCropForOffer.quantityKg)}</strong></div>
               <div className="flex justify-between"><span className="text-slate-500">Farmer Source:</span><strong className="text-slate-900">{selectedCropForOffer.farmerName} ({selectedCropForOffer.village})</strong></div>
             </div>
 
@@ -1153,15 +1188,15 @@ export const CenterInChargeDashboard = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Verified Quality Grade</label>
+                  <label className="block text-slate-700 font-bold mb-1">Verified Category Allocation</label>
                   <select
                     value={verifyGrade}
                     onChange={(e) => setVerifyGrade(e.target.value)}
                     className="w-full px-3.5 py-2.5 bg-white rounded-xl border border-slate-200 text-slate-900 font-bold"
                   >
-                    <option value="A">Grade A (High Quality)</option>
-                    <option value="B">Grade B (Medium Quality)</option>
-                    <option value="C">Grade C (Low / Industrial)</option>
+                    <option value="A">Category A (&le; 5,000 kg)</option>
+                    <option value="B">Category B (5,001 - 10,000 kg)</option>
+                    <option value="C">Category C (&gt; 10,000 kg)</option>
                   </select>
                 </div>
               </div>
@@ -1192,7 +1227,7 @@ export const CenterInChargeDashboard = () => {
 
       {/* FOOTER */}
       <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
-        © 2026 Smart Agricultural Crop Quality &amp; Tracking Management Platform • Authorized Center In-Charge Portal
+        © 2026 Smart Agricultural Crop Category &amp; Center Management System • Authorized Center In-Charge Portal
       </footer>
 
     </div>

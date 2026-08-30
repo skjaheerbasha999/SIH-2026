@@ -24,14 +24,14 @@ export const HowItWorks = () => {
     {
       num: '04',
       icon: Scale,
-      title: 'Weighing & Quality',
-      desc: 'Farmer arrives at assigned center for weighing and quality assessment.'
+      title: 'Center Arrival & Weighing',
+      desc: 'Farmer arrives at assigned center for physical weighing and verification.'
     },
     {
       num: '05',
       icon: FileText,
-      title: 'Digital Receipt',
-      desc: 'Farmer receives transparent receipt & direct bank payout.'
+      title: 'Fair Price Payout',
+      desc: 'Farmer receives transparent payout calculated according to category.'
     }
   ];
 

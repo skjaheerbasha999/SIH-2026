@@ -1,149 +1,126 @@
 import React from 'react';
-import { User, HeartHandshake, Building2, Scale, IndianRupee, FileCheck, CheckCircle2 } from 'lucide-react';
+import { User, Bell, Truck, Scale, Building2, ShieldCheck } from 'lucide-react';
 
 export const AgriculturalVisual = () => {
   return (
-    <div className="relative w-full max-w-xl mx-auto">
-      {/* Background Soft Ambient Shadow Glow */}
-      <div className="absolute -inset-2 bg-gradient-to-tr from-[#00a86b]/10 via-emerald-500/10 to-amber-500/10 rounded-3xl blur-2xl opacity-60" />
+    <div className="w-full max-w-md mx-auto">
 
-      {/* Main White Card Container */}
-      <div className="relative bg-white rounded-3xl p-6 shadow-xl border border-slate-200/90 space-y-4 max-w-md">
+      {/* Main Professional Portal Card Container */}
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
 
         {/* Header Bar */}
-        <div className="pb-3 border-b border-slate-100">
+        <div className="pb-3 border-b border-slate-100 flex items-center justify-between">
           <span className="text-[11px] font-black tracking-widest text-slate-900 uppercase">
             SMART PROCUREMENT FLOW
           </span>
+          <span className="text-[10px] font-bold text-[#00a86b] bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200">
+            Official Workflow
+          </span>
         </div>
 
-        {/* 6 Steps */}
-        <div className="space-y-2.5">
+        {/* Embedded Capacity & Allocation Live Status Panel */}
+        <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs space-y-1.5 font-semibold">
+          <div className="flex items-center justify-between text-slate-900">
+            <span className="text-slate-500 font-bold">Assigned Center:</span>
+            <span className="font-extrabold text-[#00a86b] inline-flex items-center space-x-1">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 inline" />
+              <span>A Center (Priority)</span>
+            </span>
+          </div>
+          <div className="flex items-center justify-between text-slate-900">
+            <span className="text-slate-500 font-bold">Center Capacity:</span>
+            <span className="font-black text-slate-800">3,800 / 5,000 kg (76% Full)</span>
+          </div>
+          <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+            <div className="bg-[#00a86b] h-full rounded-full" style={{ width: '76%' }} />
+          </div>
+        </div>
 
-          {/* Step 1 */}
-          <div className="flex items-center justify-between p-2.5 rounded-2xl bg-slate-50 border border-slate-100">
+        {/* 5 Official Workflow Steps */}
+        <div className="space-y-2">
+
+          {/* Step 1: Farmer Registration */}
+          <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 rounded-full bg-[#00a86b] text-white flex items-center justify-center text-xs font-bold">
-                <User className="w-4 h-4" />
+              <div className="w-7 h-7 rounded-lg bg-emerald-50 text-[#00a86b] flex items-center justify-center text-xs font-bold border border-emerald-200">
+                <User className="w-3.5 h-3.5" />
               </div>
               <div>
-                <span className="text-xs font-bold text-slate-900 block">Farmer</span>
-                <span className="text-[10px] text-slate-400">Step 01</span>
+                <span className="font-extrabold text-slate-900 block leading-tight">Farmer Registration</span>
+                <span className="text-[10px] text-slate-500">Step 01 • Harvest &amp; Qty Details</span>
               </div>
             </div>
-            <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100/90 px-2.5 py-1 rounded-full border border-emerald-200">
+            <span className="text-[10px] font-bold text-[#00a86b] bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
               ✓ Registered
             </span>
           </div>
 
-          {/* Step 2 */}
-          <div className="flex items-center justify-between p-2.5 rounded-2xl bg-slate-50 border border-slate-100">
+          {/* Step 2: Center Allocation */}
+          <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 rounded-full bg-[#00a86b] text-white flex items-center justify-center text-xs font-bold">
-                <HeartHandshake className="w-4 h-4" />
+              <div className="w-7 h-7 rounded-lg bg-emerald-50 text-[#00a86b] flex items-center justify-center text-xs font-bold border border-emerald-200">
+                <Building2 className="w-3.5 h-3.5" />
               </div>
               <div>
-                <span className="text-xs font-bold text-slate-900 block">Procurement Mitra</span>
-                <span className="text-[10px] text-slate-400">Step 02</span>
+                <span className="font-extrabold text-slate-900 block leading-tight">Center Allocation</span>
+                <span className="text-[10px] text-slate-500">Step 02 • Auto A → B → C Routing</span>
               </div>
             </div>
-            <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100/90 px-2.5 py-1 rounded-full border border-emerald-200">
-              ✓ Token Assigned
+            <span className="text-[10px] font-bold text-[#00a86b] bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+              ✓ A Center Assigned
             </span>
           </div>
 
-          {/* Step 3 */}
-          <div className="flex items-center justify-between p-2.5 rounded-2xl bg-slate-50 border border-slate-100">
+          {/* Step 3: Farmer Notification */}
+          <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 rounded-full bg-[#00a86b] text-white flex items-center justify-center text-xs font-bold">
-                <Building2 className="w-4 h-4" />
+              <div className="w-7 h-7 rounded-lg bg-emerald-50 text-[#00a86b] flex items-center justify-center text-xs font-bold border border-emerald-200">
+                <Bell className="w-3.5 h-3.5" />
               </div>
               <div>
-                <span className="text-xs font-bold text-slate-900 block">Collection Center</span>
-                <span className="text-[10px] text-slate-400">Step 03</span>
+                <span className="font-extrabold text-slate-900 block leading-tight">Farmer Notification</span>
+                <span className="text-[10px] text-slate-500">Step 03 • SMS &amp; Token Sent</span>
               </div>
             </div>
-            <span className="text-[10px] font-bold text-white bg-slate-900 px-3 py-1 rounded-full">
-              ₹ 3,600 Fair Price
+            <span className="text-[10px] font-bold text-[#00a86b] bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+              ✓ SMS Dispatched
             </span>
           </div>
 
-          {/* Step 4 */}
-          <div className="flex items-center justify-between p-2.5 rounded-2xl bg-slate-50 border border-slate-100">
+          {/* Step 4: Center Arrival */}
+          <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 rounded-full bg-[#00a86b] text-white flex items-center justify-center text-xs font-bold">
-                <Scale className="w-4 h-4" />
+              <div className="w-7 h-7 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center text-xs font-bold border border-slate-200">
+                <Truck className="w-3.5 h-3.5" />
               </div>
               <div>
-                <span className="text-xs font-bold text-slate-900 block">Quality Check</span>
-                <span className="text-[10px] text-slate-400">Step 04</span>
+                <span className="font-extrabold text-slate-900 block leading-tight">Center Arrival</span>
+                <span className="text-[10px] text-slate-500">Step 04 • Gate Receiving Queue</span>
               </div>
             </div>
-            <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100/90 px-2.5 py-1 rounded-full border border-emerald-200">
-              ✓ Quality Checked
+            <span className="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
+              In Transit
             </span>
           </div>
 
-          {/* Step 5 */}
-          <div className="flex items-center justify-between p-2.5 rounded-2xl bg-slate-50 border border-slate-100">
+          {/* Step 5: Weighing & Procurement */}
+          <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 rounded-full bg-[#00a86b] text-white flex items-center justify-center text-xs font-bold">
-                <IndianRupee className="w-4 h-4" />
+              <div className="w-7 h-7 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center text-xs font-bold border border-slate-200">
+                <Scale className="w-3.5 h-3.5" />
               </div>
               <div>
-                <span className="text-xs font-bold text-slate-900 block">Fair Price</span>
-                <span className="text-[10px] text-slate-400">Step 05</span>
+                <span className="font-extrabold text-slate-900 block leading-tight">Weighing &amp; Procurement</span>
+                <span className="text-[10px] text-slate-500">Step 05 • Physical Weight &amp; Payout</span>
               </div>
             </div>
-            <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100/90 px-2.5 py-1 rounded-full border border-emerald-200">
-              ✓ Grade A Payout
+            <span className="text-[10px] font-bold text-[#00a86b] bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+              ✓ Verified Qty
             </span>
-          </div>
-
-          {/* Step 6 */}
-          <div className="flex items-center justify-between p-2.5 rounded-2xl bg-slate-50 border border-slate-100">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center text-xs font-bold">
-                <FileCheck className="w-4 h-4" />
-              </div>
-              <div>
-                <span className="text-xs font-bold text-slate-900 block">Digital Receipt</span>
-                <span className="text-[10px] text-slate-400">Generated Successfully</span>
-              </div>
-            </div>
           </div>
 
         </div>
 
-      </div>
-
-      {/* Floating Cards on Right Stack (Matching Reference) */}
-
-      {/* Floating Card 1: Quality Grade */}
-      <div className="absolute top-2 -right-4 bg-white rounded-2xl p-3 shadow-xl border border-slate-200 w-36 z-20 space-y-1">
-        <span className="text-[9px] font-bold text-slate-400 uppercase block tracking-wider">Quality Grade</span>
-        <div className="flex items-center space-x-2">
-          <div className="w-6 h-6 rounded-full bg-emerald-600 text-white font-black text-xs flex items-center justify-center">
-            A
-          </div>
-          <span className="text-xs font-bold text-slate-900">Best Quality</span>
-        </div>
-      </div>
-
-      {/* Floating Card 2: Fair Price */}
-      <div className="absolute top-1/3 -right-6 bg-white rounded-2xl p-3 shadow-xl border border-slate-200 w-40 z-20 space-y-1">
-        <span className="text-[9px] font-bold text-slate-400 uppercase block tracking-wider">Fair Price</span>
-        <div className="text-sm font-black text-slate-900">₹ 3,600</div>
-        <span className="text-[10px] text-slate-500 font-medium block">120 kg • Wheat</span>
-      </div>
-
-      {/* Floating Card 3: Digital Receipt */}
-      <div className="absolute bottom-4 -right-4 bg-white rounded-2xl p-3 shadow-xl border border-slate-200 w-36 z-20 space-y-1">
-        <span className="text-[9px] font-bold text-slate-400 uppercase block tracking-wider">Digital Receipt</span>
-        <div className="flex items-center space-x-1.5 text-xs font-bold text-emerald-700">
-          <FileCheck className="w-4 h-4 text-emerald-600" />
-          <span>Verified ✓</span>
-        </div>
       </div>
 
     </div>

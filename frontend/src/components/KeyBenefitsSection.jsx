@@ -10,7 +10,7 @@ export const KeyBenefitsSection = () => {
       id: 'farmers',
       role: 'Farmers',
       icon: Sprout,
-      description: 'Better prices based on transparent quality grading without middleman exploitation.',
+      description: 'Better prices based on transparent category allocation without middleman exploitation.',
       color: 'bg-emerald-100 text-emerald-800 border-emerald-300',
       iconBg: 'bg-emerald-600 text-white',
       route: '/farmer'

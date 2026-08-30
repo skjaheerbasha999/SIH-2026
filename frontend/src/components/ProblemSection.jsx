@@ -14,16 +14,16 @@ export const ProblemSection = () => {
     {
       id: 2,
       icon: Scale,
-      title: 'Unclear Quality Assessment',
-      description: 'Farmers need a transparent way to understand how crop quality affects pricing without arbitrary cuts.',
+      title: 'Unclear Center Allocation',
+      description: 'Farmers need a transparent way to understand center assignment and capacity routing without long queues.',
       color: 'from-emerald-600 to-teal-700',
-      badge: 'Grading Gap'
+      badge: 'Routing Gap'
     },
     {
       id: 3,
       icon: IndianRupee,
       title: 'Uncertain Pricing',
-      description: 'Farmers need clear, guaranteed and fair prices calculated directly based on produce quality standards.',
+      description: 'Farmers need clear, guaranteed and fair prices calculated directly based on category allocation.',
       color: 'from-yellow-500 to-amber-600',
       badge: 'Financial Risk'
     },
@@ -56,7 +56,7 @@ export const ProblemSection = () => {
             Why Do Farmers Need a Better Procurement System?
           </h2>
           <p className="text-base sm:text-lg text-slate-600 font-normal">
-            Traditional agricultural markets often penalize smallholders due to informational asymmetry, tech barriers, and opaque quality grading.
+            Traditional agricultural markets often penalize smallholders due to informational asymmetry, tech barriers, and opaque center allocation.
           </p>
         </div>
 

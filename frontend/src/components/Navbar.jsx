@@ -9,7 +9,7 @@ export const Navbar = () => {
   const navLinks = [
     { name: 'Home', href: '#hero' },
     { name: 'Procurement Workflow', href: '#how-it-works' },
-    { name: 'Quality & MSP Rates', href: '#quality' },
+    { name: 'Category & MSP Rates', href: '#quality' },
   ];
 
   return (
@@ -54,7 +54,7 @@ export const Navbar = () => {
                 AgriProcure Portal
               </span>
               <span className="text-[10px] font-bold uppercase tracking-widest text-[#00a86b] mt-0.5">
-                National MSP Crop Quality &amp; Procurement System
+                National MSP Crop Category &amp; Procurement System
               </span>
             </div>
           </a>

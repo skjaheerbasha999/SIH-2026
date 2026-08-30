@@ -23,7 +23,7 @@ export const CTASection = () => {
             </h2>
 
             <p className="text-sm text-emerald-100/90 max-w-md mx-auto lg:mx-0 font-normal leading-relaxed">
-              Connecting farmers, collection centers and government through transparent quality-based procurement.
+              Connecting farmers, collection centers and government through transparent category-based procurement.
             </p>
 
             {/* CTA Button: Sign In → */}
@@ -58,7 +58,7 @@ export const CTASection = () => {
               </div>
               <div>
                 <span className="text-xs font-bold text-white block">Fair Prices</span>
-                <span className="text-[10px] text-emerald-200">Based on quality</span>
+                <span className="text-[10px] text-emerald-200">Based on category</span>
               </div>
             </div>
 

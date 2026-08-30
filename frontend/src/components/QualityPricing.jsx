@@ -110,7 +110,7 @@ export const QualityPricing = () => {
 
           <div className="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-white border border-slate-200 shadow-xs text-slate-800">
             <Award className="w-4 h-4 text-emerald-600" />
-            <span>QUALITY ASSESSMENT</span>
+            <span>CATEGORY ALLOCATION</span>
           </div>
 
           <span className="text-slate-400 font-bold">→</span>
@@ -124,7 +124,7 @@ export const QualityPricing = () => {
 
           <div className="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-emerald-700 text-white shadow-xs">
             <FileCheck className="w-4 h-4" />
-            <span>DIGITAL RECEIPT</span>
+            <span>FAIR PRICE PAYOUT</span>
           </div>
 
         </div>

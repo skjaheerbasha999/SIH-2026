@@ -47,29 +47,45 @@ import { useApp } from '../context/AppContext';
 // MOCK DATA FOR HEAD OFFICE STAKEHOLDERS
 // ==========================================
 
+const INDIA_STATES_DISTRICTS = {
+  'Haryana': ['Sonipat', 'Ambala', 'Karnal', 'Kurukshetra', 'Panipat', 'Hisar', 'Rohtak', 'Sirsa', 'Yamunanagar', 'Fatehabad'],
+  'Punjab': ['Ludhiana', 'Sangrur', 'Patiala', 'Jalandhar', 'Amritsar', 'Bathinda', 'Firozpur', 'Moga', 'Gurdaspur', 'Hoshiarpur'],
+  'Uttar Pradesh': ['Lakhimpur Kheri', 'Aligarh', 'Mathura', 'Meerut', 'Agra', 'Varanasi', 'Gorakhpur', 'Bareilly', 'Moradabad', 'Ayodhya'],
+  'Madhya Pradesh': ['Ujjain', 'Indore', 'Bhopal', 'Jabalpur', 'Gwalior', 'Hoshangabad', 'Vidisha', 'Dewas', 'Sagar', 'Chhindwara'],
+  'Rajasthan': ['Ganganagar', 'Hanumangarh', 'Kota', 'Jaipur', 'Alwar', 'Bharatpur', 'Jodhpur', 'Bikaner', 'Sikar', 'Udaipur'],
+  'Maharashtra': ['Nashik', 'Pune', 'Nagpur', 'Aurangabad', 'Solapur', 'Kolhapur', 'Ahmednagar', 'Satara', 'Latur', 'Amravati'],
+  'Andhra Pradesh': ['Guntur', 'Krishna', 'West Godavari', 'East Godavari', 'Kurnool', 'Anantapur', 'Prakasam', 'Nellore', 'Chittoor', 'Vizianagaram'],
+  'Telangana': ['Karimnagar', 'Nalgonda', 'Nizamabad', 'Khammam', 'Warangal', 'Rangareddy', 'Mahabubnagar', 'Medak', 'Adilabad', 'Suryapet'],
+  'Karnataka': ['Belagavi', 'Davangere', 'Shivamogga', 'Mandya', 'Haveri', 'Tumakuru', 'Ballari', 'Kalaburagi', 'Mysuru', 'Bagalkote'],
+  'Tamil Nadu': ['Thanjavur', 'Tiruvarur', 'Madurai', 'Coimbatore', 'Salem', 'Erode', 'Tiruchirappalli', 'Villupuram', 'Cuddalore', 'Dindigul'],
+  'West Bengal': ['Burdwan', 'Hooghly', 'Murshidabad', 'Nadia', 'North 24 Parganas', 'Birbhum', 'Malda', 'Bankura', 'Purulia', 'Dinajpur'],
+  'Gujarat': ['Rajkot', 'Junagadh', 'Surat', 'Vadodara', 'Bhavnagar', 'Mehsana', 'Banaskantha', 'Amreli', 'Jamnagar', 'Anand'],
+  'Bihar': ['Rohtas', 'West Champaran', 'East Champaran', 'Katihar', 'Nalanda', 'Gaya', 'Begusarai', 'Muzaffarpur', 'Samastipur', 'Bhojpur']
+};
+
 const FARMERS_DATA = [
-  { id: 'FARM-1001', name: 'Ramesh Kumar', mobile: '9876543211', village: 'Sonipat Khas', district: 'Sonipat', crops: 'Wheat PBW 550, Mustard', areaAcres: 4.5, totalQtyKg: 14200, status: 'Active' },
-  { id: 'FARM-1002', name: 'Sujata Devi', mobile: '9876543212', village: 'Rampur', district: 'Sonipat', crops: 'Mustard Sarson', areaAcres: 2.8, totalQtyKg: 9400, status: 'Active' },
-  { id: 'FARM-1003', name: 'Mahesh Patel', mobile: '9876543213', village: 'Sonipat East', district: 'Sonipat', crops: 'Paddy Basmati 1121', areaAcres: 5.0, totalQtyKg: 11500, status: 'Active' },
-  { id: 'FARM-1004', name: 'Harpreet Singh', mobile: '9876543214', village: 'Kotla', district: 'Ludhiana', crops: 'Sharbati Wheat', areaAcres: 6.2, totalQtyKg: 12800, status: 'Active' },
-  { id: 'FARM-1005', name: 'Sunita Yadav', mobile: '9876543215', village: 'Kisan Nagar', district: 'Sonipat', crops: 'Cotton Bt Hybrid', areaAcres: 3.5, totalQtyKg: 4200, status: 'Pending Verification' },
-  { id: 'FARM-1006', name: 'Devinder Singh', mobile: '9876543216', village: 'Sangrur Mandi', district: 'Sangrur', crops: 'Paddy PB-1, Maize', areaAcres: 5.5, totalQtyKg: 10900, status: 'Active' },
-  { id: 'FARM-1007', name: 'Karan Sharma', mobile: '9876543217', village: 'Ambala Cantt', district: 'Ambala', crops: 'Wheat & Mustard', areaAcres: 3.2, totalQtyKg: 7800, status: 'Active' }
+  { id: 'FARM-1001', name: 'Ramesh Kumar', mobile: '9876543211', village: 'Sonipat Khas', state: 'Haryana', district: 'Sonipat', crops: 'Wheat PBW 550, Mustard', areaAcres: 4.5, totalQtyKg: 14200, status: 'Active' },
+  { id: 'FARM-1002', name: 'Sujata Devi', mobile: '9876543212', village: 'Rampur', state: 'Haryana', district: 'Sonipat', crops: 'Mustard Sarson', areaAcres: 2.8, totalQtyKg: 9400, status: 'Active' },
+  { id: 'FARM-1003', name: 'Mahesh Patel', mobile: '9876543213', village: 'Sonipat East', state: 'Haryana', district: 'Sonipat', crops: 'Paddy Basmati 1121', areaAcres: 5.0, totalQtyKg: 11500, status: 'Active' },
+  { id: 'FARM-1004', name: 'Harpreet Singh', mobile: '9876543214', village: 'Kotla', state: 'Punjab', district: 'Ludhiana', crops: 'Sharbati Wheat', areaAcres: 6.2, totalQtyKg: 12800, status: 'Active' },
+  { id: 'FARM-1005', name: 'Sunita Yadav', mobile: '9876543215', village: 'Kisan Nagar', state: 'Haryana', district: 'Sonipat', crops: 'Cotton Bt Hybrid', areaAcres: 3.5, totalQtyKg: 4200, status: 'Pending Verification' },
+  { id: 'FARM-1006', name: 'Devinder Singh', mobile: '9876543216', village: 'Sangrur Mandi', state: 'Punjab', district: 'Sangrur', crops: 'Paddy PB-1, Maize', areaAcres: 5.5, totalQtyKg: 10900, status: 'Active' },
+  { id: 'FARM-1007', name: 'Karan Sharma', mobile: '9876543217', village: 'Ambala Cantt', state: 'Haryana', district: 'Ambala', crops: 'Wheat & Mustard', areaAcres: 3.2, totalQtyKg: 7800, status: 'Active' }
 ];
 
 const VOLUNTEERS_DATA = [
-  { id: 'VOL-401', name: 'Gurpreet Singh', mobile: '9876543210', district: 'Sonipat', mandal: 'Sonipat Mandal', deliveries: 48, totalVolumeKg: 112400, vehicle: 'Mahindra Bolero (HR-10-AB-4321)', status: 'Active' },
-  { id: 'VOL-402', name: 'Anita Devi', mobile: '9876598765', district: 'Sonipat', mandal: 'Sonipat Mandal', deliveries: 36, totalVolumeKg: 89000, vehicle: 'Tata Ace Gold (HR-10-C-8899)', status: 'Active' },
-  { id: 'VOL-403', name: 'Sunita Sharma', mobile: '9811223344', district: 'Ludhiana', mandal: 'Ludhiana Central', deliveries: 42, totalVolumeKg: 98500, vehicle: 'Eicher Mini Truck (PB-10-E-9012)', status: 'Active' },
-  { id: 'VOL-404', name: 'Rajender Kumar', mobile: '9822334455', district: 'Sangrur', mandal: 'Sangrur North', deliveries: 29, totalVolumeKg: 64200, vehicle: 'Force Trump (PB-13-F-5544)', status: 'Active' },
-  { id: 'VOL-405', name: 'Vikram Choudhary', mobile: '9833445566', district: 'Ambala', mandal: 'Ambala Sadar', deliveries: 24, totalVolumeKg: 52100, vehicle: 'Mahindra Pickup (HR-01-G-1122)', status: 'Active' }
+  { id: 'VOL-401', name: 'Gurpreet Singh', mobile: '9876543210', state: 'Haryana', district: 'Sonipat', mandal: 'Sonipat Mandal', deliveries: 48, totalVolumeKg: 112400, vehicle: 'Mahindra Bolero (HR-10-AB-4321)', status: 'Active' },
+  { id: 'VOL-402', name: 'Anita Devi', mobile: '9876598765', state: 'Haryana', district: 'Sonipat', mandal: 'Sonipat Mandal', deliveries: 36, totalVolumeKg: 89000, vehicle: 'Tata Ace Gold (HR-10-C-8899)', status: 'Active' },
+  { id: 'VOL-403', name: 'Sunita Sharma', mobile: '9811223344', state: 'Punjab', district: 'Ludhiana', mandal: 'Ludhiana Central', deliveries: 42, totalVolumeKg: 98500, vehicle: 'Eicher Mini Truck (PB-10-E-9012)', status: 'Active' },
+  { id: 'VOL-404', name: 'Rajender Kumar', mobile: '9822334455', state: 'Punjab', district: 'Sangrur', mandal: 'Sangrur North', deliveries: 29, totalVolumeKg: 64200, vehicle: 'Force Trump (PB-13-F-5544)', status: 'Active' },
+  { id: 'VOL-405', name: 'Vikram Choudhary', mobile: '9833445566', state: 'Haryana', district: 'Ambala', mandal: 'Ambala Sadar', deliveries: 24, totalVolumeKg: 52100, vehicle: 'Mahindra Pickup (HR-01-G-1122)', status: 'Active' }
 ];
 
 const CENTERS_DATA = [
-  { id: 'CENTER-A', name: 'A Center (Priority Collection Center)', officer: 'Dr. Vikram Sharma', district: 'Sonipat', capacityKg: 5000, currentStockKg: 3800, availableKg: 1200, status: 'AVAILABLE (76% Full)', category: 'Priority' },
-  { id: 'CENTER-B', name: 'B Center (Secondary Collection Center)', officer: 'Er. Rajesh Verma', district: 'Sonipat', capacityKg: 5000, currentStockKg: 4700, availableKg: 300, status: 'LIMITED (94% Full)', category: 'Secondary' },
-  { id: 'CENTER-C', name: 'C Center (Overflow Collection Center)', officer: 'Mrs. Sunita Patel', district: 'Sonipat', capacityKg: 5000, currentStockKg: 5000, availableKg: 0, status: 'FULL (100% Full)', category: 'Overflow' },
-  { id: 'CENTER-18', name: 'Ludhiana Central Procurement Hub #18', officer: 'Sardar Balwinder Singh', district: 'Ludhiana', capacityKg: 80000, currentStockKg: 58400, availableKg: 21600, status: 'Operating Online', category: 'Priority' }
+  { id: 'CENTER-A', name: 'A Center (Priority Collection Center)', officer: 'Dr. Vikram Sharma', state: 'Haryana', district: 'Sonipat', capacityKg: 5000, currentStockKg: 3800, availableKg: 1200, status: 'AVAILABLE (76% Full)', category: 'Priority' },
+  { id: 'CENTER-B', name: 'B Center (Secondary Collection Center)', officer: 'Er. Rajesh Verma', state: 'Haryana', district: 'Sonipat', capacityKg: 5000, currentStockKg: 4700, availableKg: 300, status: 'LIMITED (94% Full)', category: 'Secondary' },
+  { id: 'CENTER-C', name: 'C Center (Overflow Collection Center)', officer: 'Mrs. Sunita Patel', state: 'Haryana', district: 'Sonipat', capacityKg: 5000, currentStockKg: 5000, availableKg: 0, status: 'FULL (100% Full)', category: 'Overflow' },
+  { id: 'CENTER-18', name: 'Ludhiana Central Procurement Hub #18', officer: 'Sardar Balwinder Singh', state: 'Punjab', district: 'Ludhiana', capacityKg: 80000, currentStockKg: 58400, availableKg: 21600, status: 'Operating Online', category: 'Priority' }
 ];
 
 const CROP_RATIO_DATA = [
@@ -100,29 +116,33 @@ export const HeadOfficeDashboard = () => {
   const [activeStakeholderTab, setActiveStakeholderTab] = useState('farmers');
 
   // FILTERS STATE
+  const [selectedState, setSelectedState] = useState('ALL');
   const [selectedDistrict, setSelectedDistrict] = useState('ALL');
   const [selectedStatusFilter, setSelectedStatusFilter] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
 
   // FILTERED STAKEHOLDER DATA
   const filteredFarmers = FARMERS_DATA.filter(f => {
+    const matchesState = selectedState === 'ALL' || f.state === selectedState;
     const matchesDistrict = selectedDistrict === 'ALL' || f.district === selectedDistrict;
     const matchesStatus = selectedStatusFilter === 'ALL' || f.status === selectedStatusFilter;
     const matchesSearch = f.name.toLowerCase().includes(searchQuery.toLowerCase()) || f.id.toLowerCase().includes(searchQuery.toLowerCase()) || f.village.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesDistrict && matchesStatus && matchesSearch;
+    return matchesState && matchesDistrict && matchesStatus && matchesSearch;
   });
 
   const filteredVolunteers = VOLUNTEERS_DATA.filter(v => {
+    const matchesState = selectedState === 'ALL' || v.state === selectedState;
     const matchesDistrict = selectedDistrict === 'ALL' || v.district === selectedDistrict;
     const matchesStatus = selectedStatusFilter === 'ALL' || v.status === selectedStatusFilter;
     const matchesSearch = v.name.toLowerCase().includes(searchQuery.toLowerCase()) || v.id.toLowerCase().includes(searchQuery.toLowerCase()) || v.mandal.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesDistrict && matchesStatus && matchesSearch;
+    return matchesState && matchesDistrict && matchesStatus && matchesSearch;
   });
 
   const filteredCenters = CENTERS_DATA.filter(c => {
+    const matchesState = selectedState === 'ALL' || c.state === selectedState;
     const matchesDistrict = selectedDistrict === 'ALL' || c.district === selectedDistrict;
     const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.officer.toLowerCase().includes(searchQuery.toLowerCase()) || c.id.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesDistrict && matchesSearch;
+    return matchesState && matchesDistrict && matchesSearch;
   });
 
   return (
@@ -135,7 +155,7 @@ export const HeadOfficeDashboard = () => {
           <div className="flex items-center space-x-3">
             <button
               onClick={() => navigateTo('home')}
-              className="p-1.5 rounded-xl bg-emerald-900/70 hover:bg-emerald-900 text-white transition-colors"
+              className="p-1.5 rounded-xl bg-[#008f5a] hover:bg-[#007d4f] text-white transition-colors"
               title="Return Home"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -152,7 +172,7 @@ export const HeadOfficeDashboard = () => {
           </div>
 
           {/* MAIN TABS SWITCHER */}
-          <div className="hidden sm:flex items-center space-x-1 text-xs font-bold bg-emerald-950/70 p-1.5 rounded-2xl border border-emerald-800/80">
+          <div className="hidden sm:flex items-center space-x-1 text-xs font-bold bg-[#008f5a] p-1.5 rounded-2xl border border-white/20 shadow-inner">
             {[
               { id: 'overview', label: '👥 Platform Stakeholder Summary' },
               { id: 'analytics', label: '📊 Crop Analytics & Ratios' }
@@ -162,7 +182,7 @@ export const HeadOfficeDashboard = () => {
                 onClick={() => setActiveMainTab(tab.id)}
                 className={`px-4 py-2 rounded-xl transition-all ${activeMainTab === tab.id
                     ? 'bg-white text-[#00a86b] shadow-sm font-extrabold'
-                    : 'text-emerald-100 hover:text-white hover:bg-emerald-900/50'
+                    : 'text-emerald-100 hover:text-white hover:bg-[#007d4f]'
                   }`}
               >
                 {tab.label}
@@ -181,7 +201,7 @@ export const HeadOfficeDashboard = () => {
                 showToast('Logged out of Head Office Command Portal');
                 navigateTo('login');
               }}
-              className="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-emerald-900/80 hover:bg-emerald-900 text-white text-xs font-bold transition-colors"
+              className="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-[#008f5a] hover:bg-[#007d4f] text-white text-xs font-bold transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Logout</span>
@@ -192,7 +212,7 @@ export const HeadOfficeDashboard = () => {
       </header>
 
       {/* MOBILE HEADER TABS */}
-      <div className="sm:hidden bg-emerald-900 text-white px-2 py-2 flex items-center justify-center space-x-2 text-xs font-bold shadow-xs">
+      <div className="sm:hidden bg-[#008f5a] text-white px-2 py-2 flex items-center justify-center space-x-2 text-xs font-bold shadow-xs">
         {[
           { id: 'overview', label: '👥 Stakeholders' },
           { id: 'analytics', label: '📊 Crop Ratios' }
@@ -306,16 +326,37 @@ export const HeadOfficeDashboard = () => {
                     />
                   </div>
 
+                  {/* State Select */}
+                  <select
+                    value={selectedState}
+                    onChange={(e) => {
+                      setSelectedState(e.target.value);
+                      setSelectedDistrict('ALL');
+                    }}
+                    className="py-2 px-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-800 font-bold"
+                  >
+                    <option value="ALL">All States (Pan-India)</option>
+                    {Object.keys(INDIA_STATES_DISTRICTS).map((st) => (
+                      <option key={st} value={st}>{st}</option>
+                    ))}
+                  </select>
+
+                  {/* District Select */}
                   <select
                     value={selectedDistrict}
                     onChange={(e) => setSelectedDistrict(e.target.value)}
-                    className="py-2 px-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-800"
+                    className="py-2 px-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-800 font-bold"
                   >
-                    <option value="ALL">All Districts (State)</option>
-                    <option value="Sonipat">Sonipat District</option>
-                    <option value="Ludhiana">Ludhiana District</option>
-                    <option value="Sangrur">Sangrur District</option>
-                    <option value="Ambala">Ambala District</option>
+                    <option value="ALL">All Districts ({selectedState === 'ALL' ? 'State' : selectedState})</option>
+                    {selectedState !== 'ALL' ? (
+                      INDIA_STATES_DISTRICTS[selectedState]?.map((dst) => (
+                        <option key={dst} value={dst}>{dst} District</option>
+                      ))
+                    ) : (
+                      Array.from(new Set(Object.values(INDIA_STATES_DISTRICTS).flat())).sort().map((dst) => (
+                        <option key={dst} value={dst}>{dst} District</option>
+                      ))
+                    )}
                   </select>
 
                   <select
@@ -539,17 +580,17 @@ export const HeadOfficeDashboard = () => {
                 </div>
               </div>
 
-              {/* Quality Grade Distribution Card */}
+              {/* Category Allocation Distribution Card */}
               <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4 flex flex-col justify-between">
                 <div className="pb-3 border-b border-slate-100">
-                  <h3 className="text-base font-black text-slate-900">State Quality Grade Ratio</h3>
-                  <p className="text-xs text-slate-500 font-medium">Quality distribution across all verified crop harvests</p>
+                  <h3 className="text-base font-black text-slate-900">State Category Allocation Ratio</h3>
+                  <p className="text-xs text-slate-500 font-medium">Category distribution across all verified crop harvests</p>
                 </div>
 
                 <div className="space-y-4 text-xs font-bold">
                   <div>
                     <div className="flex justify-between font-extrabold text-[#00a86b] mb-1">
-                      <span>Grade A (Premium MSP)</span>
+                      <span>Category A (&le; 5,000 kg)</span>
                       <span>68% (3,30,208 kg)</span>
                     </div>
                     <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
@@ -559,7 +600,7 @@ export const HeadOfficeDashboard = () => {
 
                   <div>
                     <div className="flex justify-between font-extrabold text-amber-800 mb-1">
-                      <span>Grade B (Standard MSP)</span>
+                      <span>Category B (5,001 - 10,000 kg)</span>
                       <span>24% (1,16,544 kg)</span>
                     </div>
                     <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
@@ -569,7 +610,7 @@ export const HeadOfficeDashboard = () => {
 
                   <div>
                     <div className="flex justify-between font-extrabold text-rose-800 mb-1">
-                      <span>Grade C (Lower MSP / Industrial)</span>
+                      <span>Category C (&gt; 10,000 kg)</span>
                       <span>8% (38,848 kg)</span>
                     </div>
                     <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
@@ -709,7 +750,7 @@ export const HeadOfficeDashboard = () => {
 
       {/* FOOTER */}
       <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
-        © 2026 Smart Agricultural Crop Quality &amp; Procurement Management System • Authorized Head Office Portal Session
+        © 2026 Smart Agricultural Crop Category &amp; Center Management System • Authorized Head Office Portal Session
       </footer>
 
     </div>

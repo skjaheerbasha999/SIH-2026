@@ -162,10 +162,10 @@ export const QualityPricingSection = () => {
                 <span>Interactive Farmer Tool</span>
               </div>
               <h3 className="text-2xl font-bold text-slate-900">
-                Crop Price &amp; Quality Payout Estimator
+                Crop Price &amp; Category Payout Estimator
               </h3>
               <p className="text-xs sm:text-sm text-slate-500">
-                Simulate produce moisture &amp; cleanliness to see instant grade categorization &amp; DBT payout estimation.
+                Simulate produce moisture &amp; cleanliness to see instant category allocation &amp; payout estimation.
               </p>
             </div>
 
@@ -175,105 +175,91 @@ export const QualityPricingSection = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          {/* ESTIMATOR GRID */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-            {/* Input Controls */}
-            <div className="lg:col-span-7 space-y-6">
-
-              {/* Select Crop */}
+            {/* LEFT FORM */}
+            <div className="space-y-5">
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  1. Select Crop Produce:
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                <label className="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-2">Select Crop Type</label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {CROP_TYPES.map((crop) => (
                     <button
                       key={crop.id}
                       onClick={() => setSelectedCrop(crop)}
-                      className={`p-3 rounded-xl border text-xs font-bold text-left transition-all ${selectedCrop.id === crop.id
-                          ? 'border-emerald-600 bg-emerald-50 text-emerald-900 ring-2 ring-emerald-500/20'
-                          : 'border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100'
+                      className={`p-3 rounded-xl border text-xs font-bold text-center transition-all ${selectedCrop.id === crop.id
+                          ? 'border-[#00a86b] bg-emerald-50 text-[#00a86b] shadow-xs'
+                          : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'
                         }`}
                     >
-                      <div>{crop.name}</div>
-                      <div className="text-[10px] text-slate-500 font-normal mt-0.5">
-                        Base: ₹{crop.basePrice}/{crop.unit}
-                      </div>
+                      {crop.name}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Sliders Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
-
-                {/* Quantity */}
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-xs font-bold text-slate-700">Quantity</span>
-                    <span className="text-xs font-extrabold text-emerald-700">{quantity} Qtl</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="5"
-                    max="300"
-                    value={quantity}
-                    onChange={(e) => setQuantity(Number(e.target.value))}
-                    className="w-full accent-emerald-600 cursor-pointer"
-                  />
-                  <span className="text-[10px] text-slate-400">Total weight in quintals</span>
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Moisture Content (%)</label>
+                  <span className="text-xs font-black text-[#00a86b] bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">{moisture}%</span>
                 </div>
-
-                {/* Moisture */}
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-xs font-bold text-slate-700">Moisture %</span>
-                    <span className={`text-xs font-extrabold ${moisture <= 12 ? 'text-emerald-700' : 'text-amber-700'}`}>
-                      {moisture}%
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="8"
-                    max="22"
-                    step="0.5"
-                    value={moisture}
-                    onChange={(e) => setMoisture(Number(e.target.value))}
-                    className="w-full accent-emerald-600 cursor-pointer"
-                  />
-                  <span className="text-[10px] text-slate-400">Optimal: &lt; 12%</span>
+                <input
+                  type="range"
+                  min="5"
+                  max="25"
+                  value={moisture}
+                  onChange={(e) => setMoisture(Number(e.target.value))}
+                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#00a86b]"
+                />
+                <div className="flex justify-between text-[10px] text-slate-400 font-bold mt-1">
+                  <span>Dry (Optimal ≤12%)</span>
+                  <span>Average (14%)</span>
+                  <span>High Moisture (&gt;18%)</span>
                 </div>
-
-                {/* Cleanliness */}
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-xs font-bold text-slate-700">Cleanliness %</span>
-                    <span className="text-xs font-extrabold text-emerald-700">{cleanliness}%</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="60"
-                    max="100"
-                    value={cleanliness}
-                    onChange={(e) => setCleanliness(Number(e.target.value))}
-                    className="w-full accent-emerald-600 cursor-pointer"
-                  />
-                  <span className="text-[10px] text-slate-400">Foreign matter cut</span>
-                </div>
-
               </div>
 
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Cleanliness &amp; Purity (%)</label>
+                  <span className="text-xs font-black text-[#00a86b] bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">{purity}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="70"
+                  max="100"
+                  value={purity}
+                  onChange={(e) => setPurity(Number(e.target.value))}
+                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#00a86b]"
+                />
+                <div className="flex justify-between text-[10px] text-slate-400 font-bold mt-1">
+                  <span>70% (Industrial)</span>
+                  <span>85% (Standard)</span>
+                  <span>100% (High Purity)</span>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Quantity (Quintals)</label>
+                  <span className="text-xs font-black text-slate-900 bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200">{quantity} Qtl ({quantity * 100} kg)</span>
+                </div>
+                <input
+                  type="number"
+                  min="1"
+                  max="500"
+                  value={quantity}
+                  onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 focus:ring-2 focus:ring-[#00a86b] focus:outline-none"
+                />
+              </div>
             </div>
 
-            {/* Live Calculation Output Card */}
-            <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 to-emerald-950 text-white p-6 sm:p-7 rounded-3xl shadow-lg border border-slate-800 space-y-5">
-
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                  Calculated Result
-                </span>
-                <span className={`px-3 py-1 rounded-full text-xs font-extrabold border ${calculatedGradeInfo.color}`}>
-                  {calculatedGradeInfo.tag}
+            {/* RIGHT SUMMARY CARD */}
+            <div className="bg-slate-900 text-white rounded-3xl p-6 flex flex-col justify-between space-y-6 shadow-xl border border-slate-800">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Estimated Category Payout</span>
+                <span className="text-xs font-black bg-[#00a86b] text-white px-3 py-1 rounded-full">
+                  Category {assignedGrade}
                 </span>
               </div>
 
@@ -287,7 +273,7 @@ export const QualityPricingSection = () => {
                   <span className="font-bold text-white">₹{selectedCrop.basePrice} / Qtl</span>
                 </div>
                 <div className="flex justify-between text-xs text-slate-300">
-                  <span>Quality Adjusted Rate:</span>
+                  <span>Category Adjusted Rate:</span>
                   <span className="font-bold text-amber-300">₹{estimatedPricePerQtl} / Qtl</span>
                 </div>
                 <div className="flex justify-between text-xs text-slate-300">

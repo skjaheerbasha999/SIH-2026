@@ -29,7 +29,7 @@ export const Footer = () => {
             How It Works
           </a>
           <a href="#quality" onClick={(e) => { e.preventDefault(); navigateTo('#quality'); }} className="hover:text-emerald-400 transition-colors">
-            Quality Grading
+            Category Allocation
           </a>
         </div>
 

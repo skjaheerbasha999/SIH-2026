@@ -112,9 +112,9 @@ export const DashboardAndTrust = () => {
               </div>
             </div>
 
-            {/* Quality Distribution Ring */}
+            {/* Category Distribution Ring */}
             <div className="bg-slate-900/70 rounded-2xl p-4 border border-slate-800 flex flex-col justify-between">
-              <span className="text-xs font-bold text-slate-300 block">Quality Distribution</span>
+              <span className="text-xs font-bold text-slate-300 block">Category Distribution</span>
               <div className="flex items-center justify-center py-2">
                 <div className="w-20 h-20 rounded-full border-4 border-emerald-500 border-t-amber-500 flex items-center justify-center text-xs font-black text-white">
                   90% MSP
