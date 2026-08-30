@@ -27,8 +27,8 @@ export const ProcessFlowSection = () => {
       icon: Building2,
       subtitle: 'Auto Capacity Check',
       desc: 'Evaluates center load and routes A → B → C Center',
-      bgColor: 'bg-teal-600',
-      borderColor: 'border-teal-500'
+      bgColor: 'bg-[#00a86b]',
+      borderColor: 'border-emerald-500'
     },
     {
       id: 'center',
@@ -36,7 +36,7 @@ export const ProcessFlowSection = () => {
       icon: Building2,
       subtitle: 'Capacity Based Routing',
       desc: 'Assigned Priority (A), Secondary (B), or Overflow (C)',
-      bgColor: 'bg-emerald-700',
+      bgColor: 'bg-[#00a86b]',
       borderColor: 'border-emerald-600'
     },
     {
@@ -45,7 +45,7 @@ export const ProcessFlowSection = () => {
       icon: Scale,
       subtitle: 'Post-arrival inspection',
       desc: 'Physical weighing and quality grading at center',
-      bgColor: 'bg-emerald-800',
+      bgColor: 'bg-[#00a86b]',
       borderColor: 'border-emerald-700'
     },
     {
@@ -54,8 +54,8 @@ export const ProcessFlowSection = () => {
       icon: FileText,
       subtitle: 'Instant SMS & Payout',
       desc: 'Records weight, grade & direct bank transfer',
-      bgColor: 'bg-teal-800',
-      borderColor: 'border-teal-700'
+      bgColor: 'bg-[#00a86b]',
+      borderColor: 'border-emerald-700'
     }
   ];
 

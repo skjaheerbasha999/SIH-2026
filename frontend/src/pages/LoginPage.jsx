@@ -157,14 +157,14 @@ export const LoginPage = () => {
             <button
               type="button"
               onClick={() => handleDemoLogin('Center in Charge')}
-              className="py-2.5 px-1 bg-emerald-800 text-white text-[10px] font-black rounded-xl hover:bg-emerald-900 transition-all shadow-xs text-center"
+              className="py-2.5 px-1 bg-[#00a86b] text-white text-[10px] font-black rounded-xl hover:bg-[#008f5a] transition-all shadow-xs text-center"
             >
               🏢 Center Hub →
             </button>
             <button
               type="button"
               onClick={() => handleDemoLogin('Head Office')}
-              className="py-2.5 px-1 bg-teal-800 text-white text-[10px] font-black rounded-xl hover:bg-teal-900 transition-all shadow-xs text-center"
+              className="py-2.5 px-1 bg-[#00a86b] text-white text-[10px] font-black rounded-xl hover:bg-[#008f5a] transition-all shadow-xs text-center"
             >
               🏛️ Head Office →
             </button>
