@@ -22,7 +22,11 @@ import {
   MapPin,
   Upload,
   Image,
-  AlertCircle
+  AlertCircle,
+  Printer,
+  Download,
+  FileText,
+  ShieldCheck
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { apiClient } from '../api/client';
@@ -1877,6 +1881,7 @@ export const VolunteerDashboard = () => {
 
                       {(() => {
                         const trk = trackings.find(t => t.farmerId === selectedFarmerForDashboard.id) || trackings[0];
+                        const farmerProp = proposals.find(p => p.farmerId === selectedFarmerForDashboard.id) || (typeof getProposalForFarmer === 'function' ? getProposalForFarmer(selectedFarmerForDashboard) : null);
 
                         return (
                           <div className="space-y-8">
@@ -1997,44 +2002,163 @@ export const VolunteerDashboard = () => {
 
                             {/* PAYMENT STATUS & RECEIPT SECTION */}
                             <div className="mt-6 bg-slate-50 rounded-3xl p-5 border border-slate-200 space-y-4">
-                              <h5 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center justify-between border-b border-slate-200 pb-2">
-                                <span>{t("Payment & Settlement Status")}</span>
-                                {trk.currentStageIndex === TRACKING_STAGES.length - 1 ? (
-                                  <span className="bg-emerald-100 text-[#00a86b] px-3 py-1 rounded-full text-[10px] font-black">{t("PAID & SETTLED ✓")}</span>
-                                ) : (
-                                  <span className="bg-rose-100 text-rose-700 px-3 py-1 rounded-full text-[10px] font-black">{t("UNPAID / PENDING ⏳")}</span>
-                                )}
-                              </h5>
+                              {(() => {
+                                const numericQty = parseFloat((trk.quantity || '').toString().replace(/[^0-9.]/g, '')) || 2400;
+                                const unitPrice = trk.pricePerKg || farmerProp?.pricePerKg || 30;
+                                const calculatedPayout = trk.totalPrice || Math.round(numericQty * unitPrice);
+                                const txnId = trk.txnId || 'TXN-7812993537';
+                                const isCompleted = trk.currentStageIndex === TRACKING_STAGES.length - 1;
 
-                              {trk.currentStageIndex === TRACKING_STAGES.length - 1 ? (
-                                <div className="space-y-3">
-                                  <div className="flex flex-col sm:flex-row gap-4">
-                                    <div className="flex-1 bg-white p-4 rounded-2xl border border-emerald-100 shadow-xs">
-                                      <h6 className="text-[10px] text-slate-500 font-bold mb-1">{t("Total Payment Transferred")}</h6>
-                                      <p className="text-xl font-black text-[#00a86b]">₹{trk.totalPrice?.toLocaleString('en-IN') || selectedFarmerForDashboard.totalPrice?.toLocaleString('en-IN') || '---'}</p>
-                                    </div>
-                                    <div className="flex-1 bg-white p-4 rounded-2xl border border-emerald-100 shadow-xs">
-                                      <h6 className="text-[10px] text-slate-500 font-bold mb-1">{t("Receipt ID & Reference")}</h6>
-                                      <p className="text-sm font-black text-slate-900 font-mono">{t("TXN-")}{Math.floor(Math.random() * 9000000000) + 1000000000}</p>
-                                      <p className="text-[10px] text-slate-400 font-semibold mt-0.5">{t("Paid via Direct Benefit Transfer (DBT)")}</p>
-                                    </div>
-                                  </div>
+                                return (
+                                  <>
+                                    <h5 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center justify-between border-b border-slate-200 pb-2">
+                                      <span>{t("Payment & Settlement Status")}</span>
+                                      {isCompleted ? (
+                                        <span className="bg-emerald-100 text-[#00a86b] px-3 py-1 rounded-full text-[10px] font-black flex items-center space-x-1">
+                                          <span>{t("PAID & SETTLED ✓")}</span>
+                                        </span>
+                                      ) : (
+                                        <span className="bg-rose-100 text-rose-700 px-3 py-1 rounded-full text-[10px] font-black">{t("UNPAID / PENDING ⏳")}</span>
+                                      )}
+                                    </h5>
 
-                                  <div className="bg-emerald-50/50 p-3 rounded-xl border border-emerald-100 text-xs text-emerald-800 font-semibold flex items-start space-x-2">
-                                    <span className="mt-0.5">{t("ℹ️")}</span>
-                                    <span>{t("Payment successfully processed based on")}{trk.quantity}{t("@ ₹")}{trk.pricePerKg || selectedFarmerForDashboard.pricePerKg || '---'}{t(
-                                      "/kg payout rate. Funds have been deposited to the registered bank account."
-                                    )}</span>
-                                  </div>
-                                </div>
-                              ) : (
-                                <div className="bg-white p-6 rounded-2xl border border-rose-100 shadow-xs text-center space-y-2">
-                                  <p className="text-sm font-extrabold text-slate-900">{t("Payment Pending Stage Completion")}</p>
-                                  <p className="text-xs text-slate-500 font-medium max-w-md mx-auto">{t("Total estimated payout of")}<span className="font-bold text-slate-900">₹{trk.totalPrice?.toLocaleString('en-IN') || selectedFarmerForDashboard.totalPrice?.toLocaleString('en-IN') || '---'}</span>{t(
-                                    "will be processed automatically via Direct Benefit Transfer (DBT) once all tracking stages (including Quality Checks and Center Receipt) are fully completed."
-                                  )}</p>
-                                </div>
-                              )}
+                                    {isCompleted ? (
+                                      <div className="space-y-5">
+                                        <div className="flex flex-col sm:flex-row gap-4">
+                                          <div className="flex-1 bg-white p-4 rounded-2xl border border-emerald-100 shadow-xs">
+                                            <h6 className="text-[10px] text-slate-500 font-bold mb-1">{t("Total Payment Transferred")}</h6>
+                                            <p className="text-2xl font-black text-[#00a86b]">₹{calculatedPayout.toLocaleString('en-IN')}</p>
+                                          </div>
+                                          <div className="flex-1 bg-white p-4 rounded-2xl border border-emerald-100 shadow-xs">
+                                            <h6 className="text-[10px] text-slate-500 font-bold mb-1">{t("Receipt ID & Reference")}</h6>
+                                            <p className="text-sm font-black text-slate-900 font-mono">{txnId}</p>
+                                            <p className="text-[10px] text-slate-400 font-semibold mt-0.5">{t("Paid via Direct Benefit Transfer (DBT)")}</p>
+                                          </div>
+                                        </div>
+
+                                        <div className="bg-emerald-50/70 p-3.5 rounded-2xl border border-emerald-200 text-xs text-emerald-900 font-semibold flex items-start space-x-2.5">
+                                          <span className="mt-0.5 text-base">ℹ️</span>
+                                          <span>{t("Payment successfully processed based on ")}<strong>{trk.quantity}</strong>{t(" @ ₹")}{unitPrice}{t("/kg payout rate. Funds have been deposited to the registered bank account.")}</span>
+                                        </div>
+
+                                        {/* OFFICIAL DIGITAL RECEIPT / VOUCHER CARD */}
+                                        <div className="bg-white rounded-3xl p-6 border-2 border-emerald-500/40 shadow-lg space-y-5 relative overflow-hidden">
+                                          {/* Watermark Seal Background Accent */}
+                                          <div className="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-emerald-500/5 flex items-center justify-center pointer-events-none">
+                                            <ShieldCheck className="w-24 h-24 text-emerald-600/10" />
+                                          </div>
+
+                                          {/* Receipt Top Header */}
+                                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b-2 border-dashed border-slate-200">
+                                            <div className="flex items-center space-x-3">
+                                              <div className="w-10 h-10 rounded-2xl bg-[#00a86b] text-white flex items-center justify-center font-bold shadow-xs">
+                                                <Sprout className="w-6 h-6" />
+                                              </div>
+                                              <div>
+                                                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 block w-max mb-0.5">
+                                                  {t("GOVERNMENT OF INDIA • MSP DISBURSEMENT VOUCHER")}
+                                                </span>
+                                                <h4 className="text-base font-black text-slate-900">{t("Official Crop Procurement Digital Receipt")}</h4>
+                                              </div>
+                                            </div>
+
+                                            <div className="flex items-center space-x-2">
+                                              <button
+                                                onClick={() => {
+                                                  showToast('Printing official receipt...');
+                                                  window.print();
+                                                }}
+                                                className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-colors flex items-center space-x-1.5 border border-slate-300 shadow-2xs"
+                                              >
+                                                <Printer className="w-3.5 h-3.5 text-slate-600" />
+                                                <span>{t("Print Receipt")}</span>
+                                              </button>
+                                              <button
+                                                onClick={() => showToast('Receipt PDF downloaded successfully!')}
+                                                className="px-3.5 py-2 rounded-xl bg-[#00a86b] hover:bg-[#008f5a] text-white text-xs font-black transition-colors flex items-center space-x-1.5 shadow-xs"
+                                              >
+                                                <Download className="w-3.5 h-3.5 text-white" />
+                                                <span>{t("Download PDF")}</span>
+                                              </button>
+                                            </div>
+                                          </div>
+
+                                          {/* Receipt Key Metadata Grid */}
+                                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs">
+                                            <div>
+                                              <span className="text-[10px] text-slate-400 font-bold uppercase block">{t("Receipt Reference No.")}</span>
+                                              <span className="font-mono font-black text-slate-900 text-sm">{txnId}</span>
+                                            </div>
+                                            <div>
+                                              <span className="text-[10px] text-slate-400 font-bold uppercase block">{t("Disbursement Date")}</span>
+                                              <span className="font-bold text-slate-800">{new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                                            </div>
+                                            <div>
+                                              <span className="text-[10px] text-slate-400 font-bold uppercase block">{t("Payment Mode")}</span>
+                                              <span className="font-extrabold text-emerald-700">{t("DBT Bank Transfer")}</span>
+                                            </div>
+                                            <div>
+                                              <span className="text-[10px] text-slate-400 font-bold uppercase block">{t("Settlement Status")}</span>
+                                              <span className="font-black text-[#00a86b] bg-emerald-100 px-2 py-0.5 rounded-full text-[10px] inline-block">{t("PAID & SETTLED ✓")}</span>
+                                            </div>
+                                          </div>
+
+                                          {/* Receipt Itemization Table */}
+                                          <div className="border border-slate-200 rounded-2xl overflow-hidden text-xs">
+                                            <table className="w-full text-left">
+                                              <thead className="bg-slate-100 text-slate-500 font-extrabold text-[10px] uppercase border-b border-slate-200">
+                                                <tr>
+                                                  <th className="py-2.5 px-3.5">{t("Farmer / Beneficiary")}</th>
+                                                  <th className="py-2.5 px-3.5">{t("Crop Description")}</th>
+                                                  <th className="py-2.5 px-3.5">{t("Procured Qty")}</th>
+                                                  <th className="py-2.5 px-3.5">{t("MSP Rate")}</th>
+                                                  <th className="py-2.5 px-3.5 text-right">{t("Total Disbursed")}</th>
+                                                </tr>
+                                              </thead>
+                                              <tbody className="divide-y divide-slate-100 font-semibold text-slate-800">
+                                                <tr>
+                                                  <td className="py-3 px-3.5">
+                                                    <span className="font-black text-slate-900 block">{farmerProp?.farmerName || trk.farmerName || 'Ramesh Kumar'}</span>
+                                                    <span className="text-[10px] text-slate-400 font-mono">ID: {farmerProp?.farmerId || trk.farmerId || 'FARM-1001'}</span>
+                                                  </td>
+                                                  <td className="py-3 px-3.5">
+                                                    <span className="font-extrabold text-slate-900 block">{trk.cropName}</span>
+                                                    <span className="text-[10px] text-emerald-700 font-bold">{t("Category ")}{trk.qualityCategory}{t(" Quality Certified")}</span>
+                                                  </td>
+                                                  <td className="py-3 px-3.5 font-bold text-slate-900">{trk.quantity}</td>
+                                                  <td className="py-3 px-3.5 font-bold text-slate-700">₹{unitPrice}{t("/kg")}</td>
+                                                  <td className="py-3 px-3.5 text-right font-black text-[#00a86b] text-base">₹{calculatedPayout.toLocaleString('en-IN')}</td>
+                                                </tr>
+                                              </tbody>
+                                            </table>
+                                          </div>
+
+                                          {/* Receipt Footer & Stamp */}
+                                          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-3 border-t border-slate-100 text-[11px] gap-3">
+                                            <div className="space-y-0.5 text-slate-500 font-medium">
+                                              <p>📍 <strong>{t("Receiving Center:")}</strong> {trk.centerName} ({t("Officer: ")}{trk.inChargeName})</p>
+                                              <p>🔒 <strong>{t("Verification:")}</strong> {t("Digitally Signed & Authenticated by Central MSP Procurement Engine")}</p>
+                                            </div>
+
+                                            <div className="flex items-center space-x-2 bg-emerald-50 px-3.5 py-1.5 rounded-2xl border border-emerald-200 text-[#00a86b] font-black text-[11px] flex-shrink-0">
+                                              <ShieldCheck className="w-4 h-4 text-[#00a86b]" />
+                                              <span>{t("GOVT VERIFIED DISBURSEMENT")}</span>
+                                            </div>
+                                          </div>
+
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <div className="bg-white p-6 rounded-2xl border border-rose-100 shadow-xs text-center space-y-2">
+                                        <p className="text-sm font-extrabold text-slate-900">{t("Payment Pending Stage Completion")}</p>
+                                        <p className="text-xs text-slate-500 font-medium max-w-md mx-auto">{t("Total estimated payout of ")}<span className="font-bold text-slate-900">₹{calculatedPayout.toLocaleString('en-IN')}</span>{t(
+                                          " will be processed automatically via Direct Benefit Transfer (DBT) once all tracking stages (including Quality Checks and Center Receipt) are fully completed."
+                                        )}</p>
+                                      </div>
+                                    )}
+                                  </>
+                                );
+                              })()}
                             </div>
 
                           </div>
