@@ -20,10 +20,10 @@ export const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      const response = await apiClient.login(identifier.trim() || 'demo@agriprocure.gov.in', password.trim() || 'demo123');
+      const response = await apiClient.login(identifier.trim() || 'demo@agriprocure.gov.in', password.trim() || 'demo123', selectedRole);
       setIsLoading(false);
 
-      if (response && response.success && response.user?.role) {
+      if (response && response.success && (response.user?.role || response.user?.category)) {
         setUserSession(response.user);
         showToast(`Logged in as ${response.user.name}!`);
         const cat = (response.user.category || response.user.role || '').toLowerCase();

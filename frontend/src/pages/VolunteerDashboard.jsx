@@ -86,7 +86,6 @@ const QUALITY_CENTERS = COLLECTION_CENTERS;
 
 const TRACKING_STAGES = [
   'Crop Submitted',
-  'AI Quality Checked',
   'Quality Category Assigned',
   'Proposal Sent',
   'Center Accepted',
@@ -217,7 +216,7 @@ const INITIAL_FARMERS = [
     cultivatedArea: '9.0 Acres',
     productionQuantity: 8500,
     submissionDate: '2026-08-25',
-    cropStatus: 'Pending Check',
+    cropStatus: 'Processing',
     qualityStatus: 'Category B',
     trackingStageIndex: 0,
     history: []
@@ -231,6 +230,8 @@ const INITIAL_PROPOSALS = [
     farmerName: 'Ramesh Kumar',
     cropName: 'Wheat (PBW 550)',
     quantity: 2400,
+    pricePerKg: 24,
+    totalPrice: 57600,
     qualityCategory: 'A',
     qualityLevel: 'High Quality',
     submissionDate: '2026-08-15 10:30 AM',
@@ -245,6 +246,8 @@ const INITIAL_PROPOSALS = [
     farmerName: 'Sujata Devi',
     cropName: 'Mustard (Sarson)',
     quantity: 1250,
+    pricePerKg: 55,
+    totalPrice: 68750,
     qualityCategory: 'A',
     qualityLevel: 'High Quality',
     submissionDate: '2026-08-18 11:15 AM',
@@ -258,7 +261,9 @@ const INITIAL_PROPOSALS = [
     farmerId: 'FARM-1003',
     farmerName: 'Mahesh Patel',
     cropName: 'Paddy (Basmati 1121)',
-    quantity: 3100,
+    quantity: 6500,
+    pricePerKg: 30,
+    totalPrice: 195000,
     qualityCategory: 'B',
     qualityLevel: 'Medium Quality',
     submissionDate: '2026-08-20 02:45 PM',
@@ -269,10 +274,28 @@ const INITIAL_PROPOSALS = [
   },
   {
     id: 'PROP-104',
+    farmerId: 'FARM-1004',
+    farmerName: 'Gurpreet Singh',
+    cropName: 'Wheat (Sharbati)',
+    quantity: 4200,
+    pricePerKg: 25,
+    totalPrice: 105000,
+    qualityCategory: 'A',
+    qualityLevel: 'High Quality',
+    submissionDate: '2026-08-10 11:00 AM',
+    status: 'Accepted',
+    centerInCharge: QUALITY_CENTERS.A,
+    aiAnalysis: 'High protein content 13.1%, Moisture 10.8%. Grade A Silo Allocation.',
+    assessmentDate: '2026-08-10'
+  },
+  {
+    id: 'PROP-105',
     farmerId: 'FARM-1005',
     farmerName: 'Sunita Yadav',
     cropName: 'Cotton (Hybrid Bt)',
-    quantity: 980,
+    quantity: 12000,
+    pricePerKg: 60,
+    totalPrice: 720000,
     qualityCategory: 'C',
     qualityLevel: 'Low Quality',
     submissionDate: '2026-08-22 04:00 PM',
@@ -280,6 +303,22 @@ const INITIAL_PROPOSALS = [
     centerInCharge: QUALITY_CENTERS.C,
     aiAnalysis: 'Staple length 24mm, High trash content 5.8%, Moisture 9.4%. Sent for Industrial Processing C-Center.',
     assessmentDate: '2026-08-22'
+  },
+  {
+    id: 'PROP-106',
+    farmerId: 'FARM-1006',
+    farmerName: 'Vikram Choudhary',
+    cropName: 'Maize (Yellow Hybrid)',
+    quantity: 8500,
+    pricePerKg: 22,
+    totalPrice: 187000,
+    qualityCategory: 'B',
+    qualityLevel: 'Medium Quality',
+    submissionDate: '2026-08-25 09:30 AM',
+    status: 'Pending',
+    centerInCharge: QUALITY_CENTERS.B,
+    aiAnalysis: 'Uniform kernel size, moisture 13.2%. Dispatched to Secondary B-Center Collection Hub.',
+    assessmentDate: '2026-08-25'
   }
 ];
 
@@ -299,7 +338,6 @@ const INITIAL_TRACKINGS = [
     currentStatus: 'Unloaded & Grain Temperature Verification Complete',
     stageLogs: [
       { stage: 'Crop Submitted', time: '2026-08-15 09:00 AM', actor: 'Volunteer Gurpreet', status: 'Completed', detail: 'Farmer registered crop harvest' },
-      { stage: 'AI Quality Checked', time: '2026-08-15 10:15 AM', actor: 'AI Vision Engine v3', status: 'Completed', detail: 'Score 98.4% -> Category A' },
       { stage: 'Quality Category Assigned', time: '2026-08-15 10:20 AM', actor: 'System Auto-Engine', status: 'Completed', detail: 'Assigned Category A Hub' },
       { stage: 'Proposal Sent', time: '2026-08-15 10:30 AM', actor: 'Volunteer Gurpreet', status: 'Completed', detail: 'Proposal #PROP-101 dispatched' },
       { stage: 'Center Accepted', time: '2026-08-15 11:00 AM', actor: 'Dr. Vikram Sharma', status: 'Completed', detail: 'Slot approved at Silo Hub #42' },
@@ -324,7 +362,6 @@ const INITIAL_TRACKINGS = [
     currentStatus: 'Undergoing High-Pressure Seed Drying & Quality Hold',
     stageLogs: [
       { stage: 'Crop Submitted', time: '2026-08-18 09:30 AM', actor: 'Volunteer Gurpreet', status: 'Completed', detail: 'Harvest batch registered' },
-      { stage: 'AI Quality Checked', time: '2026-08-18 10:45 AM', actor: 'AI Vision Engine v3', status: 'Completed', detail: 'Category A Certified' },
       { stage: 'Quality Category Assigned', time: '2026-08-18 11:00 AM', actor: 'System Auto-Engine', status: 'Completed', detail: 'Category A Allocated' },
       { stage: 'Proposal Sent', time: '2026-08-18 11:15 AM', actor: 'Volunteer Gurpreet', status: 'Completed', detail: 'Proposal #PROP-102 sent' },
       { stage: 'Center Accepted', time: '2026-08-18 12:30 PM', actor: 'Dr. Vikram Sharma', status: 'Completed', detail: 'Receipt confirmed' },
@@ -349,7 +386,6 @@ const INITIAL_TRACKINGS = [
     currentStatus: 'Industrial Fiber Pre-Cleaning & De-seeding',
     stageLogs: [
       { stage: 'Crop Submitted', time: '2026-08-22 02:00 PM', actor: 'Volunteer Gurpreet', status: 'Completed', detail: 'Cotton yield registered' },
-      { stage: 'AI Quality Checked', time: '2026-08-22 03:15 PM', actor: 'AI Vision Engine v3', status: 'Completed', detail: 'Category C Classified' },
       { stage: 'Quality Category Assigned', time: '2026-08-22 03:30 PM', actor: 'System Auto-Engine', status: 'Completed', detail: 'C-Center Allocated' },
       { stage: 'Proposal Sent', time: '2026-08-22 04:00 PM', actor: 'Volunteer Gurpreet', status: 'Completed', detail: 'Proposal #PROP-104 sent' },
       { stage: 'Center Accepted', time: '2026-08-22 05:00 PM', actor: 'Mrs. Sunita Patel', status: 'Completed', detail: 'Industrial Batch Approved' },
@@ -622,14 +658,68 @@ export const VolunteerDashboard = () => {
   // Update Farmer Registration Details (Module 1)
   const handleUpdateFarmerDetails = (e) => {
     e.preventDefault();
-    if (!editFarmerForm.name.trim() || !editFarmerForm.mobile.trim()) {
+    if (!editFarmerForm || !editFarmerForm.name?.trim() || !editFarmerForm.mobile?.trim()) {
       showToast('Please provide valid Name and Contact Number');
       return;
     }
 
-    setFarmers(farmers.map(f => f.id === editFarmerForm.id ? editFarmerForm : f));
-    setSelectedFarmerForDashboard({ ...editFarmerForm });
-    showToast(`Registration details updated for ${editFarmerForm.name}!`);
+    const updatedQty = Number(editFarmerForm.productionQuantity) || 0;
+    const updatedPrice = Number(editFarmerForm.pricePerKg) || 24;
+    const computedTotal = updatedQty * updatedPrice;
+    const catFull = getCategoryFromQuantity(updatedQty);
+    const catLetter = catFull.replace('Category ', '').trim();
+    const assignedCenter = QUALITY_CENTERS[catLetter] || QUALITY_CENTERS.A;
+
+    const updatedRecord = {
+      ...editFarmerForm,
+      name: editFarmerForm.name.trim(),
+      mobile: editFarmerForm.mobile.trim(),
+      productionQuantity: updatedQty,
+      pricePerKg: updatedPrice,
+      totalPrice: computedTotal,
+      qualityStatus: catFull
+    };
+
+    setFarmers(farmers.map(f => f.id === updatedRecord.id ? updatedRecord : f));
+    setSelectedFarmerForDashboard({ ...updatedRecord });
+
+    const existingProp = proposals.find(p => p.farmerId === updatedRecord.id);
+    const updatedProp = {
+      id: existingProp ? existingProp.id : `PROP-${100 + proposals.length + 1}`,
+      farmerId: updatedRecord.id,
+      farmerName: updatedRecord.name,
+      cropName: updatedRecord.cropType || 'Wheat',
+      quantity: updatedQty,
+      pricePerKg: updatedPrice,
+      totalPrice: computedTotal,
+      qualityCategory: catLetter,
+      qualityLevel: `Category ${catLetter} Verified`,
+      submissionDate: existingProp ? existingProp.submissionDate : new Date().toISOString().replace('T', ' ').slice(0, 16),
+      status: existingProp ? existingProp.status : 'Pending',
+      centerInCharge: assignedCenter,
+      aiAnalysis: `Updated yield ${updatedQty.toLocaleString()} kg @ ₹${updatedPrice}/kg (Total ₹${computedTotal.toLocaleString('en-IN')}). Routed to ${assignedCenter.name}.`,
+      assessmentDate: new Date().toISOString().split('T')[0]
+    };
+
+    if (existingProp) {
+      setProposals(proposals.map(p => p.farmerId === updatedRecord.id ? updatedProp : p));
+    } else {
+      setProposals([...proposals, updatedProp]);
+    }
+
+    setTrackings(trackings.map(t => t.farmerId === updatedRecord.id ? {
+      ...t,
+      farmerName: updatedRecord.name,
+      cropName: updatedRecord.cropType,
+      quantity: `${updatedQty.toLocaleString()} kg`,
+      pricePerKg: updatedPrice,
+      totalPrice: computedTotal,
+      qualityCategory: catLetter,
+      centerName: assignedCenter.name,
+      inChargeName: assignedCenter.inChargeName
+    } : t));
+
+    showToast(`Registration info & Payout calculation updated (Total ₹${computedTotal.toLocaleString('en-IN')})!`);
   };
 
   // Image file selection handler
@@ -786,7 +876,7 @@ export const VolunteerDashboard = () => {
         stageLogs: TRACKING_STAGES.map((stgName, idx) => ({
           stage: stgName,
           time: idx <= 4 ? new Date().toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) : 'Pending',
-          actor: idx === 0 ? 'Volunteer Gurpreet' : idx === 1 ? 'AI Vision Engine' : idx === 2 ? 'Auto-Engine' : idx === 3 ? 'Volunteer Gurpreet' : idx === 4 ? prop.centerInCharge.inChargeName : 'Logistics Team',
+          actor: idx === 0 ? 'Volunteer Gurpreet' : idx === 1 ? 'Auto-Engine' : idx === 2 ? 'Volunteer Gurpreet' : idx === 3 ? prop.centerInCharge.inChargeName : 'Logistics Team',
           status: idx < 4 ? 'Completed' : idx === 4 ? 'Active' : 'Pending',
           detail: idx === 4 ? `Proposal accepted by ${prop.centerInCharge.inChargeName}` : idx < 4 ? 'Completed stage' : 'Pending stage completion'
         }))
@@ -846,6 +936,36 @@ export const VolunteerDashboard = () => {
     }
   };
 
+  const getProposalForFarmer = (farmer) => {
+    if (!farmer) return proposals[0];
+    const found = proposals.find(p => p.farmerId === farmer.id);
+    if (found) return found;
+
+    const qty = farmer.productionQuantity || farmer.expectedQuantity || 1000;
+    const pricePerKg = farmer.pricePerKg || 24;
+    const totalPrice = qty * pricePerKg;
+    const catFull = getCategoryFromQuantity(qty);
+    const catLetter = catFull.replace('Category ', '').trim();
+    const center = QUALITY_CENTERS[catLetter] || QUALITY_CENTERS.A;
+
+    return {
+      id: `PROP-${100 + (farmers.findIndex(f => f.id === farmer.id) >= 0 ? farmers.findIndex(f => f.id === farmer.id) + 1 : proposals.length + 1)}`,
+      farmerId: farmer.id,
+      farmerName: farmer.name,
+      cropName: farmer.cropType || 'Wheat',
+      quantity: qty,
+      pricePerKg: pricePerKg,
+      totalPrice: totalPrice,
+      qualityCategory: catLetter,
+      qualityLevel: `Category ${catLetter} Verified`,
+      submissionDate: farmer.submissionDate || new Date().toISOString().split('T')[0],
+      status: farmer.cropStatus === 'Center Accepted' || farmer.cropStatus === 'Completed' ? 'Accepted' : 'Pending',
+      centerInCharge: center,
+      aiAnalysis: `Auto-allocated based on ${qty.toLocaleString()} kg quantity @ ₹${pricePerKg}/kg (Total ₹${totalPrice.toLocaleString('en-IN')}).`,
+      assessmentDate: farmer.submissionDate || new Date().toISOString().split('T')[0]
+    };
+  };
+
   // FILTERED & SORTED FARMERS FOR DIRECTORY
   const filteredFarmers = farmers.filter(f => {
     const matchesSearch =
@@ -869,20 +989,65 @@ export const VolunteerDashboard = () => {
     return 0;
   });
 
-  // Helper Badge Color
+  // Helper Badge Colors
   const getCategoryBadge = (category) => {
     switch (category) {
       case 'A':
       case 'Category A':
-        return 'bg-emerald-100 text-[#00a86b] border-emerald-300';
+        return 'bg-emerald-50 text-emerald-800 border-emerald-300/80';
       case 'B':
       case 'Category B':
-        return 'bg-amber-100 text-amber-900 border-amber-300';
+        return 'bg-amber-50 text-amber-900 border-amber-300/80';
       case 'C':
       case 'Category C':
-        return 'bg-rose-100 text-rose-900 border-rose-300';
+        return 'bg-rose-50 text-rose-900 border-rose-300/80';
       default:
-        return 'bg-slate-100 text-slate-700 border-slate-300';
+        return 'bg-slate-50 text-slate-700 border-slate-300/80';
+    }
+  };
+
+  const getCropStatusBadge = (status) => {
+    switch (status) {
+      case 'Pending Check':
+        return {
+          bg: 'bg-sky-50 text-sky-800 border-sky-300/80',
+          dot: 'bg-sky-500'
+        };
+      case 'Processing':
+        return {
+          bg: 'bg-blue-50 text-blue-800 border-blue-300/80',
+          dot: 'bg-blue-500 animate-pulse'
+        };
+      case 'Proposal Sent':
+        return {
+          bg: 'bg-amber-50 text-amber-900 border-amber-300/80',
+          dot: 'bg-amber-500'
+        };
+      case 'Center Accepted':
+        return {
+          bg: 'bg-purple-50 text-purple-900 border-purple-300/80',
+          dot: 'bg-purple-500'
+        };
+      case 'Completed':
+        return {
+          bg: 'bg-emerald-50 text-emerald-800 border-emerald-300/80',
+          dot: 'bg-emerald-500'
+        };
+      case 'Rejected':
+        return {
+          bg: 'bg-rose-50 text-rose-800 border-rose-300/80',
+          dot: 'bg-rose-500'
+        };
+      case 'Waiting List':
+        return {
+          bg: 'bg-orange-50 text-orange-900 border-orange-300/80',
+          dot: 'bg-orange-500'
+        };
+      default:
+        return {
+          bg: 'bg-slate-50 text-slate-700 border-slate-300/80',
+          dot: 'bg-slate-400'
+        };
     }
   };
 
@@ -1300,7 +1465,6 @@ export const VolunteerDashboard = () => {
                         className="w-full py-2 px-3 bg-white rounded-xl border border-slate-200 font-bold text-slate-800"
                       >
                         <option value="ALL">All Crop Statuses</option>
-                        <option value="Pending Quality Check">Pending Quality Check</option>
                         <option value="Proposal Sent">Proposal Sent</option>
                         <option value="Center Accepted">Center Accepted</option>
                         <option value="Processing">Processing</option>
@@ -1332,60 +1496,67 @@ export const VolunteerDashboard = () => {
                     <table className="w-full text-left text-xs">
                       <thead>
                         <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px]">
-                          <th className="py-3.5 px-3">Farmer ID</th>
-                          <th className="py-3.5 px-3">Farmer Name</th>
-                          <th className="py-3.5 px-3">Contact Number</th>
-                          <th className="py-3.5 px-3">Village / Location</th>
-                          <th className="py-3.5 px-3">Crop Name</th>
-                          <th className="py-3.5 px-3">Cultivated Area</th>
-                          <th className="py-3.5 px-3">Expected Qty</th>
-                          <th className="py-3.5 px-3">Registration Date</th>
-                          <th className="py-3.5 px-3">Category</th>
-                          <th className="py-3.5 px-3">Crop Status</th>
-                          <th className="py-3.5 px-3 text-right">Action</th>
+                          <th className="py-3.5 px-3 whitespace-nowrap">Farmer ID</th>
+                          <th className="py-3.5 px-3 whitespace-nowrap">Farmer Name</th>
+                          <th className="py-3.5 px-3 whitespace-nowrap">Contact Number</th>
+                          <th className="py-3.5 px-3 whitespace-nowrap">Village / Location</th>
+                          <th className="py-3.5 px-3 whitespace-nowrap">Crop Name</th>
+                          <th className="py-3.5 px-3 whitespace-nowrap">Cultivated Area</th>
+                          <th className="py-3.5 px-3 whitespace-nowrap">Expected Qty</th>
+                          <th className="py-3.5 px-3 whitespace-nowrap">Registration Date</th>
+                          <th className="py-3.5 px-3 whitespace-nowrap">Category</th>
+                          <th className="py-3.5 px-3 whitespace-nowrap">Crop Status</th>
+                          <th className="py-3.5 px-3 text-right whitespace-nowrap">Action</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 font-semibold text-slate-800">
                         {sortedFarmers.map((farmer) => (
                           <tr key={farmer.id} className="hover:bg-slate-50/80 transition-colors">
 
-                            <td className="py-4 px-3 font-mono font-black text-[#00a86b]">{farmer.id}</td>
-                            <td className="py-4 px-3 font-black text-slate-900 text-sm">{farmer.name}</td>
-                            <td className="py-4 px-3 text-slate-600 font-bold">+91 {farmer.mobile}</td>
+                            <td className="py-4 px-3 font-mono font-black text-[#00a86b] whitespace-nowrap">{farmer.id}</td>
+                            <td className="py-4 px-3 font-black text-slate-900 text-sm whitespace-nowrap">{farmer.name}</td>
+                            <td className="py-4 px-3 text-slate-600 font-bold whitespace-nowrap">+91 {farmer.mobile}</td>
 
                             <td className="py-4 px-3">
-                              <span className="font-bold text-slate-900 block">{farmer.village}</span>
-                              <span className="text-[10px] text-slate-400">{farmer.panchayat}, {farmer.district}</span>
+                              <span className="font-bold text-slate-900 block whitespace-nowrap">{farmer.village}</span>
+                              <span className="text-[10px] text-slate-400 block whitespace-nowrap">{farmer.panchayat}, {farmer.district}</span>
                             </td>
 
-                            <td className="py-4 px-3 font-extrabold text-slate-900">{farmer.cropType}</td>
-                            <td className="py-4 px-3 text-emerald-800 font-bold">{farmer.cultivatedArea}</td>
+                            <td className="py-4 px-3 font-extrabold text-slate-900 whitespace-nowrap">{farmer.cropType}</td>
+                            <td className="py-4 px-3 text-emerald-800 font-bold whitespace-nowrap">{farmer.cultivatedArea}</td>
 
-                            <td className="py-4 px-3 font-black text-slate-900">
+                            <td className="py-4 px-3 font-black text-slate-900 whitespace-nowrap">
                               {farmer.productionQuantity.toLocaleString()} kg
                             </td>
 
-                            <td className="py-4 px-3 text-slate-500">{farmer.submissionDate}</td>
+                            <td className="py-4 px-3 text-slate-500 whitespace-nowrap">{farmer.submissionDate}</td>
 
-                            <td className="py-4 px-3">
+                            <td className="py-4 px-3 whitespace-nowrap">
                               {(() => {
                                 const catName = getCategoryFromQuantity(farmer.productionQuantity || farmer.expectedQuantity);
                                 return (
-                                  <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${getCategoryBadge(catName)}`}>
+                                  <span className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full border whitespace-nowrap shadow-2xs ${getCategoryBadge(catName)}`}>
+                                    <span className="w-1.5 h-1.5 rounded-full bg-current opacity-75" />
                                     {catName}
                                   </span>
                                 );
                               })()}
                             </td>
 
-                            <td className="py-4 px-3">
-                              <span className="text-[10px] font-black text-slate-700 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
-                                {farmer.cropStatus}
-                              </span>
+                            <td className="py-4 px-3 whitespace-nowrap">
+                              {(() => {
+                                const statusStyle = getCropStatusBadge(farmer.cropStatus);
+                                return (
+                                  <span className={`inline-flex items-center gap-1.5 text-[11px] font-extrabold px-2.5 py-1 rounded-full border whitespace-nowrap shadow-2xs ${statusStyle.bg}`}>
+                                    <span className={`w-1.5 h-1.5 rounded-full ${statusStyle.dot}`} />
+                                    {farmer.cropStatus}
+                                  </span>
+                                );
+                              })()}
                             </td>
 
                             {/* ACTION BUTTON TO OPEN FARMER DASHBOARD */}
-                            <td className="py-4 px-3 text-right">
+                            <td className="py-4 px-3 text-right whitespace-nowrap">
                               <button
                                 onClick={() => handleOpenFarmerDashboard(farmer)}
                                 className="px-3.5 py-2 rounded-xl bg-[#00a86b] text-white font-bold text-xs hover:bg-[#008f5a] transition-all inline-flex items-center space-x-1.5 shadow-xs transform active:scale-98"
@@ -1494,11 +1665,21 @@ export const VolunteerDashboard = () => {
                         </div>
 
                         <div>
-                          <label className="block text-slate-700 font-bold mb-1">Panchayat &amp; Mandal</label>
+                          <label className="block text-slate-700 font-bold mb-1">Gram Panchayat</label>
                           <input
                             type="text"
-                            value={`${editFarmerForm.panchayat}, ${editFarmerForm.mandal}`}
+                            value={editFarmerForm.panchayat || ''}
                             onChange={(e) => setEditFarmerForm({ ...editFarmerForm, panchayat: e.target.value })}
+                            className="w-full px-3.5 py-2.5 bg-white rounded-xl border border-slate-200 text-slate-900"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-slate-700 font-bold mb-1">Mandal / Tehsil</label>
+                          <input
+                            type="text"
+                            value={editFarmerForm.mandal || ''}
+                            onChange={(e) => setEditFarmerForm({ ...editFarmerForm, mandal: e.target.value })}
                             className="w-full px-3.5 py-2.5 bg-white rounded-xl border border-slate-200 text-slate-900"
                           />
                         </div>
@@ -1507,7 +1688,7 @@ export const VolunteerDashboard = () => {
                           <label className="block text-slate-700 font-bold mb-1">Crop Variety</label>
                           <input
                             type="text"
-                            value={editFarmerForm.cropType}
+                            value={editFarmerForm.cropType || ''}
                             onChange={(e) => setEditFarmerForm({ ...editFarmerForm, cropType: e.target.value })}
                             className="w-full px-3.5 py-2.5 bg-white rounded-xl border border-slate-200 text-slate-900 font-bold"
                           />
@@ -1517,26 +1698,48 @@ export const VolunteerDashboard = () => {
                           <label className="block text-slate-700 font-bold mb-1">Cultivated Landholding Area</label>
                           <input
                             type="text"
-                            value={editFarmerForm.cultivatedArea}
+                            value={editFarmerForm.cultivatedArea || ''}
                             onChange={(e) => setEditFarmerForm({ ...editFarmerForm, cultivatedArea: e.target.value })}
                             className="w-full px-3.5 py-2.5 bg-white rounded-xl border border-slate-200 text-slate-900"
                           />
                         </div>
 
-                        <div className="md:col-span-2">
+                        <div>
                           <label className="block text-slate-700 font-bold mb-1">Produced Crop Quantity (Kg)</label>
                           <input
                             type="number"
-                            value={editFarmerForm.productionQuantity}
-                            onChange={(e) => setEditFarmerForm({ ...editFarmerForm, productionQuantity: Number(e.target.value) })}
+                            value={editFarmerForm.productionQuantity ?? ''}
+                            onChange={(e) => setEditFarmerForm({ ...editFarmerForm, productionQuantity: e.target.value === '' ? '' : Number(e.target.value) })}
                             className="w-full px-3.5 py-2.5 bg-white rounded-xl border border-slate-200 text-slate-900 font-black text-sm"
                           />
+                        </div>
+
+                        <div>
+                          <label className="block text-slate-700 font-bold mb-1">Offered Price per Kg (₹) *</label>
+                          <input
+                            type="number"
+                            min="1"
+                            step="0.5"
+                            value={editFarmerForm.pricePerKg ?? 24}
+                            onChange={(e) => setEditFarmerForm({ ...editFarmerForm, pricePerKg: e.target.value === '' ? '' : Number(e.target.value) })}
+                            className="w-full px-3.5 py-2.5 bg-white rounded-xl border border-slate-200 text-slate-900 font-extrabold text-sm focus:ring-2 focus:ring-[#00a86b] focus:outline-none"
+                          />
+                        </div>
+
+                        <div className="md:col-span-2">
+                          <label className="block text-slate-700 font-bold mb-1">Total Calculated Crop Price (₹)</label>
+                          <div className="w-full px-3.5 py-2.5 bg-emerald-50 rounded-xl border border-emerald-200 text-[#00a86b] font-black text-base flex items-center justify-between shadow-2xs">
+                            <span>₹{((Number(editFarmerForm.productionQuantity) || 0) * (Number(editFarmerForm.pricePerKg) || 24)).toLocaleString('en-IN')}</span>
+                            <span className="text-[10px] text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full font-extrabold uppercase tracking-wider">
+                              Auto Calculated (Qty × Rate)
+                            </span>
+                          </div>
                         </div>
 
                         <div className="md:col-span-2 pt-2">
                           <button
                             type="submit"
-                            className="px-6 py-3 rounded-2xl bg-[#00a86b] text-white font-black text-xs shadow-md hover:bg-[#008f5a] transition-all flex items-center justify-center space-x-2"
+                            className="px-6 py-3 rounded-2xl bg-[#00a86b] text-white font-black text-xs shadow-md hover:bg-[#008f5a] active:scale-95 transition-all flex items-center justify-center space-x-2 cursor-pointer"
                           >
                             <Send className="w-4 h-4" />
                             <span>Send Registration Info</span>
@@ -1554,8 +1757,9 @@ export const VolunteerDashboard = () => {
                         </div>
 
                         {(() => {
-                          const farmerProp = proposals.find(p => p.farmerId === selectedFarmerForDashboard.id) || proposals[0];
-                          const center = farmerProp.centerInCharge;
+                          const farmerProp = proposals.find(p => p.farmerId === selectedFarmerForDashboard.id) || getProposalForFarmer(selectedFarmerForDashboard);
+                          if (!farmerProp) return null;
+                          const center = farmerProp.centerInCharge || QUALITY_CENTERS.A;
                           const isAccepted = farmerProp.status === 'Accepted';
 
                           return (
@@ -1594,6 +1798,11 @@ export const VolunteerDashboard = () => {
                                   <div className="flex justify-between"><span className="text-slate-500">Farmer Name:</span><span className="font-bold text-slate-900">{farmerProp.farmerName}</span></div>
                                   <div className="flex justify-between"><span className="text-slate-500">Harvest Quantity:</span><span className="font-bold text-slate-900">{farmerProp.quantity.toLocaleString()} kg</span></div>
                                   <div className="flex justify-between"><span className="text-slate-500">Category Allocation:</span><span className="font-bold text-emerald-800">{getCategoryFromQuantity(farmerProp.quantity)}</span></div>
+                                  <div className="flex justify-between"><span className="text-slate-500">Price Rate per Kg:</span><span className="font-bold text-slate-900">₹{(farmerProp.pricePerKg || selectedFarmerForDashboard?.pricePerKg || 24).toFixed(2)} / kg</span></div>
+                                  <div className="flex justify-between text-emerald-800 pt-1.5 border-t border-slate-200 font-black">
+                                    <span className="text-slate-800 font-extrabold">Total Crop Price / Payout:</span>
+                                    <span className="text-sm font-black text-[#00a86b]">₹{((farmerProp.quantity || 0) * (farmerProp.pricePerKg || selectedFarmerForDashboard?.pricePerKg || 24)).toLocaleString('en-IN')}</span>
+                                  </div>
                                   <div className="pt-2 text-[11px] text-slate-600 font-medium italic border-t border-slate-200">&quot;{farmerProp.aiAnalysis}&quot;</div>
                                 </div>
 
@@ -1648,7 +1857,7 @@ export const VolunteerDashboard = () => {
                           <div>
                             <h3 className="text-lg font-black text-slate-900">Individual Crop Tracking System</h3>
                             <p className="text-xs text-slate-500 font-medium">
-                              Real-time 9-stage tracking timeline specifically for <strong>{selectedFarmerForDashboard.name}&apos;s</strong> crop harvest.
+                              Real-time 8-stage tracking timeline specifically for <strong>{selectedFarmerForDashboard.name}&apos;s</strong> crop harvest.
                             </p>
                           </div>
                         </div>
@@ -1696,9 +1905,9 @@ export const VolunteerDashboard = () => {
                             </div>
 
                             <div className="space-y-4">
-                              <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">Visual 9-Stage Process Timeline</h4>
+                              <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">Visual 8-Stage Process Timeline</h4>
 
-                              <div className="hidden lg:grid grid-cols-9 gap-2 relative pt-2 pb-6">
+                              <div className="hidden lg:grid grid-cols-8 gap-2 relative pt-2 pb-6">
                                 <div className="absolute top-7 left-6 right-6 h-1 bg-slate-200 z-0" />
 
                                 {TRACKING_STAGES.map((stageName, idx) => {
@@ -1783,6 +1992,48 @@ export const VolunteerDashboard = () => {
                                   </tbody>
                                 </table>
                               </div>
+                            </div>
+
+                            {/* PAYMENT STATUS & RECEIPT SECTION */}
+                            <div className="mt-6 bg-slate-50 rounded-3xl p-5 border border-slate-200 space-y-4">
+                              <h5 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center justify-between border-b border-slate-200 pb-2">
+                                <span>Payment & Settlement Status</span>
+                                {trk.currentStageIndex === TRACKING_STAGES.length - 1 ? (
+                                  <span className="bg-emerald-100 text-[#00a86b] px-3 py-1 rounded-full text-[10px] font-black">PAID & SETTLED ✓</span>
+                                ) : (
+                                  <span className="bg-rose-100 text-rose-700 px-3 py-1 rounded-full text-[10px] font-black">UNPAID / PENDING ⏳</span>
+                                )}
+                              </h5>
+
+                              {trk.currentStageIndex === TRACKING_STAGES.length - 1 ? (
+                                <div className="space-y-3">
+                                  <div className="flex flex-col sm:flex-row gap-4">
+                                    <div className="flex-1 bg-white p-4 rounded-2xl border border-emerald-100 shadow-xs">
+                                      <h6 className="text-[10px] text-slate-500 font-bold mb-1">Total Payment Transferred</h6>
+                                      <p className="text-xl font-black text-[#00a86b]">₹{trk.totalPrice?.toLocaleString('en-IN') || selectedFarmerForDashboard.totalPrice?.toLocaleString('en-IN') || '---'}</p>
+                                    </div>
+                                    <div className="flex-1 bg-white p-4 rounded-2xl border border-emerald-100 shadow-xs">
+                                      <h6 className="text-[10px] text-slate-500 font-bold mb-1">Receipt ID & Reference</h6>
+                                      <p className="text-sm font-black text-slate-900 font-mono">TXN-{Math.floor(Math.random() * 9000000000) + 1000000000}</p>
+                                      <p className="text-[10px] text-slate-400 font-semibold mt-0.5">Paid via Direct Benefit Transfer (DBT)</p>
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="bg-emerald-50/50 p-3 rounded-xl border border-emerald-100 text-xs text-emerald-800 font-semibold flex items-start space-x-2">
+                                    <span className="mt-0.5">ℹ️</span>
+                                    <span>
+                                      Payment successfully processed based on {trk.quantity} @ ₹{trk.pricePerKg || selectedFarmerForDashboard.pricePerKg || '---'}/kg payout rate. Funds have been deposited to the registered bank account.
+                                    </span>
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="bg-white p-6 rounded-2xl border border-rose-100 shadow-xs text-center space-y-2">
+                                  <p className="text-sm font-extrabold text-slate-900">Payment Pending Stage Completion</p>
+                                  <p className="text-xs text-slate-500 font-medium max-w-md mx-auto">
+                                    Total estimated payout of <span className="font-bold text-slate-900">₹{trk.totalPrice?.toLocaleString('en-IN') || selectedFarmerForDashboard.totalPrice?.toLocaleString('en-IN') || '---'}</span> will be processed automatically via Direct Benefit Transfer (DBT) once all tracking stages (including Quality Checks and Center Receipt) are fully completed.
+                                  </p>
+                                </div>
+                              )}
                             </div>
 
                           </div>

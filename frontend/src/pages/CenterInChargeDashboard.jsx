@@ -119,7 +119,7 @@ const INITIAL_CROPS = [
     district: 'Sonipat',
     cropName: 'Paddy Basmati',
     variety: 'Basmati 1121',
-    quantityKg: 3100,
+    quantityKg: 6500,
     qualityGrade: 'B',
     qualityLevel: 'Medium Quality',
     moisturePercent: '13.8%',
@@ -146,7 +146,7 @@ const INITIAL_CROPS = [
     district: 'Sonipat',
     cropName: 'Cotton',
     variety: 'Bt Hybrid',
-    quantityKg: 980,
+    quantityKg: 12000,
     qualityGrade: 'C',
     qualityLevel: 'Low Quality (Industrial)',
     moisturePercent: '9.4%',
@@ -260,7 +260,8 @@ export const CenterInChargeDashboard = () => {
   const [verifyDiscrepancyNote, setVerifyDiscrepancyNote] = useState('');
 
   // COMPUTED METRICS FOR STORAGE OVERVIEW
-  const currentTotalStockKg = STORAGE_INVENTORY_BY_CROP.reduce((sum, item) => sum + item.totalStockKg, 0);
+  // Since this is a Category A Center, it only stores Category A (catA) crops
+  const currentTotalStockKg = STORAGE_INVENTORY_BY_CROP.reduce((sum, item) => sum + (item.catA || 0), 0);
   const capacityUsedPercent = Math.round((currentTotalStockKg / totalStorageCapacityKg) * 100);
   const availableCapacityKg = totalStorageCapacityKg - currentTotalStockKg;
 
@@ -271,11 +272,11 @@ export const CenterInChargeDashboard = () => {
   const getCategoryBadge = (cat) => {
     const str = String(cat || '');
     if (str.includes('A')) {
-      return 'bg-emerald-100 text-[#00a86b] border-emerald-300';
+      return 'bg-emerald-50 text-emerald-800 border-emerald-300/80';
     } else if (str.includes('B')) {
-      return 'bg-amber-100 text-amber-900 border-amber-300';
+      return 'bg-amber-50 text-amber-900 border-amber-300/80';
     } else {
-      return 'bg-rose-100 text-rose-900 border-rose-300';
+      return 'bg-rose-50 text-rose-900 border-rose-300/80';
     }
   };
 
@@ -579,25 +580,25 @@ export const CenterInChargeDashboard = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-bold">
               <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs space-y-1">
                 <span className="text-slate-400 uppercase tracking-wider text-[10px] block">Total Reported Batches</span>
-                <span className="text-3xl font-black text-slate-900">{crops.length} Batches</span>
+                <span className="text-3xl font-black text-slate-900">{crops.filter(c => getCategoryFromQuantity(c.quantityKg) === 'Category A').length} Batches</span>
                 <span className="text-emerald-700 block text-[10px]">Awaiting / In Dispatch</span>
               </div>
 
               <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs space-y-1">
                 <span className="text-slate-400 uppercase tracking-wider text-[10px] block">New Unassigned Crops</span>
-                <span className="text-3xl font-black text-amber-600">{crops.filter(c => c.status === 'New').length}</span>
+                <span className="text-3xl font-black text-amber-600">{crops.filter(c => c.status === 'New' && getCategoryFromQuantity(c.quantityKg) === 'Category A').length}</span>
                 <span className="text-amber-700 block text-[10px]">Requires Price Offer</span>
               </div>
 
               <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs space-y-1">
                 <span className="text-slate-400 uppercase tracking-wider text-[10px] block">Active Transport Shipments</span>
-                <span className="text-3xl font-black text-blue-700">{crops.filter(c => ['Assigned', 'In Transit', 'Price Sent'].includes(c.status)).length}</span>
+                <span className="text-3xl font-black text-blue-700">{crops.filter(c => ['Assigned', 'In Transit', 'Price Sent'].includes(c.status) && getCategoryFromQuantity(c.quantityKg) === 'Category A').length}</span>
                 <span className="text-blue-700 block text-[10px]">Volunteer Transport Active</span>
               </div>
 
               <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs space-y-1">
                 <span className="text-slate-400 uppercase tracking-wider text-[10px] block">Verified at Center</span>
-                <span className="text-3xl font-black text-emerald-800">{crops.filter(c => c.status === 'Verified').length}</span>
+                <span className="text-3xl font-black text-emerald-800">{crops.filter(c => c.status === 'Verified' && getCategoryFromQuantity(c.quantityKg) === 'Category A').length}</span>
                 <span className="text-emerald-800 block text-[10px]">Received &amp; Stocked</span>
               </div>
             </div>
@@ -658,7 +659,7 @@ export const CenterInChargeDashboard = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-semibold text-slate-800">
-                    {filteredCrops.map((crop) => (
+                    {filteredCrops.filter(c => getCategoryFromQuantity(c.quantityKg) === 'Category A').map((crop) => (
                       <tr key={crop.id} className="hover:bg-slate-50/80 transition-colors">
 
                         <td className="py-4 px-3">
@@ -675,7 +676,8 @@ export const CenterInChargeDashboard = () => {
                           {(() => {
                             const catName = getCategoryFromQuantity(crop.quantityKg);
                             return (
-                              <span className={`inline-block text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${getCategoryBadge(catName)}`}>
+                              <span className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-0.5 rounded-full border whitespace-nowrap shadow-2xs ${getCategoryBadge(catName)}`}>
+                                <span className="w-1.5 h-1.5 rounded-full bg-current opacity-75" />
                                 {catName}
                               </span>
                             );
@@ -715,15 +717,16 @@ export const CenterInChargeDashboard = () => {
                           )}
                         </td>
 
-                        <td className="py-4 px-3">
-                          <span className={`text-[10px] font-black px-2.5 py-1 rounded-full border ${crop.status === 'New' ? 'bg-amber-100 text-amber-900 border-amber-300' :
-                              crop.status === 'Price Sent' ? 'bg-purple-100 text-purple-900 border-purple-300' :
-                                crop.status === 'Assigned' ? 'bg-blue-100 text-blue-900 border-blue-300' :
-                                  crop.status === 'In Transit' ? 'bg-indigo-100 text-indigo-900 border-indigo-300 animate-pulse' :
-                                    crop.status === 'Delivered' ? 'bg-teal-100 text-teal-900 border-teal-300' :
-                                      'bg-emerald-100 text-[#00a86b] border-emerald-300'
+                        <td className="py-4 px-3 whitespace-nowrap">
+                          <span className={`inline-flex items-center gap-1.5 text-[10px] font-black px-2.5 py-1 rounded-full border whitespace-nowrap shadow-2xs ${crop.status === 'New' ? 'bg-amber-50 text-amber-900 border-amber-300' :
+                              crop.status === 'Price Sent' ? 'bg-purple-50 text-purple-900 border-purple-300' :
+                                crop.status === 'Assigned' ? 'bg-blue-50 text-blue-900 border-blue-300' :
+                                  crop.status === 'In Transit' ? 'bg-indigo-50 text-indigo-900 border-indigo-300' :
+                                    crop.status === 'Delivered' ? 'bg-teal-50 text-teal-900 border-teal-300' :
+                                      'bg-emerald-50 text-emerald-800 border-emerald-300'
                             }`}>
-                            ● {crop.status.toUpperCase()}
+                            <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                            {crop.status.toUpperCase()}
                           </span>
                         </td>
 
@@ -802,7 +805,7 @@ export const CenterInChargeDashboard = () => {
                       <div>
                         <div className="flex items-center space-x-2">
                           <span className="font-mono font-black text-[#00a86b] text-xs">{crop.id}</span>
-                          <span className={`text-[9px] font-black px-2 py-0.5 rounded-full border ${getCategoryBadge(getCategoryFromQuantity(crop.quantityKg))}`}>
+                          <span className={`inline-flex items-center gap-1 text-[9px] font-black px-2 py-0.5 rounded-full border whitespace-nowrap ${getCategoryBadge(getCategoryFromQuantity(crop.quantityKg))}`}>
                             {getCategoryFromQuantity(crop.quantityKg)}
                           </span>
                           <span className="text-[9px] font-bold text-[#00a86b] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center space-x-1">

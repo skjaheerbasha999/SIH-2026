@@ -310,7 +310,7 @@ const server = http.createServer(async (req, res) => {
     // 3. AUTH: LOGIN
     if (method === 'POST' && pathname === '/api/auth/login') {
       const body = await parseBody(req);
-      const { identifier } = body;
+      const { identifier, role } = body;
 
       if (dbStatus.isConnected) {
         let foundUser = await User.findOne({
@@ -323,9 +323,10 @@ const server = http.createServer(async (req, res) => {
         if (!foundUser) {
           foundUser = {
             id: `USER-${Date.now()}`,
-            name: identifier || 'Procurement Member',
+            name: identifier || (role ? `${role} Member` : 'Procurement Member'),
             mobile: identifier || '9876543210',
-            category: 'Volunteer',
+            category: role || 'Volunteer',
+            role: role || 'Volunteer',
             village: 'Sonipat Village',
             mandal: 'Sonipat Mandal',
             district: 'Sonipat',
@@ -341,9 +342,10 @@ const server = http.createServer(async (req, res) => {
       } else {
         const foundUser = fallbackUsers.find(u => u.mobile === identifier || u.name.toLowerCase() === identifier.toLowerCase()) || {
           id: `USER-${Date.now()}`,
-          name: identifier || 'Procurement Member',
+          name: identifier || (role ? `${role} Member` : 'Procurement Member'),
           mobile: identifier || '9876543210',
-          category: 'Volunteer',
+          category: role || 'Volunteer',
+          role: role || 'Volunteer',
           village: 'Sonipat Village',
           mandal: 'Sonipat Mandal',
           district: 'Sonipat',

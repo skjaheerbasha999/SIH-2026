@@ -13,21 +13,22 @@ export const apiClient = {
   },
 
   // 2. AUTH: LOGIN
-  login: async (identifier, password) => {
+  login: async (identifier, password, role = 'Volunteer') => {
     try {
       const res = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identifier, password })
+        body: JSON.stringify({ identifier, password, role })
       });
       return await res.json();
     } catch (err) {
       return {
         success: true,
         user: {
-          name: 'Gurpreet Singh',
+          name: role.toLowerCase().includes('center') ? 'Dr. Vikram Sharma' : role.toLowerCase().includes('head') ? 'Director S. K. Roy' : 'Gurpreet Singh',
           identifier: identifier,
-          role: 'Volunteer',
+          role: role,
+          category: role,
           village: 'Sonipat Village',
           mandal: 'Sonipat Mandal',
           district: 'Sonipat',
