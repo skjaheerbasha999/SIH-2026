@@ -1,13 +1,14 @@
 import React from 'react';
 import { Sprout } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { RevealOnScroll } from './RevealOnScroll';
 
 export const Footer = () => {
   const { navigateTo } = useApp();
 
   return (
     <footer className="bg-[#0b132b] text-slate-400 py-8 border-t border-slate-900 text-xs">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <RevealOnScroll animation="fade-up" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
 
         {/* Left Logo */}
         <div className="flex items-center space-x-2.5">
@@ -38,7 +39,7 @@ export const Footer = () => {
           © 2026 Smart &amp; Fair Crop Procurement System
         </p>
 
-      </div>
+      </RevealOnScroll>
     </footer>
   );
 };

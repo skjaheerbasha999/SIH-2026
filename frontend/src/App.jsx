@@ -9,6 +9,7 @@ import { Footer } from './components/Footer';
 import { LoginPage } from './pages/LoginPage';
 import { CreateAccountPage } from './pages/CreateAccountPage';
 import { Dashboards } from './pages/Dashboards';
+import { FarmerSupport } from './components/FarmerSupport';
 
 const AppContent = () => {
   const { currentView } = useApp();
@@ -39,6 +40,9 @@ const AppContent = () => {
         <main>
           {/* Hero */}
           <Hero />
+
+          {/* Farmer Support Section */}
+          <FarmerSupport />
 
           {/* How It Works */}
           <HowItWorks />

@@ -36,6 +36,7 @@ import {
   Award
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { useTranslation } from 'react-i18next';
 
 // ==========================================
 // MOCK DATA & CONSTANTS FOR CENTER IN-CHARGE
@@ -218,7 +219,8 @@ const STORAGE_INVENTORY_BY_CROP = [
 ];
 
 export const CenterInChargeDashboard = () => {
-  const { userSession, navigateTo, showToast } = useApp();
+  const { userSession, showToast, navigateTo } = useApp();
+  const { t } = useTranslation();
 
   const officerName = userSession?.name || 'Dr. Vikram Sharma';
   const officerRole = 'Category A Center In-Charge';
@@ -475,7 +477,7 @@ export const CenterInChargeDashboard = () => {
               <Building2 className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-sm font-black text-white block leading-none tracking-tight">Smart &amp; Fair Center Portal</span>
+              <span className="text-sm font-black text-white block leading-none tracking-tight">{t("Smart & Fair Center Portal")}</span>
               <span className="text-[9px] text-emerald-200 uppercase tracking-widest font-bold mt-0.5 block">
                 {centerName}
               </span>
@@ -492,8 +494,8 @@ export const CenterInChargeDashboard = () => {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-4 py-2 rounded-xl transition-all ${activeTab === tab.id
-                    ? 'bg-white text-[#00a86b] shadow-sm font-extrabold'
-                    : 'text-emerald-100 hover:text-white hover:bg-[#007d4f]'
+                  ? 'bg-white text-[#00a86b] shadow-sm font-extrabold'
+                  : 'text-emerald-100 hover:text-white hover:bg-[#007d4f]'
                   }`}
               >
                 {tab.label}
@@ -515,7 +517,7 @@ export const CenterInChargeDashboard = () => {
               className="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-[#008f5a] hover:bg-[#007d4f] text-white text-xs font-bold transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Logout</span>
+              <span className="hidden sm:inline">{t("Logout")}</span>
             </button>
           </div>
 
@@ -546,23 +548,21 @@ export const CenterInChargeDashboard = () => {
         <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center space-x-2">
-              <span className="text-[10px] font-black text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                CATEGORY CENTER COMMAND HUB
-              </span>
+              <span className="text-[10px] font-black text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full uppercase tracking-wider">{t("CATEGORY CENTER COMMAND HUB")}</span>
               <span className="text-xs text-slate-400 font-semibold">• {centerLocation}</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
               {centerName}
             </h1>
-            <p className="text-xs text-slate-500 font-medium">
-              Assess incoming crops, send price offers, dispatch volunteer pickups, track live transport, and inspect warehouse storage inventory.
-            </p>
+            <p className="text-xs text-slate-500 font-medium">{t(
+              "Assess incoming crops, send price offers, dispatch volunteer pickups, track live transport, and inspect warehouse storage inventory."
+            )}</p>
           </div>
 
           <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-200 text-xs font-bold text-slate-800 flex items-center space-x-4 flex-shrink-0">
             <div>
-              <span className="text-[10px] text-slate-500 uppercase block">Total Warehouse Storage</span>
-              <span className="text-lg font-black text-[#00a86b]">{currentTotalStockKg.toLocaleString()} / {totalStorageCapacityKg.toLocaleString()} kg</span>
+              <span className="text-[10px] text-slate-500 uppercase block">{t("Total Warehouse Storage")}</span>
+              <span className="text-lg font-black text-[#00a86b]">{currentTotalStockKg.toLocaleString()} / {totalStorageCapacityKg.toLocaleString()}{t("kg")}</span>
             </div>
             <div className="w-12 h-12 rounded-full border-4 border-emerald-600 flex items-center justify-center text-[11px] font-black text-[#00a86b]">
               {capacityUsedPercent}%
@@ -579,27 +579,27 @@ export const CenterInChargeDashboard = () => {
             {/* KPI METRIC CARDS FOR DISPATCH */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-bold">
               <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs space-y-1">
-                <span className="text-slate-400 uppercase tracking-wider text-[10px] block">Total Reported Batches</span>
-                <span className="text-3xl font-black text-slate-900">{crops.filter(c => getCategoryFromQuantity(c.quantityKg) === 'Category A').length} Batches</span>
-                <span className="text-emerald-700 block text-[10px]">Awaiting / In Dispatch</span>
+                <span className="text-slate-400 uppercase tracking-wider text-[10px] block">{t("Total Reported Batches")}</span>
+                <span className="text-3xl font-black text-slate-900">{crops.filter(c => getCategoryFromQuantity(c.quantityKg) === 'Category A').length}{t("Batches")}</span>
+                <span className="text-emerald-700 block text-[10px]">{t("Awaiting / In Dispatch")}</span>
               </div>
 
               <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs space-y-1">
-                <span className="text-slate-400 uppercase tracking-wider text-[10px] block">New Unassigned Crops</span>
+                <span className="text-slate-400 uppercase tracking-wider text-[10px] block">{t("New Unassigned Crops")}</span>
                 <span className="text-3xl font-black text-amber-600">{crops.filter(c => c.status === 'New' && getCategoryFromQuantity(c.quantityKg) === 'Category A').length}</span>
-                <span className="text-amber-700 block text-[10px]">Requires Price Offer</span>
+                <span className="text-amber-700 block text-[10px]">{t("Requires Price Offer")}</span>
               </div>
 
               <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs space-y-1">
-                <span className="text-slate-400 uppercase tracking-wider text-[10px] block">Active Transport Shipments</span>
+                <span className="text-slate-400 uppercase tracking-wider text-[10px] block">{t("Active Transport Shipments")}</span>
                 <span className="text-3xl font-black text-blue-700">{crops.filter(c => ['Assigned', 'In Transit', 'Price Sent'].includes(c.status) && getCategoryFromQuantity(c.quantityKg) === 'Category A').length}</span>
-                <span className="text-blue-700 block text-[10px]">Volunteer Transport Active</span>
+                <span className="text-blue-700 block text-[10px]">{t("Volunteer Transport Active")}</span>
               </div>
 
               <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs space-y-1">
-                <span className="text-slate-400 uppercase tracking-wider text-[10px] block">Verified at Center</span>
+                <span className="text-slate-400 uppercase tracking-wider text-[10px] block">{t("Verified at Center")}</span>
                 <span className="text-3xl font-black text-emerald-800">{crops.filter(c => c.status === 'Verified' && getCategoryFromQuantity(c.quantityKg) === 'Category A').length}</span>
-                <span className="text-emerald-800 block text-[10px]">Received &amp; Stocked</span>
+                <span className="text-emerald-800 block text-[10px]">{t("Received & Stocked")}</span>
               </div>
             </div>
 
@@ -608,10 +608,10 @@ export const CenterInChargeDashboard = () => {
 
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
                 <div>
-                  <h2 className="text-xl font-black text-slate-900">Crop Harvest Listing &amp; Volunteer Dispatch</h2>
-                  <p className="text-xs text-slate-500 font-medium">
-                    Review reported crop harvests, set purchase price, dispatch pickup SMS to volunteers, and track live transport.
-                  </p>
+                  <h2 className="text-xl font-black text-slate-900">{t("Crop Harvest Listing & Volunteer Dispatch")}</h2>
+                  <p className="text-xs text-slate-500 font-medium">{t(
+                    "Review reported crop harvests, set purchase price, dispatch pickup SMS to volunteers, and track live transport."
+                  )}</p>
                 </div>
 
                 {/* SEARCH & FILTER CONTROLS */}
@@ -632,13 +632,13 @@ export const CenterInChargeDashboard = () => {
                     onChange={(e) => setCropStatusFilter(e.target.value)}
                     className="py-2 px-3 bg-slate-50 rounded-xl border border-slate-200 font-bold text-slate-800"
                   >
-                    <option value="ALL">All Shipment Statuses</option>
-                    <option value="New">New (Needs Price Offer)</option>
-                    <option value="Price Sent">Price Sent / Awaiting Volunteer</option>
-                    <option value="Assigned">Assigned to Volunteer</option>
-                    <option value="In Transit">In Transit</option>
-                    <option value="Delivered">Delivered (Awaiting Verification)</option>
-                    <option value="Verified">Verified &amp; Received</option>
+                    <option value="ALL">{t("All Shipment Statuses")}</option>
+                    <option value="New">{t("New (Needs Price Offer)")}</option>
+                    <option value="Price Sent">{t("Price Sent / Awaiting Volunteer")}</option>
+                    <option value="Assigned">{t("Assigned to Volunteer")}</option>
+                    <option value="In Transit">{t("In Transit")}</option>
+                    <option value="Delivered">{t("Delivered (Awaiting Verification)")}</option>
+                    <option value="Verified">{t("Verified & Received")}</option>
                   </select>
                 </div>
               </div>
@@ -648,14 +648,14 @@ export const CenterInChargeDashboard = () => {
                 <table className="w-full text-left text-xs">
                   <thead>
                     <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px]">
-                      <th className="py-3.5 px-3">Crop ID &amp; Name</th>
-                      <th className="py-3.5 px-3">Quantity</th>
-                      <th className="py-3.5 px-3">CATEGORY ALLOCATION &amp; METRICS</th>
-                      <th className="py-3.5 px-3">Farmer &amp; Source Location</th>
-                      <th className="py-3.5 px-3">Offered Price</th>
-                      <th className="py-3.5 px-3">Assigned Volunteer</th>
-                      <th className="py-3.5 px-3">Shipment Status</th>
-                      <th className="py-3.5 px-3 text-right">Actions</th>
+                      <th className="py-3.5 px-3">{t("Crop ID & Name")}</th>
+                      <th className="py-3.5 px-3">{t("Quantity")}</th>
+                      <th className="py-3.5 px-3">{t("CATEGORY ALLOCATION & METRICS")}</th>
+                      <th className="py-3.5 px-3">{t("Farmer & Source Location")}</th>
+                      <th className="py-3.5 px-3">{t("Offered Price")}</th>
+                      <th className="py-3.5 px-3">{t("Assigned Volunteer")}</th>
+                      <th className="py-3.5 px-3">{t("Shipment Status")}</th>
+                      <th className="py-3.5 px-3 text-right">{t("Actions")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-semibold text-slate-800">
@@ -669,8 +669,7 @@ export const CenterInChargeDashboard = () => {
                         </td>
 
                         <td className="py-4 px-3 font-black text-slate-900 text-sm">
-                          {crop.quantityKg.toLocaleString()} kg
-                        </td>
+                          {crop.quantityKg.toLocaleString()}{t("kg")}</td>
 
                         <td className="py-4 px-3 space-y-1">
                           {(() => {
@@ -682,27 +681,24 @@ export const CenterInChargeDashboard = () => {
                               </span>
                             );
                           })()}
-                          <div className="text-[10px] text-slate-500 font-medium">
-                            Moisture: {crop.moisturePercent} • Purity: {crop.purityPercent}
+                          <div className="text-[10px] text-slate-500 font-medium">{t("Moisture:")}{crop.moisturePercent}{t("• Purity:")}{crop.purityPercent}
                           </div>
                         </td>
 
                         <td className="py-4 px-3">
                           <span className="font-bold text-slate-900 block">{crop.farmerName}</span>
                           <span className="text-[10px] text-slate-500 font-medium">{crop.village}, {crop.district}</span>
-                          <span className="text-[10px] text-slate-400 block">+91 {crop.farmerMobile}</span>
+                          <span className="text-[10px] text-slate-400 block">{t("+91")}{crop.farmerMobile}</span>
                         </td>
 
                         <td className="py-4 px-3">
                           {crop.offeredPricePerKg ? (
                             <div>
-                              <span className="font-black text-[#00a86b] text-sm block">₹{crop.offeredPricePerKg.toFixed(2)}/kg</span>
-                              <span className="text-[10px] text-slate-500">Total: ₹{(crop.quantityKg * crop.offeredPricePerKg).toLocaleString()}</span>
+                              <span className="font-black text-[#00a86b] text-sm block">₹{crop.offeredPricePerKg.toFixed(2)}{t("/kg")}</span>
+                              <span className="text-[10px] text-slate-500">{t("Total: ₹")}{(crop.quantityKg * crop.offeredPricePerKg).toLocaleString()}</span>
                             </div>
                           ) : (
-                            <span className="text-[11px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
-                              Price Not Set
-                            </span>
+                            <span className="text-[11px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">{t("Price Not Set")}</span>
                           )}
                         </td>
 
@@ -710,20 +706,20 @@ export const CenterInChargeDashboard = () => {
                           {crop.assignedVolunteer ? (
                             <div>
                               <span className="font-bold text-slate-900 block">{crop.assignedVolunteer.name}</span>
-                              <span className="text-[10px] text-slate-500">+91 {crop.assignedVolunteer.mobile}</span>
+                              <span className="text-[10px] text-slate-500">{t("+91")}{crop.assignedVolunteer.mobile}</span>
                             </div>
                           ) : (
-                            <span className="text-slate-400 text-xs">Unassigned</span>
+                            <span className="text-slate-400 text-xs">{t("Unassigned")}</span>
                           )}
                         </td>
 
                         <td className="py-4 px-3 whitespace-nowrap">
                           <span className={`inline-flex items-center gap-1.5 text-[10px] font-black px-2.5 py-1 rounded-full border whitespace-nowrap shadow-2xs ${crop.status === 'New' ? 'bg-amber-50 text-amber-900 border-amber-300' :
-                              crop.status === 'Price Sent' ? 'bg-purple-50 text-purple-900 border-purple-300' :
-                                crop.status === 'Assigned' ? 'bg-blue-50 text-blue-900 border-blue-300' :
-                                  crop.status === 'In Transit' ? 'bg-indigo-50 text-indigo-900 border-indigo-300' :
-                                    crop.status === 'Delivered' ? 'bg-teal-50 text-teal-900 border-teal-300' :
-                                      'bg-emerald-50 text-emerald-800 border-emerald-300'
+                            crop.status === 'Price Sent' ? 'bg-purple-50 text-purple-900 border-purple-300' :
+                              crop.status === 'Assigned' ? 'bg-blue-50 text-blue-900 border-blue-300' :
+                                crop.status === 'In Transit' ? 'bg-indigo-50 text-indigo-900 border-indigo-300' :
+                                  crop.status === 'Delivered' ? 'bg-teal-50 text-teal-900 border-teal-300' :
+                                    'bg-emerald-50 text-emerald-800 border-emerald-300'
                             }`}>
                             <span className="w-1.5 h-1.5 rounded-full bg-current" />
                             {crop.status.toUpperCase()}
@@ -738,7 +734,7 @@ export const CenterInChargeDashboard = () => {
                               className="px-3.5 py-1.5 rounded-xl bg-[#00a86b] text-white font-bold text-xs hover:bg-[#008f5a] transition-all inline-flex items-center space-x-1 shadow-xs"
                             >
                               <Send className="w-3.5 h-3.5 text-emerald-200" />
-                              <span>Set Price &amp; Dispatch →</span>
+                              <span>{t("Set Price & Dispatch →")}</span>
                             </button>
                           )}
 
@@ -749,7 +745,7 @@ export const CenterInChargeDashboard = () => {
                               className="px-3 py-1.5 rounded-xl bg-purple-700 text-white font-bold text-xs hover:bg-purple-800 transition-all inline-flex items-center space-x-1 shadow-xs"
                             >
                               <CheckCircle className="w-3.5 h-3.5" />
-                              <span>Simulate Volunteer Accept</span>
+                              <span>{t("Simulate Volunteer Accept")}</span>
                             </button>
                           )}
 
@@ -760,7 +756,7 @@ export const CenterInChargeDashboard = () => {
                               className="px-3 py-1.5 rounded-xl bg-blue-700 text-white font-bold text-xs hover:bg-blue-800 transition-all inline-flex items-center space-x-1 shadow-xs"
                             >
                               <Truck className="w-3.5 h-3.5" />
-                              <span>Advance Transport Stage →</span>
+                              <span>{t("Advance Transport Stage →")}</span>
                             </button>
                           )}
 
@@ -771,14 +767,12 @@ export const CenterInChargeDashboard = () => {
                               className="px-3.5 py-1.5 rounded-xl bg-emerald-700 text-white font-bold text-xs hover:bg-emerald-800 transition-all inline-flex items-center space-x-1 shadow-xs"
                             >
                               <ShieldCheck className="w-3.5 h-3.5" />
-                              <span>Verify &amp; Receive at Center</span>
+                              <span>{t("Verify & Receive at Center")}</span>
                             </button>
                           )}
 
                           {crop.status === 'Verified' && (
-                            <span className="text-[10px] font-black text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 inline-block">
-                              ✓ Received &amp; Stocked
-                            </span>
+                            <span className="text-[10px] font-black text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 inline-block">{t("✓ Received & Stocked")}</span>
                           )}
                         </td>
 
@@ -793,8 +787,10 @@ export const CenterInChargeDashboard = () => {
             {/* LIVE SHIPMENT TRACKING & TIMELINE SECTION */}
             <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-6">
               <div className="pb-3 border-b border-slate-100">
-                <h3 className="text-lg font-black text-slate-900">Live Active Transport Shipments &amp; Stage Timestamps</h3>
-                <p className="text-xs text-slate-500 font-medium">Real-time status per crop shipment from volunteer pickup to center gate receiving.</p>
+                <h3 className="text-lg font-black text-slate-900">{t("Live Active Transport Shipments & Stage Timestamps")}</h3>
+                <p className="text-xs text-slate-500 font-medium">{t(
+                  "Real-time status per crop shipment from volunteer pickup to center gate receiving."
+                )}</p>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -810,20 +806,19 @@ export const CenterInChargeDashboard = () => {
                           </span>
                           <span className="text-[9px] font-bold text-[#00a86b] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center space-x-1">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping inline-block" />
-                            <span>LIVE TRACKING</span>
+                            <span>{t("LIVE TRACKING")}</span>
                           </span>
                         </div>
-                        <h4 className="text-base font-extrabold text-slate-900 mt-0.5">{crop.cropName} ({crop.quantityKg.toLocaleString()} kg)</h4>
-                        <p className="text-xs text-slate-500 font-medium">Farmer: {crop.farmerName} ({crop.village})</p>
+                        <h4 className="text-base font-extrabold text-slate-900 mt-0.5">{crop.cropName} ({crop.quantityKg.toLocaleString()}{t("kg)")}</h4>
+                        <p className="text-xs text-slate-500 font-medium">{t("Farmer:")}{crop.farmerName} ({crop.village})</p>
                       </div>
 
                       <div className="text-right">
-                        <span className="text-xs font-bold text-slate-400 uppercase block">Assigned Volunteer</span>
+                        <span className="text-xs font-bold text-slate-400 uppercase block">{t("Assigned Volunteer")}</span>
                         <span className="text-sm font-extrabold text-slate-900 block">{crop.assignedVolunteer.name}</span>
-                        <span className="text-[10px] text-slate-500">+91 {crop.assignedVolunteer.mobile}</span>
+                        <span className="text-[10px] text-slate-500">{t("+91")}{crop.assignedVolunteer.mobile}</span>
                         {crop.assignedVolunteer.vehicle && (
-                          <span className="text-[9px] font-semibold text-slate-600 block bg-slate-100 px-2 py-0.5 rounded-md mt-1 border border-slate-200">
-                            🚚 {crop.assignedVolunteer.vehicle}
+                          <span className="text-[9px] font-semibold text-slate-600 block bg-slate-100 px-2 py-0.5 rounded-md mt-1 border border-slate-200">{t("🚚")}{crop.assignedVolunteer.vehicle}
                           </span>
                         )}
                       </div>
@@ -833,9 +828,9 @@ export const CenterInChargeDashboard = () => {
                       <div className="flex items-center justify-between text-[#00a86b] font-bold">
                         <div className="flex items-center space-x-1.5">
                           <MapPin className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                          <span>Live Location &amp; Transport Status:</span>
+                          <span>{t("Live Location & Transport Status:")}</span>
                         </div>
-                        <span className="text-[10px] text-slate-400 font-normal">GPS Active</span>
+                        <span className="text-[10px] text-slate-400 font-normal">{t("GPS Active")}</span>
                       </div>
                       <p className="text-slate-800 font-bold pl-5">{crop.assignedVolunteer.location}</p>
                     </div>
@@ -843,14 +838,14 @@ export const CenterInChargeDashboard = () => {
                     {/* TIMELINE STAGES */}
                     <div className="space-y-2 pt-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">Shipment Stage Timeline</span>
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">{t("Shipment Stage Timeline")}</span>
                         {(crop.status === 'Assigned' || crop.status === 'In Transit') && (
                           <button
                             onClick={() => handleAdvanceTransportStage(crop.id)}
                             className="text-[10px] font-bold text-white bg-[#00a86b] hover:bg-[#008f5a] px-2.5 py-1 rounded-lg transition-colors flex items-center space-x-1"
                           >
                             <Truck className="w-3 h-3" />
-                            <span>Advance Stage →</span>
+                            <span>{t("Advance Stage →")}</span>
                           </button>
                         )}
                       </div>
@@ -869,7 +864,7 @@ export const CenterInChargeDashboard = () => {
                     {/* DISCREPANCY NOTE IF VERIFIED */}
                     {crop.status === 'Verified' && (
                       <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs text-[#00a86b] space-y-0.5">
-                        <span className="font-extrabold block">✓ Verified at Center: {crop.receivedQtyKg?.toLocaleString()} kg Received</span>
+                        <span className="font-extrabold block">{t("✓ Verified at Center:")}{crop.receivedQtyKg?.toLocaleString()}{t("kg Received")}</span>
                         <span className="text-[11px] text-slate-600 block">{crop.discrepancyNote}</span>
                       </div>
                     )}
@@ -894,24 +889,24 @@ export const CenterInChargeDashboard = () => {
               {/* Storage Capacity Gauge Card */}
               <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
                 <div className="pb-3 border-b border-slate-100">
-                  <h3 className="text-base font-black text-slate-900">Storage Capacity Overview</h3>
+                  <h3 className="text-base font-black text-slate-900">{t("Storage Capacity Overview")}</h3>
                   <p className="text-xs text-slate-500 font-medium">{centerName}</p>
                 </div>
 
                 <div className="space-y-4 text-xs font-bold">
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-500">Total Center Capacity:</span>
-                    <span className="text-slate-900 font-black text-sm">{totalStorageCapacityKg.toLocaleString()} kg (50 MT)</span>
+                    <span className="text-slate-500">{t("Total Center Capacity:")}</span>
+                    <span className="text-slate-900 font-black text-sm">{totalStorageCapacityKg.toLocaleString()}{t("kg (50 MT)")}</span>
                   </div>
 
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-500">Current Occupied Stock:</span>
-                    <span className="text-[#00a86b] font-black text-sm">{currentTotalStockKg.toLocaleString()} kg ({capacityUsedPercent}%)</span>
+                    <span className="text-slate-500">{t("Current Occupied Stock:")}</span>
+                    <span className="text-[#00a86b] font-black text-sm">{currentTotalStockKg.toLocaleString()}{t("kg (")}{capacityUsedPercent}{t("%)")}</span>
                   </div>
 
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-500">Available Remaining Space:</span>
-                    <span className="text-emerald-700 font-black text-sm">{availableCapacityKg.toLocaleString()} kg</span>
+                    <span className="text-slate-500">{t("Available Remaining Space:")}</span>
+                    <span className="text-emerald-700 font-black text-sm">{availableCapacityKg.toLocaleString()}{t("kg")}</span>
                   </div>
 
                   {/* VISUAL CAPACITY BAR */}
@@ -923,9 +918,9 @@ export const CenterInChargeDashboard = () => {
                       />
                     </div>
                     <div className="flex justify-between text-[10px] text-slate-400 font-bold">
-                      <span>0 kg</span>
-                      <span>{capacityUsedPercent}% Capacity Used</span>
-                      <span>50,000 kg</span>
+                      <span>{t("0 kg")}</span>
+                      <span>{capacityUsedPercent}{t("% Capacity Used")}</span>
+                      <span>{t("50,000 kg")}</span>
                     </div>
                   </div>
                 </div>
@@ -934,48 +929,44 @@ export const CenterInChargeDashboard = () => {
               {/* Collection Center Category Capacity Status Card */}
               <div className="lg:col-span-2 bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4 flex flex-col justify-between">
                 <div className="pb-3 border-b border-slate-100">
-                  <h3 className="text-base font-black text-slate-900">Collection Center Category Capacity Status</h3>
-                  <p className="text-xs text-slate-500 font-medium">Real-time load and storage distribution across A (Priority), B (Secondary), and C (Overflow) Centers</p>
+                  <h3 className="text-base font-black text-slate-900">{t("Collection Center Category Capacity Status")}</h3>
+                  <p className="text-xs text-slate-500 font-medium">{t(
+                    "Real-time load and storage distribution across A (Priority), B (Secondary), and C (Overflow) Centers"
+                  )}</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-black text-[#00a86b] uppercase">A CENTER (Priority)</span>
-                      <span className="text-[10px] font-bold bg-emerald-200 text-[#00a86b] px-2 py-0.5 rounded-full">AVAILABLE</span>
+                      <span className="text-xs font-black text-[#00a86b] uppercase">{t("A CENTER (Priority)")}</span>
+                      <span className="text-[10px] font-bold bg-emerald-200 text-[#00a86b] px-2 py-0.5 rounded-full">{t("AVAILABLE")}</span>
                     </div>
-                    <div className="text-2xl font-black text-slate-900">3,800 / 5,000 kg</div>
-                    <span className="text-[10px] text-emerald-800 font-bold block">
-                      76% Capacity Used (1,200 kg Available)
-                    </span>
+                    <div className="text-2xl font-black text-slate-900">{t("3,800 / 5,000 kg")}</div>
+                    <span className="text-[10px] text-emerald-800 font-bold block">{t("76% Capacity Used (1,200 kg Available)")}</span>
                   </div>
 
                   <div className="p-4 bg-amber-50 rounded-2xl border border-amber-200 space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-black text-amber-900 uppercase">B CENTER (Secondary)</span>
-                      <span className="text-[10px] font-bold bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full">LIMITED</span>
+                      <span className="text-xs font-black text-amber-900 uppercase">{t("B CENTER (Secondary)")}</span>
+                      <span className="text-[10px] font-bold bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full">{t("LIMITED")}</span>
                     </div>
-                    <div className="text-2xl font-black text-slate-900">4,700 / 5,000 kg</div>
-                    <span className="text-[10px] text-amber-800 font-bold block">
-                      94% Capacity Used (300 kg Available)
-                    </span>
+                    <div className="text-2xl font-black text-slate-900">{t("4,700 / 5,000 kg")}</div>
+                    <span className="text-[10px] text-amber-800 font-bold block">{t("94% Capacity Used (300 kg Available)")}</span>
                   </div>
 
                   <div className="p-4 bg-rose-50 rounded-2xl border border-rose-200 space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-black text-rose-900 uppercase">C CENTER (Overflow)</span>
-                      <span className="text-[10px] font-bold bg-rose-200 text-rose-900 px-2 py-0.5 rounded-full">FULL</span>
+                      <span className="text-xs font-black text-rose-900 uppercase">{t("C CENTER (Overflow)")}</span>
+                      <span className="text-[10px] font-bold bg-rose-200 text-rose-900 px-2 py-0.5 rounded-full">{t("FULL")}</span>
                     </div>
-                    <div className="text-2xl font-black text-slate-900">5,000 / 5,000 kg</div>
-                    <span className="text-[10px] text-rose-800 font-bold block">
-                      100% Capacity Used (0 kg Available)
-                    </span>
+                    <div className="text-2xl font-black text-slate-500">{t("5,000 / 5,000 kg")}</div>
+                    <span className="text-[10px] text-rose-800 font-bold block">{t("100% Capacity Used (0 kg Available)")}</span>
                   </div>
                 </div>
 
-                <div className="pt-2 text-xs text-slate-500 font-medium">
-                  💡 <strong>Capacity Routing Rule:</strong> Crops automatically route to A Center first. If A is full, system routes to B Center, then C Center.
-                </div>
+                <div className="pt-2 text-xs text-slate-500 font-medium">{t("💡")}<strong>{t("Capacity Routing Rule:")}</strong>{t(
+                  "Crops automatically route to A Center first. If A is full, system routes to B Center, then C Center."
+                )}</div>
               </div>
 
             </div>
@@ -983,24 +974,24 @@ export const CenterInChargeDashboard = () => {
             {/* CROP-WISE BREAKDOWN TABLE */}
             <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-6">
               <div className="pb-3 border-b border-slate-100 flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-black text-slate-900">Crop-Wise Warehouse Breakdown Table</h3>
-                  <p className="text-xs text-slate-500 font-medium">Complete list of stored crop varieties, Category breakdown, and source contributors.</p>
+                <div className="flex flex-col">
+                  <span className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                    {t('dashboard.center.title') || 'Center In-Charge Dashboard'}
+                  </span>
+                  <span className="text-xs font-bold text-[#00a86b] uppercase tracking-wider">{t("System: Active")}</span>
                 </div>
-                <span className="text-xs font-bold text-[#00a86b] bg-emerald-100 px-3 py-1 rounded-full border border-emerald-200">
-                  Total {STORAGE_INVENTORY_BY_CROP.length} Crop Categories
-                </span>
+                <span className="text-xs font-bold text-[#00a86b] bg-emerald-100 px-3 py-1 rounded-full border border-emerald-200">{t("Total")}{STORAGE_INVENTORY_BY_CROP.length}{t("Crop Categories")}</span>
               </div>
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead>
                     <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px]">
-                      <th className="py-3.5 px-3">Crop Name &amp; Variety</th>
-                      <th className="py-3.5 px-3">Quantity in Stock</th>
-                      <th className="py-3.5 px-3">Category Breakdown</th>
-                      <th className="py-3.5 px-3">Last Stock Update</th>
-                      <th className="py-3.5 px-3">Source Contributors (Farmers/Volunteers)</th>
+                      <th className="py-3.5 px-3">{t("Crop Name & Variety")}</th>
+                      <th className="py-3.5 px-3">{t("Quantity in Stock")}</th>
+                      <th className="py-3.5 px-3">{t("Category Breakdown")}</th>
+                      <th className="py-3.5 px-3">{t("Last Stock Update")}</th>
+                      <th className="py-3.5 px-3">{t("Source Contributors (Farmers/Volunteers)")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-semibold text-slate-800">
@@ -1012,21 +1003,20 @@ export const CenterInChargeDashboard = () => {
                         </td>
 
                         <td className="py-4 px-3 font-black text-[#00a86b] text-base">
-                          {inv.totalStockKg.toLocaleString()} kg
-                        </td>
+                          {inv.totalStockKg.toLocaleString()}{t("kg")}</td>
 
                         <td className="py-4 px-3 space-y-1.5">
                           <div className="flex items-center space-x-2">
-                            <span className="w-32 text-[10px] text-slate-500 font-bold">Category A (&le;5k kg):</span>
-                            <span className="font-extrabold text-[#00a86b]">{inv.catA.toLocaleString()} kg</span>
+                            <span className="w-32 text-[10px] text-slate-500 font-bold">{t("Category A (≤5k kg):")}</span>
+                            <span className="font-extrabold text-[#00a86b]">{inv.catA.toLocaleString()}{t("kg")}</span>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <span className="w-32 text-[10px] text-slate-500 font-bold">Category B (5k-10k kg):</span>
-                            <span className="font-extrabold text-amber-700">{inv.catB.toLocaleString()} kg</span>
+                            <span className="w-32 text-[10px] text-slate-500 font-bold">{t("Category B (5k-10k kg):")}</span>
+                            <span className="font-extrabold text-amber-700">{inv.catB.toLocaleString()}{t("kg")}</span>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <span className="w-32 text-[10px] text-slate-500 font-bold">Category C (&gt;10k kg):</span>
-                            <span className="font-extrabold text-rose-700">{inv.catC.toLocaleString()} kg</span>
+                            <span className="w-32 text-[10px] text-slate-500 font-bold">{t("Category C (>10k kg):")}</span>
+                            <span className="font-extrabold text-rose-700">{inv.catC.toLocaleString()}{t("kg")}</span>
                           </div>
                         </td>
 
@@ -1064,10 +1054,9 @@ export const CenterInChargeDashboard = () => {
 
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div>
-                <span className="text-[10px] font-black text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full uppercase">
-                  DISPATCH ORDER {selectedCropForOffer.id}
+                <span className="text-[10px] font-black text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full uppercase">{t("DISPATCH ORDER")}{selectedCropForOffer.id}
                 </span>
-                <h3 className="text-lg font-black text-slate-900 mt-1">Set Price &amp; Select Volunteer</h3>
+                <h3 className="text-lg font-black text-slate-900 mt-1">{t("Set Price & Select Volunteer")}</h3>
               </div>
               <button onClick={() => setSelectedCropForOffer(null)} className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-400">
                 <X className="w-5 h-5" />
@@ -1075,15 +1064,15 @@ export const CenterInChargeDashboard = () => {
             </div>
 
             <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs space-y-1.5">
-              <div className="flex justify-between"><span className="text-slate-500">Crop Variety:</span><strong className="text-slate-900">{selectedCropForOffer.cropName} ({selectedCropForOffer.variety})</strong></div>
-              <div className="flex justify-between"><span className="text-slate-500">Quantity Available:</span><strong className="text-slate-900">{selectedCropForOffer.quantityKg.toLocaleString()} kg</strong></div>
-              <div className="flex justify-between"><span className="text-slate-500">Category Allocation:</span><strong className="text-emerald-800">{getCategoryFromQuantity(selectedCropForOffer.quantityKg)}</strong></div>
-              <div className="flex justify-between"><span className="text-slate-500">Farmer Source:</span><strong className="text-slate-900">{selectedCropForOffer.farmerName} ({selectedCropForOffer.village})</strong></div>
+              <div className="flex justify-between"><span className="text-slate-500">{t("Crop Variety:")}</span><strong className="text-slate-900">{selectedCropForOffer.cropName} ({selectedCropForOffer.variety})</strong></div>
+              <div className="flex justify-between"><span className="text-slate-500">{t("Quantity Available:")}</span><strong className="text-slate-900">{selectedCropForOffer.quantityKg.toLocaleString()}{t("kg")}</strong></div>
+              <div className="flex justify-between"><span className="text-slate-500">{t("Category Allocation:")}</span><strong className="text-emerald-800">{getCategoryFromQuantity(selectedCropForOffer.quantityKg)}</strong></div>
+              <div className="flex justify-between"><span className="text-slate-500">{t("Farmer Source:")}</span><strong className="text-slate-900">{selectedCropForOffer.farmerName} ({selectedCropForOffer.village})</strong></div>
             </div>
 
             <form onSubmit={handleConfirmDispatchToVolunteer} className="space-y-4 text-xs font-semibold">
               <div>
-                <label className="block text-slate-700 font-bold mb-1">Set Offered Purchase Price (₹ / kg) *</label>
+                <label className="block text-slate-700 font-bold mb-1">{t("Set Offered Purchase Price (₹ / kg) *")}</label>
                 <input
                   type="number"
                   step="0.50"
@@ -1092,20 +1081,19 @@ export const CenterInChargeDashboard = () => {
                   placeholder="e.g. 24.50"
                   className="w-full px-4 py-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 font-black text-sm focus:ring-2 focus:ring-[#00a86b] focus:outline-none"
                 />
-                <span className="text-[10px] text-slate-400 mt-1 block">
-                  Total Offered Payout: <strong>₹{(selectedCropForOffer.quantityKg * (parseFloat(offeredPriceInput) || 0)).toLocaleString()}</strong>
+                <span className="text-[10px] text-slate-400 mt-1 block">{t("Total Offered Payout:")}<strong>₹{(selectedCropForOffer.quantityKg * (parseFloat(offeredPriceInput) || 0)).toLocaleString()}</strong>
                 </span>
               </div>
 
               <div>
-                <label className="block text-slate-700 font-bold mb-1">Select Transport Volunteer *</label>
+                <label className="block text-slate-700 font-bold mb-1">{t("Select Transport Volunteer *")}</label>
                 <select
                   value={selectedVolunteerName}
                   onChange={(e) => setSelectedVolunteerName(e.target.value)}
                   className="w-full px-4 py-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs font-bold text-slate-900 focus:ring-2 focus:ring-[#00a86b] focus:outline-none"
                 >
                   {AVAILABLE_VOLUNTEERS.map(v => (
-                    <option key={v.name} value={v.name}>{v.name} (+91 {v.mobile}) — {v.vehicle}</option>
+                    <option key={v.name} value={v.name}>{v.name}{t("(+91")}{v.mobile}{t(") —")}{v.vehicle}</option>
                   ))}
                 </select>
               </div>
@@ -1115,7 +1103,7 @@ export const CenterInChargeDashboard = () => {
                 className="w-full py-3.5 rounded-2xl bg-[#00a86b] text-white font-black text-xs shadow-md hover:bg-[#008f5a] transition-all flex items-center justify-center space-x-2"
               >
                 <Send className="w-4 h-4 text-emerald-300" />
-                <span>Confirm &amp; Dispatch SMS to Volunteer →</span>
+                <span>{t("Confirm & Dispatch SMS to Volunteer →")}</span>
               </button>
             </form>
 
@@ -1129,7 +1117,7 @@ export const CenterInChargeDashboard = () => {
           <div className="bg-white rounded-3xl p-6 max-w-md w-full space-y-4 shadow-2xl border border-slate-100 animate-scale-up">
             <div className="flex items-center space-x-2 text-[#00a86b]">
               <MessageSquare className="w-5 h-5" />
-              <h3 className="text-base font-black">SMS Notification Sent Successfully</h3>
+              <h3 className="text-base font-black">{t("SMS Notification Sent Successfully")}</h3>
             </div>
 
             <div className="p-4 bg-slate-950 text-emerald-300 rounded-2xl font-mono text-xs whitespace-pre-wrap leading-relaxed border border-slate-800 shadow-inner">
@@ -1139,9 +1127,7 @@ export const CenterInChargeDashboard = () => {
             <button
               onClick={() => setDispatchedSmsLog(null)}
               className="w-full py-2.5 rounded-xl bg-[#00a86b] text-white font-bold text-xs hover:bg-[#008f5a]"
-            >
-              Close SMS Log
-            </button>
+            >{t("Close SMS Log")}</button>
           </div>
         </div>
       )}
@@ -1153,10 +1139,8 @@ export const CenterInChargeDashboard = () => {
 
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div>
-                <span className="text-[10px] font-black text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full uppercase">
-                  CENTER RECEIVING GATE &amp; WEIGHBRIDGE
-                </span>
-                <h3 className="text-lg font-black text-slate-900 mt-1">Verify Shipment #{selectedCropForVerify.id}</h3>
+                <span className="text-[10px] font-black text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full uppercase">{t("CENTER RECEIVING GATE & WEIGHBRIDGE")}</span>
+                <h3 className="text-lg font-black text-slate-900 mt-1">{t("Verify Shipment #")}{selectedCropForVerify.id}</h3>
               </div>
               <button onClick={() => setSelectedCropForVerify(null)} className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-400">
                 <X className="w-5 h-5" />
@@ -1166,11 +1150,11 @@ export const CenterInChargeDashboard = () => {
             <form onSubmit={handleConfirmVerifyAndReceive} className="space-y-4 text-xs font-semibold">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Expected Harvest Qty</label>
+                  <label className="block text-slate-700 font-bold mb-1">{t("Expected Harvest Qty")}</label>
                   <input type="text" value={`${selectedCropForVerify.quantityKg.toLocaleString()} kg`} disabled className="w-full px-3.5 py-2.5 bg-slate-100 rounded-xl border border-slate-200 text-slate-500 font-bold" />
                 </div>
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Actual Received Qty (Kg) *</label>
+                  <label className="block text-slate-700 font-bold mb-1">{t("Actual Received Qty (Kg) *")}</label>
                   <input
                     type="number"
                     value={verifyReceivedQty}
@@ -1182,7 +1166,7 @@ export const CenterInChargeDashboard = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Verified Moisture Level</label>
+                  <label className="block text-slate-700 font-bold mb-1">{t("Verified Moisture Level")}</label>
                   <input
                     type="text"
                     value={verifyMoisture}
@@ -1191,21 +1175,21 @@ export const CenterInChargeDashboard = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Verified Category Allocation</label>
+                  <label className="block text-slate-700 font-bold mb-1">{t("Verified Category Allocation")}</label>
                   <select
                     value={verifyGrade}
                     onChange={(e) => setVerifyGrade(e.target.value)}
                     className="w-full px-3.5 py-2.5 bg-white rounded-xl border border-slate-200 text-slate-900 font-bold"
                   >
-                    <option value="A">Category A (&le; 5,000 kg)</option>
-                    <option value="B">Category B (5,001 - 10,000 kg)</option>
-                    <option value="C">Category C (&gt; 10,000 kg)</option>
+                    <option value="A">{t("Category A (≤ 5,000 kg)")}</option>
+                    <option value="B">{t("Category B (5,001 - 10,000 kg)")}</option>
+                    <option value="C">{t("Category C (> 10,000 kg)")}</option>
                   </select>
                 </div>
               </div>
 
               <div>
-                <label className="block text-slate-700 font-bold mb-1">Discrepancy / Receiving Remarks</label>
+                <label className="block text-slate-700 font-bold mb-1">{t("Discrepancy / Receiving Remarks")}</label>
                 <textarea
                   rows={2}
                   value={verifyDiscrepancyNote}
@@ -1220,7 +1204,7 @@ export const CenterInChargeDashboard = () => {
                 className="w-full py-3.5 rounded-2xl bg-[#00a86b] text-white font-black text-xs shadow-md hover:bg-[#008f5a] transition-all flex items-center justify-center space-x-2"
               >
                 <ShieldCheck className="w-4 h-4 text-emerald-300" />
-                <span>Mark as Received &amp; Add Stock to Center Inventory →</span>
+                <span>{t("Mark as Received & Add Stock to Center Inventory →")}</span>
               </button>
             </form>
 
@@ -1229,9 +1213,9 @@ export const CenterInChargeDashboard = () => {
       )}
 
       {/* FOOTER */}
-      <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
-        © 2026 Smart Agricultural Crop Category &amp; Center Management System • Authorized Center In-Charge Portal
-      </footer>
+      <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">{t(
+        "© 2026 Smart Agricultural Crop Category & Center Management System • Authorized Center In-Charge Portal"
+      )}</footer>
 
     </div>
   );

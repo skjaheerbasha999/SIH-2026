@@ -320,10 +320,18 @@ const server = http.createServer(async (req, res) => {
           ]
         });
 
+        const getDefaultName = (rawIdentifier, userRole) => {
+          const normRole = (userRole || '').toLowerCase();
+          if (normRole.includes('head')) return 'Director S. K. Roy (Head Office)';
+          if (normRole.includes('center')) return 'Dr. Vikram Sharma (Center In-Charge)';
+          if (rawIdentifier && !rawIdentifier.includes('@')) return rawIdentifier;
+          return 'Gurpreet Singh (Procurement Mitra)';
+        };
+
         if (!foundUser) {
           foundUser = {
             id: `USER-${Date.now()}`,
-            name: identifier || (role ? `${role} Member` : 'Procurement Member'),
+            name: getDefaultName(identifier, role),
             mobile: identifier || '9876543210',
             category: role || 'Volunteer',
             role: role || 'Volunteer',
@@ -342,7 +350,11 @@ const server = http.createServer(async (req, res) => {
       } else {
         const foundUser = fallbackUsers.find(u => u.mobile === identifier || u.name.toLowerCase() === identifier.toLowerCase()) || {
           id: `USER-${Date.now()}`,
-          name: identifier || (role ? `${role} Member` : 'Procurement Member'),
+          name: (role && role.toLowerCase().includes('head'))
+            ? 'Director S. K. Roy (Head Office)'
+            : (role && role.toLowerCase().includes('center'))
+            ? 'Dr. Vikram Sharma (Center In-Charge)'
+            : (identifier && !identifier.includes('@') ? identifier : 'Gurpreet Singh (Procurement Mitra)'),
           mobile: identifier || '9876543210',
           category: role || 'Volunteer',
           role: role || 'Volunteer',

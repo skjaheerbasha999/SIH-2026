@@ -122,8 +122,8 @@ export const LoginPage = () => {
                 type="button"
                 onClick={() => setSelectedRole(roleItem.id)}
                 className={`py-2 px-1 rounded-xl transition-all text-center text-[11px] ${selectedRole === roleItem.id
-                    ? 'bg-[#00a86b] text-white shadow-xs font-black'
-                    : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-[#00a86b] text-white shadow-xs font-black'
+                  : 'text-slate-600 hover:text-slate-900'
                   }`}
               >
                 {roleItem.label}

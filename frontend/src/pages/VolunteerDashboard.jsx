@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { apiClient } from '../api/client';
+import { useTranslation } from 'react-i18next';
 
 // ==========================================
 // MOCK DATA & CONSTANTS
@@ -449,7 +450,8 @@ const SAMPLE_CROP_SCANS = [
 // ==========================================
 
 export const VolunteerDashboard = () => {
-  const { userSession, navigateTo, showToast } = useApp();
+  const { userSession, showToast, navigateTo } = useApp();
+  const { t } = useTranslation();
 
   const volunteerName = userSession?.name || 'Gurpreet Singh';
   const volunteerMandal = userSession?.mandal || 'Sonipat Mandal';
@@ -499,7 +501,8 @@ export const VolunteerDashboard = () => {
     state: '',
     cropType: 'Wheat',
     cultivatedArea: '3.5 Acres',
-    productionQuantity: '120'
+    goodCropQuantity: '',
+    wasteCropQuantity: ''
   });
   const [editFarmerForm, setEditFarmerForm] = useState(null);
 
@@ -594,12 +597,37 @@ export const VolunteerDashboard = () => {
       return;
     }
 
-    const qtyKg = Number(newFarmer.productionQuantity) || 120;
+    const goodQty = Number(newFarmer.goodCropQuantity) || 0;
+    const wasteQty = Number(newFarmer.wasteCropQuantity) || 0;
+    const qtyKg = goodQty + wasteQty;
+    
+    if (qtyKg <= 0) {
+      showToast('Please provide crop quantities');
+      return;
+    }
+    
     const farmerName = newFarmer.name.trim();
     const cropName = newFarmer.cropType || 'Wheat';
 
-    // Execute automatic capacity allocation
-    const allocResult = runCenterAllocation(farmerName, newFarmer.mobile.trim(), cropName, qtyKg);
+    // Execute automatic capacity allocation for Good Crop
+    let allocResult = null;
+    if (goodQty > 0) {
+      allocResult = runCenterAllocation(farmerName, newFarmer.mobile.trim(), cropName, goodQty);
+    }
+
+    // Process Waste Crop
+    let wasteResult = null;
+    if (wasteQty > 0) {
+      wasteResult = {
+        assignedCategory: 'WASTE',
+        assignedName: 'Waste Crop Center Region 1',
+        inChargeName: 'Mr. Ramesh (Waste Manager)',
+        contact: '+91 9988776655',
+        location: 'Plot 88, Bio-Gas & Composting Park, Sonipat',
+        statusMessage: 'Assigned to Waste Crop Center',
+        notificationText: `Dear Farmer, Please bring your waste ${cropName} (${wasteQty} kg) to Waste Crop Center Region 1.`
+      };
+    }
 
     const createdId = `FARM-${1000 + farmers.length + 1}`;
     const newRecord = {
@@ -615,13 +643,15 @@ export const VolunteerDashboard = () => {
       cropType: cropName,
       cultivatedArea: newFarmer.cultivatedArea || '3.5 Acres',
       productionQuantity: qtyKg,
+      goodCropQuantity: goodQty,
+      wasteCropQuantity: wasteQty,
       submissionDate: new Date().toISOString().split('T')[0],
-      assignedCenterCategory: allocResult.assignedCategory,
-      assignedCenterName: allocResult.assignedName,
-      allocationStatusMessage: allocResult.statusMessage,
-      notificationText: allocResult.notificationText,
-      cropStatus: allocResult.assignedCategory === 'WAITING' ? 'Waiting List' : `Assigned ${allocResult.assignedCategory} Center`,
-      qualityStatus: `Assigned ${allocResult.assignedCategory} Center`,
+      assignedCenterCategory: allocResult ? allocResult.assignedCategory : (wasteResult ? wasteResult.assignedCategory : ''),
+      assignedCenterName: allocResult ? allocResult.assignedName : (wasteResult ? wasteResult.assignedName : ''),
+      allocationStatusMessage: allocResult ? allocResult.statusMessage : (wasteResult ? wasteResult.statusMessage : ''),
+      notificationText: allocResult ? allocResult.notificationText : (wasteResult ? wasteResult.notificationText : ''),
+      cropStatus: allocResult ? (allocResult.assignedCategory === 'WAITING' ? 'Waiting List' : `Assigned ${allocResult.assignedCategory} Center`) : 'Assigned Waste Center',
+      qualityStatus: allocResult ? `Assigned ${allocResult.assignedCategory} Center` : 'Waste Crop Only',
       trackingStageIndex: 1,
       history: []
     };
@@ -634,7 +664,10 @@ export const VolunteerDashboard = () => {
       village: newRecord.village,
       cropName,
       qtyKg,
+      goodQty,
+      wasteQty,
       allocResult,
+      wasteResult,
       farmerId: createdId
     });
 
@@ -649,10 +682,10 @@ export const VolunteerDashboard = () => {
       state: volunteerState,
       cropType: 'Wheat',
       cultivatedArea: '3.5 Acres',
-      productionQuantity: '120'
+      goodCropQuantity: '',
+      wasteCropQuantity: ''
     });
-
-    showToast(`Farmer ${farmerName} registered! Assigned to ${allocResult.assignedName}.`);
+    showToast('Farmer registered and smart capacity allocation triggered');
   };
 
   // Update Farmer Registration Details (Module 1)
@@ -1076,7 +1109,7 @@ export const VolunteerDashboard = () => {
               <Sprout className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-sm font-black text-white block leading-none tracking-tight">Smart &amp; Fair Platform</span>
+              <span className="text-sm font-black text-white block leading-none tracking-tight">{t("Smart & Fair Platform")}</span>
               <span className="text-[9px] text-emerald-200 uppercase tracking-widest font-bold mt-0.5 block">
                 {selectedFarmerForDashboard ? `Farmer Dashboard • ${selectedFarmerForDashboard.name}` : activeTab === 'Dashboard' ? 'Dashboard Overview' : 'Farmers Directory'}
               </span>
@@ -1109,7 +1142,7 @@ export const VolunteerDashboard = () => {
           <div className="flex items-center space-x-3">
             <div className="hidden sm:flex flex-col text-right">
               <span className="text-xs font-bold text-white">{volunteerName}</span>
-              <span className="text-[10px] text-emerald-200">Authorized Volunteer • {volunteerMandal}</span>
+              <span className="text-[10px] text-emerald-200">{t("Authorized Volunteer •")}{volunteerMandal}</span>
             </div>
             <button
               onClick={() => {
@@ -1119,7 +1152,7 @@ export const VolunteerDashboard = () => {
               className="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-[#008f5a] hover:bg-[#007d4f] text-white text-xs font-bold transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Logout</span>
+              <span className="hidden sm:inline">{t("Logout")}</span>
             </button>
           </div>
 
@@ -1157,19 +1190,11 @@ export const VolunteerDashboard = () => {
 
             {/* HERO WELCOME BANNER */}
             <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <div className="flex items-center space-x-2">
-                  <span className="text-[10px] font-black text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                    VOLUNTEER OVERVIEW
-                  </span>
-                  <span className="text-xs text-slate-400 font-semibold">• {volunteerMandal}, {volunteerDistrict}</span>
-                </div>
-                <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
-                  Welcome back, {volunteerName}
-                </h1>
-                <p className="text-xs text-slate-500 font-medium">
-                  Crop production statistics, quality distribution overview, and registered farmers management.
-                </p>
+              <div className="flex flex-col">
+                <span className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                  {t('dashboard.volunteer.title') || 'Procurement Mitra Dashboard'}
+                </span>
+                <span className="text-xs font-bold text-[#00a86b] uppercase tracking-wider">{t("Live Network: Active")}</span>
               </div>
 
               <button
@@ -1181,7 +1206,7 @@ export const VolunteerDashboard = () => {
                 className="flex items-center space-x-1.5 px-5 py-3 rounded-2xl bg-[#00a86b] text-white text-xs font-bold shadow-md hover:bg-[#008f5a] transition-all transform active:scale-98 flex-shrink-0"
               >
                 <Plus className="w-4.5 h-4.5" />
-                <span>+ Register New Farmer</span>
+                <span>{t("+ Register New Farmer")}</span>
               </button>
             </div>
 
@@ -1196,13 +1221,13 @@ export const VolunteerDashboard = () => {
                 className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs hover:border-[#00a86b] transition-all cursor-pointer space-y-2 group"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Registered Farmers</span>
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t("Registered Farmers")}</span>
                   <div className="w-9 h-9 rounded-2xl bg-emerald-100 text-[#00a86b] flex items-center justify-center font-bold group-hover:scale-110 transition-transform">
                     <Users className="w-4.5 h-4.5" />
                   </div>
                 </div>
                 <div className="text-3xl font-black text-slate-900">{totalRegisteredFarmers}</div>
-                <span className="text-[10px] text-emerald-700 font-bold block">Across {volunteerMandal} Villages</span>
+                <span className="text-[10px] text-emerald-700 font-bold block">{t("Across")}{volunteerMandal}{t("Villages")}</span>
               </div>
 
               <div
@@ -1213,13 +1238,13 @@ export const VolunteerDashboard = () => {
                 className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs hover:border-[#00a86b] transition-all cursor-pointer space-y-2 group"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Crops Submitted</span>
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t("Crops Submitted")}</span>
                   <div className="w-9 h-9 rounded-2xl bg-blue-100 text-blue-800 flex items-center justify-center font-bold group-hover:scale-110 transition-transform">
                     <Sprout className="w-4.5 h-4.5" />
                   </div>
                 </div>
-                <div className="text-3xl font-black text-slate-900">{totalCropsSubmitted} Batches</div>
-                <span className="text-[10px] text-blue-700 font-bold block">{totalProductionQuantityKg.toLocaleString()} kg Total Yield</span>
+                <div className="text-3xl font-black text-slate-900">{totalCropsSubmitted}{t("Batches")}</div>
+                <span className="text-[10px] text-blue-700 font-bold block">{totalProductionQuantityKg.toLocaleString()}{t("kg Total Yield")}</span>
               </div>
 
               <div
@@ -1230,13 +1255,13 @@ export const VolunteerDashboard = () => {
                 className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs hover:border-[#00a86b] transition-all cursor-pointer space-y-2 group"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Pending Checks</span>
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t("Pending Checks")}</span>
                   <div className="w-9 h-9 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold group-hover:scale-110 transition-transform">
                     <Sparkles className="w-4.5 h-4.5" />
                   </div>
                 </div>
                 <div className="text-3xl font-black text-amber-700">{pendingQualityChecks}</div>
-                <span className="text-[10px] text-amber-800 font-bold block">Awaiting Category Allocation</span>
+                <span className="text-[10px] text-amber-800 font-bold block">{t("Awaiting Category Allocation")}</span>
               </div>
 
               <div
@@ -1247,15 +1272,15 @@ export const VolunteerDashboard = () => {
                 className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs hover:border-[#00a86b] transition-all cursor-pointer space-y-2 group"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Accepted Proposals</span>
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t("Accepted Proposals")}</span>
                   <div className="w-9 h-9 rounded-2xl bg-purple-100 text-purple-800 flex items-center justify-center font-bold group-hover:scale-110 transition-transform">
                     <CheckCircle2 className="w-4.5 h-4.5" />
                   </div>
                 </div>
                 <div className="text-3xl font-black text-slate-900">
-                  {acceptedProposals} <span className="text-xs text-emerald-600 font-bold">/ {proposals.length} Accepted</span>
+                  {acceptedProposals} <span className="text-xs text-emerald-600 font-bold">/ {proposals.length}{t("Accepted")}</span>
                 </div>
-                <span className="text-[10px] text-purple-800 font-bold block">{pendingProposals} Proposals Pending</span>
+                <span className="text-[10px] text-purple-800 font-bold block">{pendingProposals}{t("Proposals Pending")}</span>
               </div>
 
             </div>
@@ -1266,12 +1291,10 @@ export const VolunteerDashboard = () => {
               <div className="lg:col-span-2 bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                   <div>
-                    <h3 className="text-base font-black text-slate-900">Crop Production Statistics &amp; Monthly Yield</h3>
-                    <p className="text-xs text-slate-500 font-medium">Monthly crop volume harvested and submitted in {volunteerMandal} (in Quintals)</p>
+                    <h3 className="text-base font-black text-slate-900">{t("Crop Production Statistics & Monthly Yield")}</h3>
+                    <p className="text-xs text-slate-500 font-medium">{t("Monthly crop volume harvested and submitted in")}{volunteerMandal}{t("(in Quintals)")}</p>
                   </div>
-                  <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-200">
-                    Active Season 2026
-                  </span>
+                  <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-200">{t("Active Season 2026")}</span>
                 </div>
 
                 <div className="h-64 w-full pt-4">
@@ -1282,101 +1305,98 @@ export const VolunteerDashboard = () => {
                     <line x1="40" y1="140" x2="480" y2="140" stroke="#f1f5f9" strokeWidth="1" />
                     <line x1="40" y1="170" x2="480" y2="170" stroke="#cbd5e1" strokeWidth="1.5" />
 
-                    <text x="30" y="24" textAnchor="end" className="text-[10px] fill-slate-400 font-bold">50 Q</text>
-                    <text x="30" y="64" textAnchor="end" className="text-[10px] fill-slate-400 font-bold">35 Q</text>
-                    <text x="30" y="104" textAnchor="end" className="text-[10px] fill-slate-400 font-bold">20 Q</text>
-                    <text x="30" y="144" textAnchor="end" className="text-[10px] fill-slate-400 font-bold">10 Q</text>
-                    <text x="30" y="174" textAnchor="end" className="text-[10px] fill-slate-400 font-bold">0 Q</text>
+                    <text x="30" y="24" textAnchor="end" className="text-[10px] fill-slate-400 font-bold">{t("50 Q")}</text>
+                    <text x="30" y="64" textAnchor="end" className="text-[10px] fill-slate-400 font-bold">{t("35 Q")}</text>
+                    <text x="30" y="104" textAnchor="end" className="text-[10px] fill-slate-400 font-bold">{t("20 Q")}</text>
+                    <text x="30" y="144" textAnchor="end" className="text-[10px] fill-slate-400 font-bold">{t("10 Q")}</text>
+                    <text x="30" y="174" textAnchor="end" className="text-[10px] fill-slate-400 font-bold">{t("0 Q")}</text>
 
                     <rect x="70" y="110" width="36" height="60" rx="6" className="fill-emerald-200 hover:fill-emerald-300 transition-all cursor-pointer" />
                     <text x="88" y="104" textAnchor="middle" className="text-[10px] fill-slate-600 font-extrabold">15</text>
-                    <text x="88" y="188" textAnchor="middle" className="text-[10px] fill-slate-500 font-bold">Mar</text>
+                    <text x="88" y="188" textAnchor="middle" className="text-[10px] fill-slate-500 font-bold">{t("Mar")}</text>
 
                     <rect x="140" y="70" width="36" height="100" rx="6" className="fill-emerald-400 hover:fill-emerald-500 transition-all cursor-pointer" />
                     <text x="158" y="64" textAnchor="middle" className="text-[10px] fill-slate-600 font-extrabold">30</text>
-                    <text x="158" y="188" textAnchor="middle" className="text-[10px] fill-slate-500 font-bold">Apr</text>
+                    <text x="158" y="188" textAnchor="middle" className="text-[10px] fill-slate-500 font-bold">{t("Apr")}</text>
 
                     <rect x="210" y="40" width="36" height="130" rx="6" className="fill-[#00a86b] hover:fill-emerald-900 transition-all cursor-pointer" />
                     <text x="228" y="34" textAnchor="middle" className="text-[10px] fill-[#00a86b] font-black">42</text>
-                    <text x="228" y="188" textAnchor="middle" className="text-[10px] fill-slate-500 font-bold">May</text>
+                    <text x="228" y="188" textAnchor="middle" className="text-[10px] fill-slate-500 font-bold">{t("May")}</text>
 
                     <rect x="280" y="85" width="36" height="85" rx="6" className="fill-emerald-300 hover:fill-emerald-400 transition-all cursor-pointer" />
                     <text x="298" y="79" textAnchor="middle" className="text-[10px] fill-slate-600 font-extrabold">24</text>
-                    <text x="298" y="188" textAnchor="middle" className="text-[10px] fill-slate-500 font-bold">Jun</text>
+                    <text x="298" y="188" textAnchor="middle" className="text-[10px] fill-slate-500 font-bold">{t("Jun")}</text>
 
                     <rect x="350" y="55" width="36" height="115" rx="6" className="fill-emerald-600 hover:fill-emerald-700 transition-all cursor-pointer" />
                     <text x="368" y="49" textAnchor="middle" className="text-[10px] fill-slate-600 font-extrabold">36</text>
-                    <text x="368" y="188" textAnchor="middle" className="text-[10px] fill-slate-500 font-bold">Jul</text>
+                    <text x="368" y="188" textAnchor="middle" className="text-[10px] fill-slate-500 font-bold">{t("Jul")}</text>
 
                     <rect x="420" y="30" width="36" height="140" rx="6" className="fill-[#00a86b] hover:fill-emerald-900 transition-all cursor-pointer" />
                     <text x="438" y="24" textAnchor="middle" className="text-[10px] fill-[#00a86b] font-black">48</text>
-                    <text x="438" y="188" textAnchor="middle" className="text-[10px] fill-slate-500 font-bold">Aug</text>
+                    <text x="438" y="188" textAnchor="middle" className="text-[10px] fill-slate-500 font-bold">{t("Aug")}</text>
                   </svg>
                 </div>
               </div>
 
               <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4 flex flex-col justify-between">
                 <div className="pb-3 border-b border-slate-100">
-                  <h3 className="text-base font-black text-slate-900">Center Capacity Dashboard</h3>
-                  <p className="text-xs text-slate-500 font-medium">Real-time availability across A, B &amp; C Collection Centers</p>
+                  <h3 className="text-base font-black text-slate-900">{t("Center Capacity Dashboard")}</h3>
+                  <p className="text-xs text-slate-500 font-medium">{t("Real-time availability across A, B & C Collection Centers")}</p>
                 </div>
 
                 <div className="space-y-4 my-auto py-1">
                   {/* A CENTER */}
                   <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200/80 space-y-1.5">
                     <div className="flex items-center justify-between text-xs font-bold">
-                      <span className="text-emerald-900 font-black">A CENTER (Priority)</span>
+                      <span className="text-emerald-900 font-black">{t("A CENTER (Priority)")}</span>
                       <span className="px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300">
-                        {centerCapacities.A.status} ({centerCapacities.A.fillPercentage}% Full)
-                      </span>
+                        {centerCapacities.A.status} ({centerCapacities.A.fillPercentage}{t("% Full)")}</span>
                     </div>
                     <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
                       <div className="h-full bg-emerald-600 rounded-full transition-all duration-500" style={{ width: `${centerCapacities.A.fillPercentage}%` }} />
                     </div>
                     <div className="flex justify-between text-[11px] text-slate-500 font-semibold pt-0.5">
-                      <span>Stock: {centerCapacities.A.currentStockKg.toLocaleString()} kg</span>
-                      <span className="text-emerald-700 font-extrabold">Available: {centerCapacities.A.availableKg.toLocaleString()} kg</span>
+                      <span>{t("Stock:")}{centerCapacities.A.currentStockKg.toLocaleString()}{t("kg")}</span>
+                      <span className="text-emerald-700 font-extrabold">{t("Available:")}{centerCapacities.A.availableKg.toLocaleString()}{t("kg")}</span>
                     </div>
                   </div>
 
                   {/* B CENTER */}
                   <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200/80 space-y-1.5">
                     <div className="flex items-center justify-between text-xs font-bold">
-                      <span className="text-amber-900 font-black">B CENTER (Secondary)</span>
+                      <span className="text-amber-900 font-black">{t("B CENTER (Secondary)")}</span>
                       <span className="px-2 py-0.5 rounded-md text-[10px] font-black bg-amber-100 text-amber-800 border border-amber-300">
-                        {centerCapacities.B.status} ({centerCapacities.B.fillPercentage}% Full)
-                      </span>
+                        {centerCapacities.B.status} ({centerCapacities.B.fillPercentage}{t("% Full)")}</span>
                     </div>
                     <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
                       <div className="h-full bg-amber-500 rounded-full transition-all duration-500" style={{ width: `${centerCapacities.B.fillPercentage}%` }} />
                     </div>
                     <div className="flex justify-between text-[11px] text-slate-500 font-semibold pt-0.5">
-                      <span>Stock: {centerCapacities.B.currentStockKg.toLocaleString()} kg</span>
-                      <span className="text-amber-700 font-extrabold">Available: {centerCapacities.B.availableKg.toLocaleString()} kg</span>
+                      <span>{t("Stock:")}{centerCapacities.B.currentStockKg.toLocaleString()}{t("kg")}</span>
+                      <span className="text-amber-700 font-extrabold">{t("Available:")}{centerCapacities.B.availableKg.toLocaleString()}{t("kg")}</span>
                     </div>
                   </div>
 
                   {/* C CENTER */}
                   <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200/80 space-y-1.5">
                     <div className="flex items-center justify-between text-xs font-bold">
-                      <span className="text-red-900 font-black">C CENTER (Overflow)</span>
+                      <span className="text-red-900 font-black">{t("C CENTER (Overflow)")}</span>
                       <span className="px-2 py-0.5 rounded-md text-[10px] font-black bg-red-100 text-red-800 border border-red-300">
-                        {centerCapacities.C.status} ({centerCapacities.C.fillPercentage}% Full)
-                      </span>
+                        {centerCapacities.C.status} ({centerCapacities.C.fillPercentage}{t("% Full)")}</span>
                     </div>
                     <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
                       <div className="h-full bg-red-500 rounded-full transition-all duration-500" style={{ width: `${centerCapacities.C.fillPercentage}%` }} />
                     </div>
                     <div className="flex justify-between text-[11px] text-slate-500 font-semibold pt-0.5">
-                      <span>Stock: {centerCapacities.C.currentStockKg.toLocaleString()} kg</span>
-                      <span className="text-red-700 font-extrabold">Available: {centerCapacities.C.availableKg.toLocaleString()} kg</span>
+                      <span>{t("Stock:")}{centerCapacities.C.currentStockKg.toLocaleString()}{t("kg")}</span>
+                      <span className="text-red-700 font-extrabold">{t("Available:")}{centerCapacities.C.availableKg.toLocaleString()}{t("kg")}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-600">
-                  <span>Priority Sequence:</span>
-                  <span className="text-[#00a86b] font-extrabold">A CENTER → B CENTER → C CENTER</span>
+                  <span>{t("Priority Sequence:")}</span>
+                  <span className="text-[#00a86b] font-extrabold">{t("A CENTER → B CENTER → C CENTER")}</span>
                 </div>
               </div>
 
@@ -1399,17 +1419,13 @@ export const VolunteerDashboard = () => {
                 <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div className="space-y-1">
                     <div className="flex items-center space-x-2">
-                      <span className="text-[10px] font-black text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                        FARMERS DIRECTORY
-                      </span>
+                      <span className="text-[10px] font-black text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full uppercase tracking-wider">{t("FARMERS DIRECTORY")}</span>
                       <span className="text-xs text-slate-400 font-semibold">• {volunteerMandal}, {volunteerDistrict}</span>
                     </div>
-                    <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
-                      Registered Farmers Directory
-                    </h1>
-                    <p className="text-xs text-slate-500 font-medium max-w-2xl">
-                      View all registered farmers. Click <strong>&quot;View Dashboard&quot;</strong> for any farmer to open their dedicated dashboard containing registration details, center proposals, and live crop tracking.
-                    </p>
+                    <h1 className="text-2xl sm:text-3xl font-black text-slate-900">{t("Registered Farmers Directory")}</h1>
+                    <p className="text-xs text-slate-500 font-medium max-w-2xl">{t("View all registered farmers. Click")}<strong>{t("\"View Dashboard\"")}</strong>{t(
+                      "for any farmer to open their dedicated dashboard containing registration details, center proposals, and live crop tracking."
+                    )}</p>
                   </div>
 
                   <button
@@ -1417,15 +1433,15 @@ export const VolunteerDashboard = () => {
                     className="flex items-center space-x-1.5 px-5 py-3 rounded-2xl bg-[#00a86b] text-white text-xs font-bold shadow-md hover:bg-[#008f5a] transition-all transform active:scale-98 flex-shrink-0"
                   >
                     <Plus className="w-4.5 h-4.5" />
-                    <span>+ Register New Farmer</span>
+                    <span>{t("+ Register New Farmer")}</span>
                   </button>
                 </div>
 
                 {/* SEARCH, FILTER & SORT CONTROLS */}
                 <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-xs space-y-4">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-sm font-black text-slate-900 uppercase tracking-wider">Search, Filter &amp; Sort Farmers</h2>
-                    <span className="text-xs text-slate-500 font-bold">Showing <strong className="text-[#00a86b]">{sortedFarmers.length}</strong> of {farmers.length} Farmers</span>
+                    <h2 className="text-sm font-black text-slate-900 uppercase tracking-wider">{t("Search, Filter & Sort Farmers")}</h2>
+                    <span className="text-xs text-slate-500 font-bold">{t("Showing")}<strong className="text-[#00a86b]">{sortedFarmers.length}</strong>{t("of")}{farmers.length}{t("Farmers")}</span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs">
@@ -1450,10 +1466,10 @@ export const VolunteerDashboard = () => {
                         onChange={(e) => setFarmerQualityFilter(e.target.value)}
                         className="w-full py-2 px-3 bg-white rounded-xl border border-slate-200 font-bold text-slate-800"
                       >
-                        <option value="ALL">All Categories</option>
-                        <option value="Category A">Category A (&le; 5,000 kg)</option>
-                        <option value="Category B">Category B (5,001 - 10,000 kg)</option>
-                        <option value="Category C">Category C (&gt; 10,000 kg)</option>
+                        <option value="ALL">{t("All Categories")}</option>
+                        <option value="Category A">{t("Category A (≤ 5,000 kg)")}</option>
+                        <option value="Category B">{t("Category B (5,001 - 10,000 kg)")}</option>
+                        <option value="Category C">{t("Category C (> 10,000 kg)")}</option>
                       </select>
                     </div>
 
@@ -1464,11 +1480,11 @@ export const VolunteerDashboard = () => {
                         onChange={(e) => setFarmerStatusFilter(e.target.value)}
                         className="w-full py-2 px-3 bg-white rounded-xl border border-slate-200 font-bold text-slate-800"
                       >
-                        <option value="ALL">All Crop Statuses</option>
-                        <option value="Proposal Sent">Proposal Sent</option>
-                        <option value="Center Accepted">Center Accepted</option>
-                        <option value="Processing">Processing</option>
-                        <option value="Completed">Completed</option>
+                        <option value="ALL">{t("All Crop Statuses")}</option>
+                        <option value="Proposal Sent">{t("Proposal Sent")}</option>
+                        <option value="Center Accepted">{t("Center Accepted")}</option>
+                        <option value="Processing">{t("Processing")}</option>
+                        <option value="Completed">{t("Completed")}</option>
                       </select>
                     </div>
 
@@ -1480,10 +1496,10 @@ export const VolunteerDashboard = () => {
                         onChange={(e) => setFarmerSort(e.target.value)}
                         className="w-full py-2 px-3 bg-white rounded-xl border border-slate-200 font-bold text-slate-800"
                       >
-                        <option value="DATE_DESC">Sort: Newest First</option>
-                        <option value="NAME_ASC">Sort: Farmer Name (A-Z)</option>
-                        <option value="QTY_DESC">Sort: Produced Qty (High-Low)</option>
-                        <option value="AREA_DESC">Sort: Cultivated Area (High-Low)</option>
+                        <option value="DATE_DESC">{t("Sort: Newest First")}</option>
+                        <option value="NAME_ASC">{t("Sort: Farmer Name (A-Z)")}</option>
+                        <option value="QTY_DESC">{t("Sort: Produced Qty (High-Low)")}</option>
+                        <option value="AREA_DESC">{t("Sort: Cultivated Area (High-Low)")}</option>
                       </select>
                     </div>
 
@@ -1496,17 +1512,17 @@ export const VolunteerDashboard = () => {
                     <table className="w-full text-left text-xs">
                       <thead>
                         <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px]">
-                          <th className="py-3.5 px-3 whitespace-nowrap">Farmer ID</th>
-                          <th className="py-3.5 px-3 whitespace-nowrap">Farmer Name</th>
-                          <th className="py-3.5 px-3 whitespace-nowrap">Contact Number</th>
-                          <th className="py-3.5 px-3 whitespace-nowrap">Village / Location</th>
-                          <th className="py-3.5 px-3 whitespace-nowrap">Crop Name</th>
-                          <th className="py-3.5 px-3 whitespace-nowrap">Cultivated Area</th>
-                          <th className="py-3.5 px-3 whitespace-nowrap">Expected Qty</th>
-                          <th className="py-3.5 px-3 whitespace-nowrap">Registration Date</th>
-                          <th className="py-3.5 px-3 whitespace-nowrap">Category</th>
-                          <th className="py-3.5 px-3 whitespace-nowrap">Crop Status</th>
-                          <th className="py-3.5 px-3 text-right whitespace-nowrap">Action</th>
+                          <th className="py-3.5 px-3 whitespace-nowrap">{t("Farmer ID")}</th>
+                          <th className="py-3.5 px-3 whitespace-nowrap">{t("Farmer Name")}</th>
+                          <th className="py-3.5 px-3 whitespace-nowrap">{t("Contact Number")}</th>
+                          <th className="py-3.5 px-3 whitespace-nowrap">{t("Village / Location")}</th>
+                          <th className="py-3.5 px-3 whitespace-nowrap">{t("Crop Name")}</th>
+                          <th className="py-3.5 px-3 whitespace-nowrap">{t("Cultivated Area")}</th>
+                          <th className="py-3.5 px-3 whitespace-nowrap">{t("Expected Qty")}</th>
+                          <th className="py-3.5 px-3 whitespace-nowrap">{t("Registration Date")}</th>
+                          <th className="py-3.5 px-3 whitespace-nowrap">{t("Category")}</th>
+                          <th className="py-3.5 px-3 whitespace-nowrap">{t("Crop Status")}</th>
+                          <th className="py-3.5 px-3 text-right whitespace-nowrap">{t("Action")}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 font-semibold text-slate-800">
@@ -1515,7 +1531,7 @@ export const VolunteerDashboard = () => {
 
                             <td className="py-4 px-3 font-mono font-black text-[#00a86b] whitespace-nowrap">{farmer.id}</td>
                             <td className="py-4 px-3 font-black text-slate-900 text-sm whitespace-nowrap">{farmer.name}</td>
-                            <td className="py-4 px-3 text-slate-600 font-bold whitespace-nowrap">+91 {farmer.mobile}</td>
+                            <td className="py-4 px-3 text-slate-600 font-bold whitespace-nowrap">{t("+91")}{farmer.mobile}</td>
 
                             <td className="py-4 px-3">
                               <span className="font-bold text-slate-900 block whitespace-nowrap">{farmer.village}</span>
@@ -1526,8 +1542,7 @@ export const VolunteerDashboard = () => {
                             <td className="py-4 px-3 text-emerald-800 font-bold whitespace-nowrap">{farmer.cultivatedArea}</td>
 
                             <td className="py-4 px-3 font-black text-slate-900 whitespace-nowrap">
-                              {farmer.productionQuantity.toLocaleString()} kg
-                            </td>
+                              {farmer.productionQuantity.toLocaleString()}{t("kg")}</td>
 
                             <td className="py-4 px-3 text-slate-500 whitespace-nowrap">{farmer.submissionDate}</td>
 
@@ -1562,7 +1577,7 @@ export const VolunteerDashboard = () => {
                                 className="px-3.5 py-2 rounded-xl bg-[#00a86b] text-white font-bold text-xs hover:bg-[#008f5a] transition-all inline-flex items-center space-x-1.5 shadow-xs transform active:scale-98"
                               >
                                 <Eye className="w-3.5 h-3.5 text-emerald-200" />
-                                <span>View Dashboard →</span>
+                                <span>{t("View Dashboard →")}</span>
                               </button>
                             </td>
 
@@ -1574,7 +1589,7 @@ export const VolunteerDashboard = () => {
                     {sortedFarmers.length === 0 && (
                       <div className="py-12 text-center space-y-2">
                         <User className="w-8 h-8 text-slate-300 mx-auto" />
-                        <p className="text-xs font-bold text-slate-500">No farmers found matching your search or filter criteria.</p>
+                        <p className="text-xs font-bold text-slate-500">{t("No farmers found matching your search or filter criteria.")}</p>
                       </div>
                     )}
                   </div>
@@ -1595,13 +1610,12 @@ export const VolunteerDashboard = () => {
                     className="flex items-center space-x-2 text-xs font-bold text-[#00a86b] hover:bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-200 transition-all w-fit"
                   >
                     <ArrowLeft className="w-4 h-4" />
-                    <span>← Back to Registered Farmers Directory</span>
+                    <span>{t("← Back to Registered Farmers Directory")}</span>
                   </button>
 
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs font-bold text-slate-500">INDIVIDUAL FARMER DASHBOARD</span>
-                    <span className="text-[10px] font-black text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full uppercase border border-emerald-200">
-                      ID: {selectedFarmerForDashboard.id}
+                    <span className="text-xs font-bold text-slate-500">{t("INDIVIDUAL FARMER DASHBOARD")}</span>
+                    <span className="text-[10px] font-black text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full uppercase border border-emerald-200">{t("ID:")}{selectedFarmerForDashboard.id}
                     </span>
                   </div>
                 </div>
@@ -1613,18 +1627,18 @@ export const VolunteerDashboard = () => {
                   {editFarmerForm && (
                     <div className="space-y-8">
                       <div className="pb-3 border-b border-slate-100">
-                        <h3 className="text-lg font-black text-slate-900">Farmer Registration Form Information</h3>
-                        <p className="text-xs text-slate-500 font-medium">View and update registration details for {selectedFarmerForDashboard.name}.</p>
+                        <h3 className="text-lg font-black text-slate-900">{t("Farmer Registration Form Information")}</h3>
+                        <p className="text-xs text-slate-500 font-medium">{t("View and update registration details for")}{selectedFarmerForDashboard.name}.</p>
                       </div>
 
                       <form onSubmit={handleUpdateFarmerDetails} className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-semibold">
                         <div>
-                          <label className="block text-slate-700 font-bold mb-1">Farmer ID (Read Only)</label>
+                          <label className="block text-slate-700 font-bold mb-1">{t("Farmer ID (Read Only)")}</label>
                           <input type="text" value={editFarmerForm.id} disabled className="w-full px-3.5 py-2.5 bg-slate-100 rounded-xl border border-slate-200 text-slate-500 font-mono font-bold" />
                         </div>
 
                         <div>
-                          <label className="block text-slate-700 font-bold mb-1">Farmer Full Name *</label>
+                          <label className="block text-slate-700 font-bold mb-1">{t("Farmer Full Name *")}</label>
                           <input
                             type="text"
                             value={editFarmerForm.name}
@@ -1634,7 +1648,7 @@ export const VolunteerDashboard = () => {
                         </div>
 
                         <div>
-                          <label className="block text-slate-700 font-bold mb-1">Contact Phone Number *</label>
+                          <label className="block text-slate-700 font-bold mb-1">{t("Contact Phone Number *")}</label>
                           <input
                             type="tel"
                             maxLength={10}
@@ -1645,7 +1659,7 @@ export const VolunteerDashboard = () => {
                         </div>
 
                         <div>
-                          <label className="block text-slate-700 font-bold mb-1">Email Address</label>
+                          <label className="block text-slate-700 font-bold mb-1">{t("Email Address")}</label>
                           <input
                             type="email"
                             value={editFarmerForm.email}
@@ -1655,7 +1669,7 @@ export const VolunteerDashboard = () => {
                         </div>
 
                         <div>
-                          <label className="block text-slate-700 font-bold mb-1">Village Name</label>
+                          <label className="block text-slate-700 font-bold mb-1">{t("Village Name")}</label>
                           <input
                             type="text"
                             value={editFarmerForm.village}
@@ -1665,7 +1679,7 @@ export const VolunteerDashboard = () => {
                         </div>
 
                         <div>
-                          <label className="block text-slate-700 font-bold mb-1">Gram Panchayat</label>
+                          <label className="block text-slate-700 font-bold mb-1">{t("Gram Panchayat")}</label>
                           <input
                             type="text"
                             value={editFarmerForm.panchayat || ''}
@@ -1675,7 +1689,7 @@ export const VolunteerDashboard = () => {
                         </div>
 
                         <div>
-                          <label className="block text-slate-700 font-bold mb-1">Mandal / Tehsil</label>
+                          <label className="block text-slate-700 font-bold mb-1">{t("Mandal / Tehsil")}</label>
                           <input
                             type="text"
                             value={editFarmerForm.mandal || ''}
@@ -1685,7 +1699,7 @@ export const VolunteerDashboard = () => {
                         </div>
 
                         <div>
-                          <label className="block text-slate-700 font-bold mb-1">Crop Variety</label>
+                          <label className="block text-slate-700 font-bold mb-1">{t("Crop Variety")}</label>
                           <input
                             type="text"
                             value={editFarmerForm.cropType || ''}
@@ -1695,7 +1709,7 @@ export const VolunteerDashboard = () => {
                         </div>
 
                         <div>
-                          <label className="block text-slate-700 font-bold mb-1">Cultivated Landholding Area</label>
+                          <label className="block text-slate-700 font-bold mb-1">{t("Cultivated Landholding Area")}</label>
                           <input
                             type="text"
                             value={editFarmerForm.cultivatedArea || ''}
@@ -1705,7 +1719,7 @@ export const VolunteerDashboard = () => {
                         </div>
 
                         <div>
-                          <label className="block text-slate-700 font-bold mb-1">Produced Crop Quantity (Kg)</label>
+                          <label className="block text-slate-700 font-bold mb-1">{t("Produced Crop Quantity (Kg)")}</label>
                           <input
                             type="number"
                             value={editFarmerForm.productionQuantity ?? ''}
@@ -1715,7 +1729,7 @@ export const VolunteerDashboard = () => {
                         </div>
 
                         <div>
-                          <label className="block text-slate-700 font-bold mb-1">Offered Price per Kg (₹) *</label>
+                          <label className="block text-slate-700 font-bold mb-1">{t("Offered Price per Kg (₹) *")}</label>
                           <input
                             type="number"
                             min="1"
@@ -1727,12 +1741,10 @@ export const VolunteerDashboard = () => {
                         </div>
 
                         <div className="md:col-span-2">
-                          <label className="block text-slate-700 font-bold mb-1">Total Calculated Crop Price (₹)</label>
+                          <label className="block text-slate-700 font-bold mb-1">{t("Total Calculated Crop Price (₹)")}</label>
                           <div className="w-full px-3.5 py-2.5 bg-emerald-50 rounded-xl border border-emerald-200 text-[#00a86b] font-black text-base flex items-center justify-between shadow-2xs">
                             <span>₹{((Number(editFarmerForm.productionQuantity) || 0) * (Number(editFarmerForm.pricePerKg) || 24)).toLocaleString('en-IN')}</span>
-                            <span className="text-[10px] text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full font-extrabold uppercase tracking-wider">
-                              Auto Calculated (Qty × Rate)
-                            </span>
+                            <span className="text-[10px] text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full font-extrabold uppercase tracking-wider">{t("Auto Calculated (Qty × Rate)")}</span>
                           </div>
                         </div>
 
@@ -1742,7 +1754,7 @@ export const VolunteerDashboard = () => {
                             className="px-6 py-3 rounded-2xl bg-[#00a86b] text-white font-black text-xs shadow-md hover:bg-[#008f5a] active:scale-95 transition-all flex items-center justify-center space-x-2 cursor-pointer"
                           >
                             <Send className="w-4 h-4" />
-                            <span>Send Registration Info</span>
+                            <span>{t("Send Registration Info")}</span>
                           </button>
                         </div>
                       </form>
@@ -1750,10 +1762,10 @@ export const VolunteerDashboard = () => {
                       {/* INTEGRATED CENTER PROPOSAL ALLOCATION SECTION */}
                       <div className="pt-6 border-t border-slate-100 space-y-4">
                         <div className="pb-2 border-b border-slate-100">
-                          <h4 className="text-base font-black text-slate-900">Center Proposal Allocation</h4>
-                          <p className="text-xs text-slate-500 font-medium">
-                            Based on crop expected quantity category, proposals are automatically dispatched to the corresponding Center In-Charge (Category A → A-Center, Category B → B-Center, Category C → C-Center).
-                          </p>
+                          <h4 className="text-base font-black text-slate-900">{t("Center Proposal Allocation")}</h4>
+                          <p className="text-xs text-slate-500 font-medium">{t(
+                            "Based on crop expected quantity category, proposals are automatically dispatched to the corresponding Center In-Charge (Category A → A-Center, Category B → B-Center, Category C → C-Center)."
+                          )}</p>
                         </div>
 
                         {(() => {
@@ -1768,16 +1780,13 @@ export const VolunteerDashboard = () => {
                                 <div>
                                   <div className="flex items-center space-x-2">
                                     <span className="text-xs font-mono font-black text-[#00a86b]">{farmerProp.id}</span>
-                                    <span className="text-xs text-slate-400">• Date: {farmerProp.submissionDate}</span>
+                                    <span className="text-xs text-slate-400">{t("• Date:")}{farmerProp.submissionDate}</span>
                                   </div>
-                                  <h4 className="text-base font-extrabold text-slate-900 mt-0.5">
-                                    Proposal for {farmerProp.cropName} ({farmerProp.quantity.toLocaleString()} kg)
-                                  </h4>
+                                  <h4 className="text-base font-extrabold text-slate-900 mt-0.5">{t("Proposal for")}{farmerProp.cropName} ({farmerProp.quantity.toLocaleString()}{t("kg)")}</h4>
                                 </div>
 
                                 <div className="flex items-center space-x-3">
-                                  <span className={`text-xs font-extrabold px-3.5 py-1 rounded-full border ${isAccepted ? 'bg-emerald-100 text-[#00a86b] border-emerald-300' : 'bg-amber-100 text-amber-900 border-amber-300'}`}>
-                                    ● Proposal Status: {farmerProp.status.toUpperCase()}
+                                  <span className={`text-xs font-extrabold px-3.5 py-1 rounded-full border ${isAccepted ? 'bg-emerald-100 text-[#00a86b] border-emerald-300' : 'bg-amber-100 text-amber-900 border-amber-300'}`}>{t("● Proposal Status:")}{farmerProp.status.toUpperCase()}
                                   </span>
 
                                   {farmerProp.status === 'Pending' && (
@@ -1786,7 +1795,7 @@ export const VolunteerDashboard = () => {
                                       className="px-4 py-2 rounded-xl bg-[#00a86b] text-white font-bold text-xs shadow-xs hover:bg-[#008f5a] flex items-center space-x-1"
                                     >
                                       <CheckCircle className="w-4 h-4 text-emerald-200" />
-                                      <span>Simulate Center In-Charge Acceptance</span>
+                                      <span>{t("Simulate Center In-Charge Acceptance")}</span>
                                     </button>
                                   )}
                                 </div>
@@ -1794,13 +1803,13 @@ export const VolunteerDashboard = () => {
 
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
                                 <div className="space-y-2.5 bg-slate-50 p-4 rounded-2xl border border-slate-200 font-semibold">
-                                  <h5 className="font-extrabold text-slate-900 text-sm border-b border-slate-200 pb-1">Proposal Harvest Details</h5>
-                                  <div className="flex justify-between"><span className="text-slate-500">Farmer Name:</span><span className="font-bold text-slate-900">{farmerProp.farmerName}</span></div>
-                                  <div className="flex justify-between"><span className="text-slate-500">Harvest Quantity:</span><span className="font-bold text-slate-900">{farmerProp.quantity.toLocaleString()} kg</span></div>
-                                  <div className="flex justify-between"><span className="text-slate-500">Category Allocation:</span><span className="font-bold text-emerald-800">{getCategoryFromQuantity(farmerProp.quantity)}</span></div>
-                                  <div className="flex justify-between"><span className="text-slate-500">Price Rate per Kg:</span><span className="font-bold text-slate-900">₹{(farmerProp.pricePerKg || selectedFarmerForDashboard?.pricePerKg || 24).toFixed(2)} / kg</span></div>
+                                  <h5 className="font-extrabold text-slate-900 text-sm border-b border-slate-200 pb-1">{t("Proposal Harvest Details")}</h5>
+                                  <div className="flex justify-between"><span className="text-slate-500">{t("Farmer Name:")}</span><span className="font-bold text-slate-900">{farmerProp.farmerName}</span></div>
+                                  <div className="flex justify-between"><span className="text-slate-500">{t("Harvest Quantity:")}</span><span className="font-bold text-slate-900">{farmerProp.quantity.toLocaleString()}{t("kg")}</span></div>
+                                  <div className="flex justify-between"><span className="text-slate-500">{t("Category Allocation:")}</span><span className="font-bold text-emerald-800">{getCategoryFromQuantity(farmerProp.quantity)}</span></div>
+                                  <div className="flex justify-between"><span className="text-slate-500">{t("Price Rate per Kg:")}</span><span className="font-bold text-slate-900">₹{(farmerProp.pricePerKg || selectedFarmerForDashboard?.pricePerKg || 24).toFixed(2)}{t("/ kg")}</span></div>
                                   <div className="flex justify-between text-emerald-800 pt-1.5 border-t border-slate-200 font-black">
-                                    <span className="text-slate-800 font-extrabold">Total Crop Price / Payout:</span>
+                                    <span className="text-slate-800 font-extrabold">{t("Total Crop Price / Payout:")}</span>
                                     <span className="text-sm font-black text-[#00a86b]">₹{((farmerProp.quantity || 0) * (farmerProp.pricePerKg || selectedFarmerForDashboard?.pricePerKg || 24)).toLocaleString('en-IN')}</span>
                                   </div>
                                   <div className="pt-2 text-[11px] text-slate-600 font-medium italic border-t border-slate-200">&quot;{farmerProp.aiAnalysis}&quot;</div>
@@ -1809,20 +1818,17 @@ export const VolunteerDashboard = () => {
                                 <div className={`p-4.5 rounded-2xl border space-y-3 ${isAccepted ? 'bg-[#00a86b] text-white border-emerald-900' : 'bg-slate-50 border-slate-200'}`}>
                                   <div className="flex items-center justify-between border-b border-white/20 pb-1.5">
                                     <h5 className={`font-black text-sm ${isAccepted ? 'text-emerald-200' : 'text-slate-900'}`}>
-                                      {getCategoryFromQuantity(farmerProp.quantity)} Designated Collection Center
-                                    </h5>
+                                      {getCategoryFromQuantity(farmerProp.quantity)}{t("Designated Collection Center")}</h5>
                                     {isAccepted && (
-                                      <span className="text-[9px] font-black bg-white text-[#00a86b] px-2.5 py-0.5 rounded-full">
-                                        ACCEPTED &amp; UNLOCKED ✓
-                                      </span>
+                                      <span className="text-[9px] font-black bg-white text-[#00a86b] px-2.5 py-0.5 rounded-full">{t("ACCEPTED & UNLOCKED ✓")}</span>
                                     )}
                                   </div>
 
                                   <div className="space-y-1.5 text-xs font-semibold">
                                     <span className={`font-black text-sm block ${isAccepted ? 'text-white' : 'text-slate-900'}`}>{center.name}</span>
-                                    <div className="flex justify-between"><span className={isAccepted ? 'text-emerald-200' : 'text-slate-500'}>Center In-Charge Name:</span><strong className={isAccepted ? 'text-white' : 'text-slate-900'}>{center.inChargeName} ({center.role})</strong></div>
-                                    <div className="flex justify-between"><span className={isAccepted ? 'text-emerald-200' : 'text-slate-500'}>Contact Information:</span><strong className={isAccepted ? 'text-white' : 'text-slate-900'}>+91 {center.mobile} | {center.email}</strong></div>
-                                    <div className="flex justify-between"><span className={isAccepted ? 'text-emerald-200' : 'text-slate-500'}>Center Physical Location:</span><strong className={isAccepted ? 'text-white' : 'text-slate-900'}>{center.location}</strong></div>
+                                    <div className="flex justify-between"><span className={isAccepted ? 'text-emerald-200' : 'text-slate-500'}>{t("Center In-Charge Name:")}</span><strong className={isAccepted ? 'text-white' : 'text-slate-900'}>{center.inChargeName} ({center.role})</strong></div>
+                                    <div className="flex justify-between"><span className={isAccepted ? 'text-emerald-200' : 'text-slate-500'}>{t("Contact Information:")}</span><strong className={isAccepted ? 'text-white' : 'text-slate-900'}>{t("+91")}{center.mobile} | {center.email}</strong></div>
+                                    <div className="flex justify-between"><span className={isAccepted ? 'text-emerald-200' : 'text-slate-500'}>{t("Center Physical Location:")}</span><strong className={isAccepted ? 'text-white' : 'text-slate-900'}>{center.location}</strong></div>
                                   </div>
 
                                   {isAccepted && (
@@ -1852,13 +1858,11 @@ export const VolunteerDashboard = () => {
                             onClick={() => setShowTrackingTimeline(false)}
                             className="px-3.5 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold text-xs transition-colors flex items-center space-x-1 border border-slate-200"
                           >
-                            <span>Hide Timeline ↑</span>
+                            <span>{t("Hide Timeline ↑")}</span>
                           </button>
                           <div>
-                            <h3 className="text-lg font-black text-slate-900">Individual Crop Tracking System</h3>
-                            <p className="text-xs text-slate-500 font-medium">
-                              Real-time 8-stage tracking timeline specifically for <strong>{selectedFarmerForDashboard.name}&apos;s</strong> crop harvest.
-                            </p>
+                            <h3 className="text-lg font-black text-slate-900">{t("Individual Crop Tracking System")}</h3>
+                            <p className="text-xs text-slate-500 font-medium">{t("Real-time 8-stage tracking timeline specifically for")}<strong>{selectedFarmerForDashboard.name}{t("'s")}</strong>{t("crop harvest.")}</p>
                           </div>
                         </div>
 
@@ -1867,7 +1871,7 @@ export const VolunteerDashboard = () => {
                           className="px-4 py-2 rounded-xl bg-[#00a86b] text-white font-bold text-xs hover:bg-[#008f5a] transition-all flex items-center space-x-1.5 shadow-xs"
                         >
                           <RefreshCw className="w-3.5 h-3.5 text-emerald-300" />
-                          <span>Advance Stage →</span>
+                          <span>{t("Advance Stage →")}</span>
                         </button>
                       </div>
 
@@ -1879,33 +1883,30 @@ export const VolunteerDashboard = () => {
 
                             <div className="bg-gradient-to-r from-slate-900 to-[#00a86b] text-white p-6 rounded-3xl space-y-3 shadow-md">
                               <div className="flex justify-between items-center">
-                                <span className="text-[10px] font-black bg-emerald-400 text-slate-950 px-2.5 py-0.5 rounded-full uppercase">
-                                  TRACKING ID: {trk.id}
+                                <span className="text-[10px] font-black bg-emerald-400 text-slate-950 px-2.5 py-0.5 rounded-full uppercase">{t("TRACKING ID:")}{trk.id}
                                 </span>
-                                <span className={`text-[10px] font-black px-3 py-0.5 rounded-full border ${getCategoryBadge(trk.qualityCategory)}`}>
-                                  Category {trk.qualityCategory} Quality
-                                </span>
+                                <span className={`text-[10px] font-black px-3 py-0.5 rounded-full border ${getCategoryBadge(trk.qualityCategory)}`}>{t("Category")}{trk.qualityCategory}{t("Quality")}</span>
                               </div>
 
                               <div>
                                 <h4 className="text-xl font-black text-white">{trk.cropName} ({trk.quantity})</h4>
-                                <p className="text-xs text-emerald-200 font-medium">Assigned Center: <strong>{trk.centerName}</strong> (In-Charge: {trk.inChargeName})</p>
+                                <p className="text-xs text-emerald-200 font-medium">{t("Assigned Center:")}<strong>{trk.centerName}</strong>{t("(In-Charge:")}{trk.inChargeName})</p>
                               </div>
 
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-emerald-800 text-xs">
                                 <div className="bg-emerald-950/70 p-3 rounded-2xl">
-                                  <span className="text-[10px] text-emerald-300 font-bold block uppercase">Current Location</span>
+                                  <span className="text-[10px] text-emerald-300 font-bold block uppercase">{t("Current Location")}</span>
                                   <span className="font-extrabold text-white text-sm">{trk.currentLocation}</span>
                                 </div>
                                 <div className="bg-emerald-950/70 p-3 rounded-2xl">
-                                  <span className="text-[10px] text-emerald-300 font-bold block uppercase">Current Status</span>
+                                  <span className="text-[10px] text-emerald-300 font-bold block uppercase">{t("Current Status")}</span>
                                   <span className="font-extrabold text-amber-300 text-sm">{trk.currentStatus}</span>
                                 </div>
                               </div>
                             </div>
 
                             <div className="space-y-4">
-                              <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">Visual 8-Stage Process Timeline</h4>
+                              <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">{t("Visual 8-Stage Process Timeline")}</h4>
 
                               <div className="hidden lg:grid grid-cols-8 gap-2 relative pt-2 pb-6">
                                 <div className="absolute top-7 left-6 right-6 h-1 bg-slate-200 z-0" />
@@ -1962,16 +1963,16 @@ export const VolunteerDashboard = () => {
                             </div>
 
                             <div className="bg-slate-50 rounded-3xl p-5 border border-slate-200 space-y-3">
-                              <h5 className="text-xs font-black text-slate-900 uppercase tracking-wider">Detailed Stage Audit Log</h5>
+                              <h5 className="text-xs font-black text-slate-900 uppercase tracking-wider">{t("Detailed Stage Audit Log")}</h5>
                               <div className="overflow-x-auto">
                                 <table className="w-full text-left text-xs">
                                   <thead>
                                     <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px]">
-                                      <th className="py-2.5">Stage</th>
-                                      <th className="py-2.5">Timestamp</th>
-                                      <th className="py-2.5">Actor / Officer</th>
-                                      <th className="py-2.5">Status</th>
-                                      <th className="py-2.5">Details</th>
+                                      <th className="py-2.5">{t("Stage")}</th>
+                                      <th className="py-2.5">{t("Timestamp")}</th>
+                                      <th className="py-2.5">{t("Actor / Officer")}</th>
+                                      <th className="py-2.5">{t("Status")}</th>
+                                      <th className="py-2.5">{t("Details")}</th>
                                     </tr>
                                   </thead>
                                   <tbody className="divide-y divide-slate-200 font-semibold text-slate-800">
@@ -1997,11 +1998,11 @@ export const VolunteerDashboard = () => {
                             {/* PAYMENT STATUS & RECEIPT SECTION */}
                             <div className="mt-6 bg-slate-50 rounded-3xl p-5 border border-slate-200 space-y-4">
                               <h5 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center justify-between border-b border-slate-200 pb-2">
-                                <span>Payment & Settlement Status</span>
+                                <span>{t("Payment & Settlement Status")}</span>
                                 {trk.currentStageIndex === TRACKING_STAGES.length - 1 ? (
-                                  <span className="bg-emerald-100 text-[#00a86b] px-3 py-1 rounded-full text-[10px] font-black">PAID & SETTLED ✓</span>
+                                  <span className="bg-emerald-100 text-[#00a86b] px-3 py-1 rounded-full text-[10px] font-black">{t("PAID & SETTLED ✓")}</span>
                                 ) : (
-                                  <span className="bg-rose-100 text-rose-700 px-3 py-1 rounded-full text-[10px] font-black">UNPAID / PENDING ⏳</span>
+                                  <span className="bg-rose-100 text-rose-700 px-3 py-1 rounded-full text-[10px] font-black">{t("UNPAID / PENDING ⏳")}</span>
                                 )}
                               </h5>
 
@@ -2009,29 +2010,29 @@ export const VolunteerDashboard = () => {
                                 <div className="space-y-3">
                                   <div className="flex flex-col sm:flex-row gap-4">
                                     <div className="flex-1 bg-white p-4 rounded-2xl border border-emerald-100 shadow-xs">
-                                      <h6 className="text-[10px] text-slate-500 font-bold mb-1">Total Payment Transferred</h6>
+                                      <h6 className="text-[10px] text-slate-500 font-bold mb-1">{t("Total Payment Transferred")}</h6>
                                       <p className="text-xl font-black text-[#00a86b]">₹{trk.totalPrice?.toLocaleString('en-IN') || selectedFarmerForDashboard.totalPrice?.toLocaleString('en-IN') || '---'}</p>
                                     </div>
                                     <div className="flex-1 bg-white p-4 rounded-2xl border border-emerald-100 shadow-xs">
-                                      <h6 className="text-[10px] text-slate-500 font-bold mb-1">Receipt ID & Reference</h6>
-                                      <p className="text-sm font-black text-slate-900 font-mono">TXN-{Math.floor(Math.random() * 9000000000) + 1000000000}</p>
-                                      <p className="text-[10px] text-slate-400 font-semibold mt-0.5">Paid via Direct Benefit Transfer (DBT)</p>
+                                      <h6 className="text-[10px] text-slate-500 font-bold mb-1">{t("Receipt ID & Reference")}</h6>
+                                      <p className="text-sm font-black text-slate-900 font-mono">{t("TXN-")}{Math.floor(Math.random() * 9000000000) + 1000000000}</p>
+                                      <p className="text-[10px] text-slate-400 font-semibold mt-0.5">{t("Paid via Direct Benefit Transfer (DBT)")}</p>
                                     </div>
                                   </div>
-                                  
+
                                   <div className="bg-emerald-50/50 p-3 rounded-xl border border-emerald-100 text-xs text-emerald-800 font-semibold flex items-start space-x-2">
-                                    <span className="mt-0.5">ℹ️</span>
-                                    <span>
-                                      Payment successfully processed based on {trk.quantity} @ ₹{trk.pricePerKg || selectedFarmerForDashboard.pricePerKg || '---'}/kg payout rate. Funds have been deposited to the registered bank account.
-                                    </span>
+                                    <span className="mt-0.5">{t("ℹ️")}</span>
+                                    <span>{t("Payment successfully processed based on")}{trk.quantity}{t("@ ₹")}{trk.pricePerKg || selectedFarmerForDashboard.pricePerKg || '---'}{t(
+                                      "/kg payout rate. Funds have been deposited to the registered bank account."
+                                    )}</span>
                                   </div>
                                 </div>
                               ) : (
                                 <div className="bg-white p-6 rounded-2xl border border-rose-100 shadow-xs text-center space-y-2">
-                                  <p className="text-sm font-extrabold text-slate-900">Payment Pending Stage Completion</p>
-                                  <p className="text-xs text-slate-500 font-medium max-w-md mx-auto">
-                                    Total estimated payout of <span className="font-bold text-slate-900">₹{trk.totalPrice?.toLocaleString('en-IN') || selectedFarmerForDashboard.totalPrice?.toLocaleString('en-IN') || '---'}</span> will be processed automatically via Direct Benefit Transfer (DBT) once all tracking stages (including Quality Checks and Center Receipt) are fully completed.
-                                  </p>
+                                  <p className="text-sm font-extrabold text-slate-900">{t("Payment Pending Stage Completion")}</p>
+                                  <p className="text-xs text-slate-500 font-medium max-w-md mx-auto">{t("Total estimated payout of")}<span className="font-bold text-slate-900">₹{trk.totalPrice?.toLocaleString('en-IN') || selectedFarmerForDashboard.totalPrice?.toLocaleString('en-IN') || '---'}</span>{t(
+                                    "will be processed automatically via Direct Benefit Transfer (DBT) once all tracking stages (including Quality Checks and Center Receipt) are fully completed."
+                                  )}</p>
                                 </div>
                               )}
                             </div>
@@ -2053,10 +2054,10 @@ export const VolunteerDashboard = () => {
                     className="px-6 py-3 rounded-2xl bg-[#00a86b] text-white font-black text-xs shadow-md hover:bg-[#008f5a] transition-all flex items-center space-x-2"
                   >
                     <ArrowLeft className="w-4 h-4 text-white" />
-                    <span>← Back to Registered Farmers Directory</span>
+                    <span>{t("← Back to Registered Farmers Directory")}</span>
                   </button>
 
-                  <span className="text-xs text-slate-400 font-semibold">AgriProcure Platform • Verified Farmer Record #{selectedFarmerForDashboard.id}</span>
+                  <span className="text-xs text-slate-400 font-semibold">{t("AgriProcure Platform • Verified Farmer Record #")}{selectedFarmerForDashboard.id}</span>
                 </div>
 
               </div>
@@ -2073,7 +2074,7 @@ export const VolunteerDashboard = () => {
           <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-5 shadow-2xl border border-slate-100 animate-scale-up">
 
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="text-lg font-black text-slate-900">Register New Farmer</h3>
+              <h3 className="text-lg font-black text-slate-900">{t("Register New Farmer")}</h3>
               <button onClick={() => setShowAddFarmerModal(false)} className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-400">
                 <X className="w-5 h-5" />
               </button>
@@ -2082,7 +2083,7 @@ export const VolunteerDashboard = () => {
             <form onSubmit={handleAddFarmerSubmit} className="space-y-4 text-xs font-semibold">
 
               <div>
-                <label className="block text-slate-700 font-bold mb-1">Farmer Full Name *</label>
+                <label className="block text-slate-700 font-bold mb-1">{t("Farmer Full Name *")}</label>
                 <input
                   type="text"
                   value={newFarmer.name}
@@ -2094,7 +2095,7 @@ export const VolunteerDashboard = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Mobile Contact *</label>
+                  <label className="block text-slate-700 font-bold mb-1">{t("Mobile Contact *")}</label>
                   <input
                     type="tel"
                     maxLength={10}
@@ -2105,7 +2106,7 @@ export const VolunteerDashboard = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Crop Variety</label>
+                  <label className="block text-slate-700 font-bold mb-1">{t("Crop Variety")}</label>
                   <input
                     type="text"
                     value={newFarmer.cropType}
@@ -2118,7 +2119,7 @@ export const VolunteerDashboard = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Village Name</label>
+                  <label className="block text-slate-700 font-bold mb-1">{t("Village Name")}</label>
                   <input
                     type="text"
                     value={newFarmer.village}
@@ -2128,7 +2129,7 @@ export const VolunteerDashboard = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Cultivated Area (Acres)</label>
+                  <label className="block text-slate-700 font-bold mb-1">{t("Cultivated Area (Acres)")}</label>
                   <input
                     type="text"
                     value={newFarmer.cultivatedArea}
@@ -2140,22 +2141,46 @@ export const VolunteerDashboard = () => {
               </div>
 
               <div>
-                <label className="block text-slate-700 font-bold mb-1">Expected / Produced Crop Quantity (Kg)</label>
+                <label className="block text-slate-700 font-bold mb-1">{t("Produced Crop Quantity (Kg)")}</label>
                 <input
                   type="number"
-                  value={newFarmer.productionQuantity}
-                  onChange={(e) => setNewFarmer({ ...newFarmer, productionQuantity: e.target.value })}
-                  placeholder="e.g. 2500"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-slate-900 font-bold"
+                  value={Number(newFarmer.goodCropQuantity || 0) + Number(newFarmer.wasteCropQuantity || 0) || ''}
+                  disabled
+                  placeholder="Total Quantity"
+                  className="w-full px-3.5 py-2.5 bg-slate-100 rounded-xl border border-slate-200 text-slate-500 font-bold cursor-not-allowed"
                 />
+              </div>
+
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                <label className="block text-slate-800 font-black text-xs uppercase tracking-wider mb-2 border-b border-slate-200 pb-2">{t("Crop Type & Waste Management")}</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-700 font-bold mb-1">{t("Good Crop (Kg)")}</label>
+                    <input
+                      type="number"
+                      value={newFarmer.goodCropQuantity}
+                      onChange={(e) => setNewFarmer({ ...newFarmer, goodCropQuantity: e.target.value })}
+                      placeholder="e.g. 2000"
+                      className="w-full px-3 py-2 bg-white rounded-lg border border-emerald-200 text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-700 font-bold mb-1">{t("Waste Crop (Kg)")}</label>
+                    <input
+                      type="number"
+                      value={newFarmer.wasteCropQuantity}
+                      onChange={(e) => setNewFarmer({ ...newFarmer, wasteCropQuantity: e.target.value })}
+                      placeholder="e.g. 500"
+                      className="w-full px-3 py-2 bg-white rounded-lg border border-amber-200 text-slate-900 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    />
+                  </div>
+                </div>
               </div>
 
               <button
                 type="submit"
                 className="w-full py-3.5 rounded-2xl bg-[#00a86b] text-white font-black text-xs shadow-md hover:bg-[#008f5a] transition-all"
-              >
-                Submit &amp; Register Farmer →
-              </button>
+              >{t("Submit & Register Farmer →")}</button>
 
             </form>
           </div>
@@ -2174,8 +2199,8 @@ export const VolunteerDashboard = () => {
                   <CheckCircle2 className="w-5 h-5 text-emerald-700" />
                 </div>
                 <div>
-                  <h3 className="text-base font-black text-slate-900">Smart Center Allocation Result</h3>
-                  <p className="text-xs text-slate-500 font-medium">Automatic real-time capacity routing</p>
+                  <h3 className="text-base font-black text-slate-900">{t("Smart Center Allocation Result")}</h3>
+                  <p className="text-xs text-slate-500 font-medium">{t("Automatic real-time capacity routing")}</p>
                 </div>
               </div>
               <button onClick={() => setAllocationModalData(null)} className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-400">
@@ -2186,60 +2211,85 @@ export const VolunteerDashboard = () => {
             {/* Farmer & Crop Details Summary */}
             <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 space-y-2 text-xs">
               <div className="flex justify-between font-bold">
-                <span className="text-slate-500">Farmer Name:</span>
+                <span className="text-slate-500">{t("Farmer Name:")}</span>
                 <span className="text-slate-900 font-black">{allocationModalData.farmerName}</span>
               </div>
               <div className="flex justify-between font-bold">
-                <span className="text-slate-500">Mobile Contact:</span>
+                <span className="text-slate-500">{t("Mobile Contact:")}</span>
                 <span className="text-slate-900">{allocationModalData.mobile}</span>
               </div>
               <div className="flex justify-between font-bold">
-                <span className="text-slate-500">Crop &amp; Quantity:</span>
-                <span className="text-emerald-800 font-extrabold">{allocationModalData.cropName} ({allocationModalData.qtyKg} kg)</span>
+                <span className="text-slate-500">{t("Crop & Quantity:")}</span>
+                <span className="text-emerald-800 font-extrabold">{allocationModalData.cropName} ({allocationModalData.qtyKg}{t("kg)")}</span>
               </div>
             </div>
 
             {/* System Result Banner */}
-            <div className={`p-4 rounded-2xl border text-xs font-bold space-y-1 ${allocationModalData.allocResult.assignedCategory === 'A'
-              ? 'bg-emerald-50 border-emerald-300 text-emerald-950'
-              : allocationModalData.allocResult.assignedCategory === 'B'
-                ? 'bg-amber-50 border-amber-300 text-amber-950'
-                : allocationModalData.allocResult.assignedCategory === 'C'
-                  ? 'bg-orange-50 border-orange-300 text-orange-950'
-                  : 'bg-red-50 border-red-300 text-red-950'
-              }`}>
-              <div className="flex items-center space-x-2 font-black text-sm">
-                <Sparkles className="w-4 h-4" />
-                <span>System Result: ✓ {allocationModalData.allocResult.statusMessage}</span>
+            {allocationModalData.allocResult && (
+              <div className={`p-4 rounded-2xl border text-xs font-bold space-y-1 ${allocationModalData.allocResult.assignedCategory === 'A'
+                ? 'bg-emerald-50 border-emerald-300 text-emerald-950'
+                : allocationModalData.allocResult.assignedCategory === 'B'
+                  ? 'bg-amber-50 border-amber-300 text-amber-950'
+                  : allocationModalData.allocResult.assignedCategory === 'C'
+                    ? 'bg-orange-50 border-orange-300 text-orange-950'
+                    : 'bg-red-50 border-red-300 text-red-950'
+                }`}>
+                <div className="flex items-center space-x-2 font-black text-sm">
+                  <Sparkles className="w-4 h-4" />
+                  <span>{t("System Result: ✓")}{allocationModalData.allocResult.statusMessage}</span>
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Center Availability Matrix */}
+            {/* Center Availability Matrix & Allocation Details */}
             <div className="space-y-2 text-xs">
-              <span className="font-extrabold text-slate-700 block uppercase tracking-wider text-[11px]">Center Availability Check</span>
+              <span className="font-extrabold text-slate-700 block uppercase tracking-wider text-[11px]">{t("Center Allocation Details")}</span>
 
-              <div className="grid grid-cols-3 gap-2 text-center text-[11px] font-bold">
-                <div className={`p-2.5 rounded-xl border ${allocationModalData.allocResult.assignedCategory === 'A' ? 'bg-emerald-100 border-emerald-400 ring-2 ring-emerald-500/30' : 'bg-slate-50 border-slate-200'}`}>
-                  <span className="block font-black text-slate-900">A Center</span>
-                  <span className="text-[10px] text-slate-500 block">5,000 kg Cap</span>
+              <div className="grid grid-cols-1 gap-2 text-[11px] font-bold mb-3">
+                {allocationModalData.goodQty > 0 && allocationModalData.allocResult && (
+                  <div className={`p-3 rounded-xl border ${allocationModalData.allocResult.assignedCategory === 'A' ? 'bg-emerald-100 border-emerald-400' : allocationModalData.allocResult.assignedCategory === 'B' ? 'bg-amber-100 border-amber-400' : 'bg-orange-100 border-orange-400'}`}>
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="block font-black text-slate-900">{allocationModalData.allocResult.assignedName}{t("(Good Crop)")}</span>
+                      <span className="px-2 py-0.5 rounded text-[9px] bg-white text-slate-800">{allocationModalData.goodQty}{t("kg Assigned")}</span>
+                    </div>
+                    <span className="text-[10px] text-slate-600 block">{t("Status:")}{allocationModalData.allocResult.statusMessage}</span>
+                  </div>
+                )}
+                
+                {allocationModalData.wasteQty > 0 && allocationModalData.wasteResult && (
+                  <div className="p-3 rounded-xl border bg-slate-100 border-slate-300">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="block font-black text-slate-900">{allocationModalData.wasteResult.assignedName}{t("(Waste Crop)")}</span>
+                      <span className="px-2 py-0.5 rounded text-[9px] bg-white text-slate-800">{allocationModalData.wasteQty}{t("kg Assigned")}</span>
+                    </div>
+                    <span className="text-[10px] text-slate-600 block">{t("In-Charge:")}{allocationModalData.wasteResult.inChargeName} | {allocationModalData.wasteResult.contact}</span>
+                    <span className="text-[10px] text-slate-500 block">{t("Location:")}{allocationModalData.wasteResult.location}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 text-center text-[11px] font-bold mt-2">
+                <div className={`p-2.5 rounded-xl border ${allocationModalData.allocResult?.assignedCategory === 'A' ? 'bg-emerald-100 border-emerald-400 ring-2 ring-emerald-500/30' : 'bg-slate-50 border-slate-200'}`}>
+                  <span className="block font-black text-slate-900">{t("A Center")}</span>
+                  <span className="text-[10px] text-slate-500 block">{t("5,000 kg Cap")}</span>
                   <span className={`text-[10px] font-bold block ${centerCapacities.A.status === 'AVAILABLE' ? 'text-emerald-700' : 'text-amber-700'}`}>
-                    {centerCapacities.A.availableKg} kg Avail ({centerCapacities.A.status})
+                    {centerCapacities.A.availableKg}{t("kg Avail (")}{centerCapacities.A.status})
                   </span>
                 </div>
 
-                <div className={`p-2.5 rounded-xl border ${allocationModalData.allocResult.assignedCategory === 'B' ? 'bg-amber-100 border-amber-400 ring-2 ring-amber-500/30' : 'bg-slate-50 border-slate-200'}`}>
-                  <span className="block font-black text-slate-900">B Center</span>
-                  <span className="text-[10px] text-slate-500 block">5,000 kg Cap</span>
+                <div className={`p-2.5 rounded-xl border ${allocationModalData.allocResult?.assignedCategory === 'B' ? 'bg-amber-100 border-amber-400 ring-2 ring-amber-500/30' : 'bg-slate-50 border-slate-200'}`}>
+                  <span className="block font-black text-slate-900">{t("B Center")}</span>
+                  <span className="text-[10px] text-slate-500 block">{t("5,000 kg Cap")}</span>
                   <span className={`text-[10px] font-bold block ${centerCapacities.B.status === 'AVAILABLE' ? 'text-emerald-700' : 'text-amber-700'}`}>
-                    {centerCapacities.B.availableKg} kg Avail ({centerCapacities.B.status})
+                    {centerCapacities.B.availableKg}{t("kg Avail (")}{centerCapacities.B.status})
                   </span>
                 </div>
 
-                <div className={`p-2.5 rounded-xl border ${allocationModalData.allocResult.assignedCategory === 'C' ? 'bg-orange-100 border-orange-400 ring-2 ring-orange-500/30' : 'bg-slate-50 border-slate-200'}`}>
-                  <span className="block font-black text-slate-900">C Center</span>
-                  <span className="text-[10px] text-slate-500 block">5,000 kg Cap</span>
+                <div className={`p-2.5 rounded-xl border ${allocationModalData.allocResult?.assignedCategory === 'C' ? 'bg-orange-100 border-orange-400 ring-2 ring-orange-500/30' : 'bg-slate-50 border-slate-200'}`}>
+                  <span className="block font-black text-slate-900">{t("C Center")}</span>
+                  <span className="text-[10px] text-slate-500 block">{t("5,000 kg Cap")}</span>
                   <span className={`text-[10px] font-bold block ${centerCapacities.C.availableKg > 0 ? 'text-emerald-700' : 'text-red-700'}`}>
-                    {centerCapacities.C.availableKg} kg Avail ({centerCapacities.C.status})
+                    {centerCapacities.C.availableKg}{t("kg Avail (")}{centerCapacities.C.status})
                   </span>
                 </div>
               </div>
@@ -2248,29 +2298,34 @@ export const VolunteerDashboard = () => {
             {/* Generated Notification Box */}
             <div className="bg-emerald-950 text-white rounded-2xl p-4 space-y-2 border border-emerald-800">
               <div className="flex items-center justify-between text-[11px] font-bold text-amber-400 uppercase tracking-wider">
-                <span>💬 Automated Farmer &amp; Mitra SMS Notification</span>
-                <span className="bg-amber-400/20 text-amber-300 px-2 py-0.5 rounded-md text-[9px]">DISPATCHED</span>
+                <span>{t("💬 Automated Farmer & Mitra SMS Notification")}</span>
+                <span className="bg-amber-400/20 text-amber-300 px-2 py-0.5 rounded-md text-[9px]">{t("DISPATCHED")}</span>
               </div>
-              <p className="text-xs font-semibold text-emerald-100 whitespace-pre-line leading-relaxed italic bg-emerald-900/60 p-3 rounded-xl border border-emerald-800">
-                "{allocationModalData.allocResult.notificationText}"
-              </p>
+              {allocationModalData.allocResult && (
+                <p className="text-xs font-semibold text-emerald-100 whitespace-pre-line leading-relaxed italic bg-emerald-900/60 p-3 rounded-xl border border-emerald-800">
+                  "{allocationModalData.allocResult.notificationText}"
+                </p>
+              )}
+              {allocationModalData.wasteResult && (
+                <p className="text-xs font-semibold text-emerald-100 whitespace-pre-line leading-relaxed italic bg-emerald-900/60 p-3 rounded-xl border border-emerald-800 mt-2">
+                  "{allocationModalData.wasteResult.notificationText}"
+                </p>
+              )}
             </div>
 
             <button
               onClick={() => setAllocationModalData(null)}
               className="w-full py-3.5 rounded-2xl bg-[#00a86b] text-white font-black text-xs shadow-md hover:bg-[#008f5a] transition-all"
-            >
-              Acknowledge &amp; Complete Registration ✓
-            </button>
+            >{t("Acknowledge & Complete Registration ✓")}</button>
 
           </div>
         </div>
       )}
 
       {/* FOOTER */}
-      <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
-        © 2026 Smart Agricultural Crop Category &amp; Center Management System • Authorized Volunteer Portal
-      </footer>
+      <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">{t(
+        "© 2026 Smart Agricultural Crop Category & Center Management System • Authorized Volunteer Portal"
+      )}</footer>
 
     </div>
   );

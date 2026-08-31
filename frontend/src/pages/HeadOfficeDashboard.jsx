@@ -39,9 +39,11 @@ import {
   Layers,
   ArrowUpRight,
   UserCheck,
+  ShieldAlert,
   Briefcase
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { useTranslation } from 'react-i18next';
 
 // ==========================================
 // MOCK DATA FOR HEAD OFFICE STAKEHOLDERS
@@ -105,10 +107,10 @@ const VOLUNTEERS_DATA = [
 ];
 
 const CENTERS_DATA = [
-  { id: 'CENTER-A', name: 'A Center (Priority Collection Center)', officer: 'Dr. Vikram Sharma', state: 'Haryana', district: 'Sonipat', capacityKg: 5000, currentStockKg: 3800, availableKg: 1200, status: 'AVAILABLE (76% Full)', category: 'Priority' },
-  { id: 'CENTER-B', name: 'B Center (Secondary Collection Center)', officer: 'Er. Rajesh Verma', state: 'Haryana', district: 'Sonipat', capacityKg: 5000, currentStockKg: 4700, availableKg: 300, status: 'LIMITED (94% Full)', category: 'Secondary' },
-  { id: 'CENTER-C', name: 'C Center (Overflow Collection Center)', officer: 'Mrs. Sunita Patel', state: 'Haryana', district: 'Sonipat', capacityKg: 5000, currentStockKg: 5000, availableKg: 0, status: 'FULL (100% Full)', category: 'Overflow' },
-  { id: 'CENTER-18', name: 'Ludhiana Central Procurement Hub #18', officer: 'Sardar Balwinder Singh', state: 'Punjab', district: 'Ludhiana', capacityKg: 80000, currentStockKg: 58400, availableKg: 21600, status: 'Operating Online', category: 'Priority' }
+  { id: 'CENTER-A', name: 'A Center (Priority Collection Center)', officer: 'Dr. Vikram Sharma', state: 'Haryana', district: 'Sonipat', capacityKg: 5000, currentStockKg: 3800, availableKg: 1200, status: 'AVAILABLE (76% Full)', category: 'Priority', cropsHandled: 'Wheat & Mustard', activeVolunteers: 12 },
+  { id: 'CENTER-B', name: 'B Center (Secondary Collection Center)', officer: 'Er. Rajesh Verma', state: 'Haryana', district: 'Sonipat', capacityKg: 5000, currentStockKg: 4700, availableKg: 300, status: 'LIMITED (94% Full)', category: 'Secondary', cropsHandled: 'Paddy Basmati', activeVolunteers: 8 },
+  { id: 'CENTER-C', name: 'C Center (Overflow Collection Center)', officer: 'Mrs. Sunita Patel', state: 'Haryana', district: 'Sonipat', capacityKg: 5000, currentStockKg: 5000, availableKg: 0, status: 'FULL (100% Full)', category: 'Overflow', cropsHandled: 'Mustard Sarson', activeVolunteers: 5 },
+  { id: 'CENTER-18', name: 'Ludhiana Central Procurement Hub #18', officer: 'Sardar Balwinder Singh', state: 'Punjab', district: 'Ludhiana', capacityKg: 80000, currentStockKg: 58400, availableKg: 21600, status: 'Operating Online', category: 'Priority', cropsHandled: 'Sharbati Wheat & Paddy', activeVolunteers: 18 }
 ];
 
 const CROP_RATIO_DATA = [
@@ -126,7 +128,8 @@ const DISTRICT_PERFORMANCE = [
 ];
 
 export const HeadOfficeDashboard = () => {
-  const { userSession, navigateTo, showToast } = useApp();
+  const { userSession, showToast, navigateTo } = useApp();
+  const { t } = useTranslation();
 
   const officialName = userSession?.name || 'Director S. K. Roy';
   const officialRole = 'State Head Office Director';
@@ -186,12 +189,14 @@ export const HeadOfficeDashboard = () => {
             <div className="w-8.5 h-8.5 rounded-full bg-white text-[#00a86b] flex items-center justify-center font-bold shadow-xs">
               <Globe className="w-5 h-5" />
             </div>
-            <div>
-              <span className="text-sm font-black text-white block leading-none tracking-tight">Head Office Command Center</span>
-              <span className="text-[9px] text-emerald-200 uppercase tracking-widest font-bold mt-0.5 block">
-                {stateJurisdiction}
-              </span>
-            </div>
+              <div className="flex flex-col">
+                <span className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                  {t('Head Office Dashboard')}
+                </span>
+                <span className="text-[9px] text-emerald-200 uppercase tracking-widest font-bold mt-0.5 block">
+                  {stateJurisdiction}
+                </span>
+              </div>
           </div>
 
           {/* MAIN TABS SWITCHER */}
@@ -227,7 +232,7 @@ export const HeadOfficeDashboard = () => {
               className="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-[#008f5a] hover:bg-[#007d4f] text-white text-xs font-bold transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Logout</span>
+              <span className="hidden sm:inline">{t("Logout")}</span>
             </button>
           </div>
 
@@ -258,23 +263,19 @@ export const HeadOfficeDashboard = () => {
         <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center space-x-2">
-              <span className="text-[10px] font-black text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                CENTRAL PROCUREMENT MONITORING &amp; GOVERNANCE
-              </span>
-              <span className="text-xs text-slate-400 font-semibold">• Real-Time Analytics Active</span>
+              <span className="text-[10px] font-black text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full uppercase tracking-wider">{t("CENTRAL PROCUREMENT MONITORING & GOVERNANCE")}</span>
+              <span className="text-xs text-slate-400 font-semibold">{t("• Real-Time Analytics Active")}</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
-              State Agricultural Head Office Portal
-            </h1>
-            <p className="text-xs text-slate-500 font-medium">
-              Monitor network-wide registered farmers, active volunteers, center in-charges, crop production ratio share, quality distribution, and pipeline flows.
-            </p>
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900">{t("State Agricultural Head Office Portal")}</h1>
+            <p className="text-xs text-slate-500 font-medium">{t(
+              "Monitor network-wide registered farmers, active volunteers, center in-charges, crop production ratio share, quality distribution, and pipeline flows."
+            )}</p>
           </div>
 
           <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-200 text-xs font-bold text-slate-800 flex items-center space-x-4 flex-shrink-0">
             <div>
-              <span className="text-[10px] text-slate-500 uppercase block">Total Network Procurement</span>
-              <span className="text-lg font-black text-[#00a86b]">4,85,600 kg (MSP ₹1.45 Cr)</span>
+              <span className="text-[10px] text-slate-500 uppercase block">{t("Total Network Procurement")}</span>
+              <span className="text-lg font-black text-[#00a86b]">{t("4,85,600 kg (MSP ₹1.45 Cr)")}</span>
             </div>
             <div className="w-10 h-10 rounded-2xl bg-[#00a86b] text-white flex items-center justify-center font-black">
               <BarChart3 className="w-5 h-5" />
@@ -292,38 +293,38 @@ export const HeadOfficeDashboard = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-bold">
               <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs space-y-1">
                 <div className="flex justify-between items-center text-slate-400">
-                  <span className="uppercase tracking-wider text-[10px]">Registered Farmers</span>
+                  <span className="uppercase tracking-wider text-[10px]">{t("Registered Farmers")}</span>
                   <Users className="w-4 h-4 text-emerald-700" />
                 </div>
                 <span className="text-3xl font-black text-slate-900">12,450</span>
-                <span className="text-emerald-700 block text-[10px]">11,890 Active (95.5%)</span>
+                <span className="text-emerald-700 block text-[10px]">{t("11,890 Active (95.5%)")}</span>
               </div>
 
               <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs space-y-1">
                 <div className="flex justify-between items-center text-slate-400">
-                  <span className="uppercase tracking-wider text-[10px]">Active Volunteers</span>
+                  <span className="uppercase tracking-wider text-[10px]">{t("Active Volunteers")}</span>
                   <UserCheck className="w-4 h-4 text-blue-700" />
                 </div>
                 <span className="text-3xl font-black text-blue-700">840</span>
-                <span className="text-blue-700 block text-[10px]">785 On Duty (93.4%)</span>
+                <span className="text-blue-700 block text-[10px]">{t("785 On Duty (93.4%)")}</span>
               </div>
 
               <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs space-y-1">
                 <div className="flex justify-between items-center text-slate-400">
-                  <span className="uppercase tracking-wider text-[10px]">Center-In-Charges</span>
+                  <span className="uppercase tracking-wider text-[10px]">{t("Center-In-Charges")}</span>
                   <Briefcase className="w-4 h-4 text-purple-700" />
                 </div>
                 <span className="text-3xl font-black text-purple-700">142</span>
-                <span className="text-purple-700 block text-[10px]">Licensed Officers</span>
+                <span className="text-purple-700 block text-[10px]">{t("Licensed Officers")}</span>
               </div>
 
               <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs space-y-1">
                 <div className="flex justify-between items-center text-slate-400">
-                  <span className="uppercase tracking-wider text-[10px]">Collection Hubs</span>
+                  <span className="uppercase tracking-wider text-[10px]">{t("Collection Hubs")}</span>
                   <Building2 className="w-4 h-4 text-amber-700" />
                 </div>
-                <span className="text-3xl font-black text-amber-700">142 Hubs</span>
-                <span className="text-amber-700 block text-[10px]">7,10,000 MT Capacity</span>
+                <span className="text-3xl font-black text-amber-700">{t("142 Hubs")}</span>
+                <span className="text-amber-700 block text-[10px]">{t("7,10,000 MT Capacity")}</span>
               </div>
             </div>
 
@@ -332,8 +333,10 @@ export const HeadOfficeDashboard = () => {
 
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
                 <div>
-                  <h2 className="text-xl font-black text-slate-900">Stakeholder Directory &amp; Performance Drill-Down</h2>
-                  <p className="text-xs text-slate-500 font-medium">Filter and inspect individual registered Farmers, active Volunteers, and Center-in-Charges.</p>
+                  <h2 className="text-xl font-black text-slate-900">{t("Stakeholder Directory & Performance Drill-Down")}</h2>
+                  <p className="text-xs text-slate-500 font-medium">{t(
+                    "Filter and inspect individual registered Farmers, active Volunteers, and Center-in-Charges."
+                  )}</p>
                 </div>
 
                 {/* FILTERS BAR */}
@@ -358,7 +361,7 @@ export const HeadOfficeDashboard = () => {
                     }}
                     className="py-2 px-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-800 font-bold"
                   >
-                    <option value="ALL">All States (Pan-India)</option>
+                    <option value="ALL">{t("All States (Pan-India)")}</option>
                     {Object.keys(INDIA_STATES_DISTRICTS).map((st) => (
                       <option key={st} value={st}>{st}</option>
                     ))}
@@ -370,14 +373,14 @@ export const HeadOfficeDashboard = () => {
                     onChange={(e) => setSelectedDistrict(e.target.value)}
                     className="py-2 px-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-800 font-bold"
                   >
-                    <option value="ALL">All Districts ({selectedState === 'ALL' ? 'State' : selectedState})</option>
+                    <option value="ALL">{t("All Districts (")}{selectedState === 'ALL' ? 'State' : selectedState})</option>
                     {selectedState !== 'ALL' ? (
                       INDIA_STATES_DISTRICTS[selectedState]?.map((dst) => (
-                        <option key={dst} value={dst}>{dst} District</option>
+                        <option key={dst} value={dst}>{dst}{t("District")}</option>
                       ))
                     ) : (
                       Array.from(new Set(Object.values(INDIA_STATES_DISTRICTS).flat())).sort().map((dst) => (
-                        <option key={dst} value={dst}>{dst} District</option>
+                        <option key={dst} value={dst}>{dst}{t("District")}</option>
                       ))
                     )}
                   </select>
@@ -387,9 +390,9 @@ export const HeadOfficeDashboard = () => {
                     onChange={(e) => setSelectedStatusFilter(e.target.value)}
                     className="py-2 px-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-800"
                   >
-                    <option value="ALL">All Statuses</option>
-                    <option value="Active">Active</option>
-                    <option value="Pending Verification">Pending Verification</option>
+                    <option value="ALL">{t("All Statuses")}</option>
+                    <option value="Active">{t("Active")}</option>
+                    <option value="Pending Verification">{t("Pending Verification")}</option>
                   </select>
                 </div>
               </div>
@@ -420,13 +423,13 @@ export const HeadOfficeDashboard = () => {
                   <table className="w-full text-left text-xs">
                     <thead>
                       <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px]">
-                        <th className="py-3 px-3">Farmer ID &amp; Name</th>
-                        <th className="py-3 px-3">Contact Details</th>
-                        <th className="py-3 px-3">Location (Village, District)</th>
-                        <th className="py-3 px-3">Crops Registered</th>
-                        <th className="py-3 px-3">Cultivated Area</th>
-                        <th className="py-3 px-3">Total Qty Supplied</th>
-                        <th className="py-3 px-3">Verification Status</th>
+                        <th className="py-3 px-3">{t("Farmer ID & Name")}</th>
+                        <th className="py-3 px-3">{t("Contact Details")}</th>
+                        <th className="py-3 px-3">{t("Location (Village, District)")}</th>
+                        <th className="py-3 px-3">{t("Crops Registered")}</th>
+                        <th className="py-3 px-3">{t("Cultivated Area")}</th>
+                        <th className="py-3 px-3">{t("Total Qty Supplied")}</th>
+                        <th className="py-3 px-3">{t("Verification Status")}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 font-semibold text-slate-800">
@@ -436,18 +439,18 @@ export const HeadOfficeDashboard = () => {
                             <span className="font-mono font-black text-[#00a86b] text-xs block">{farmer.id}</span>
                             <span className="font-extrabold text-slate-900">{farmer.name}</span>
                           </td>
-                          <td className="py-3.5 px-3 text-slate-600">+91 {farmer.mobile}</td>
+                          <td className="py-3.5 px-3 text-slate-600">{t("+91")}{farmer.mobile}</td>
                           <td className="py-3.5 px-3">
                             <span className="font-bold text-slate-900 block">{farmer.village}</span>
-                            <span className="text-[10px] text-slate-500">{farmer.district} District</span>
+                            <span className="text-[10px] text-slate-500">{farmer.district}{t("District")}</span>
                           </td>
                           <td className="py-3.5 px-3">
                             <span className="bg-emerald-50 text-[#00a86b] px-2 py-0.5 rounded-md font-bold text-[11px] border border-emerald-200">
                               {farmer.crops}
                             </span>
                           </td>
-                          <td className="py-3.5 px-3 font-bold text-slate-700">{farmer.areaAcres} Acres</td>
-                          <td className="py-3.5 px-3 font-black text-[#00a86b] text-sm">{farmer.totalQtyKg.toLocaleString()} kg</td>
+                          <td className="py-3.5 px-3 font-bold text-slate-700">{farmer.areaAcres}{t("Acres")}</td>
+                          <td className="py-3.5 px-3 font-black text-[#00a86b] text-sm">{farmer.totalQtyKg.toLocaleString()}{t("kg")}</td>
                           <td className="py-3.5 px-3">
                             <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full border ${farmer.status === 'Active' ? 'bg-emerald-100 text-[#00a86b] border-emerald-300' : 'bg-amber-100 text-amber-900 border-amber-300'
                               }`}>
@@ -467,13 +470,13 @@ export const HeadOfficeDashboard = () => {
                   <table className="w-full text-left text-xs">
                     <thead>
                       <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px]">
-                        <th className="py-3 px-3">Volunteer ID &amp; Name</th>
-                        <th className="py-3 px-3">Contact</th>
-                        <th className="py-3 px-3">Assigned Region / Mandal</th>
-                        <th className="py-3 px-3">Deliveries Completed</th>
-                        <th className="py-3 px-3">Total Volume Transported</th>
-                        <th className="py-3 px-3">Assigned Vehicle</th>
-                        <th className="py-3 px-3">Duty Status</th>
+                        <th className="py-3 px-3">{t("Volunteer ID & Name")}</th>
+                        <th className="py-3 px-3">{t("Contact")}</th>
+                        <th className="py-3 px-3">{t("Assigned Region / Mandal")}</th>
+                        <th className="py-3 px-3">{t("Deliveries Completed")}</th>
+                        <th className="py-3 px-3">{t("Total Volume Transported")}</th>
+                        <th className="py-3 px-3">{t("Assigned Vehicle")}</th>
+                        <th className="py-3 px-3">{t("Duty Status")}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 font-semibold text-slate-800">
@@ -483,13 +486,13 @@ export const HeadOfficeDashboard = () => {
                             <span className="font-mono font-black text-blue-700 text-xs block">{vol.id}</span>
                             <span className="font-extrabold text-slate-900">{vol.name}</span>
                           </td>
-                          <td className="py-3.5 px-3 text-slate-600">+91 {vol.mobile}</td>
+                          <td className="py-3.5 px-3 text-slate-600">{t("+91")}{vol.mobile}</td>
                           <td className="py-3.5 px-3">
                             <span className="font-bold text-slate-900 block">{vol.mandal}</span>
-                            <span className="text-[10px] text-slate-500">{vol.district} District</span>
+                            <span className="text-[10px] text-slate-500">{vol.district}{t("District")}</span>
                           </td>
-                          <td className="py-3.5 px-3 font-black text-slate-900 text-sm">{vol.deliveries} Pickups</td>
-                          <td className="py-3.5 px-3 font-black text-blue-800 text-sm">{vol.totalVolumeKg.toLocaleString()} kg</td>
+                          <td className="py-3.5 px-3 font-black text-slate-900 text-sm">{vol.deliveries}{t("Pickups")}</td>
+                          <td className="py-3.5 px-3 font-black text-blue-800 text-sm">{vol.totalVolumeKg.toLocaleString()}{t("kg")}</td>
                           <td className="py-3.5 px-3 text-slate-600 text-[11px] font-medium">{vol.vehicle}</td>
                           <td className="py-3.5 px-3">
                             <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full border bg-blue-100 text-blue-900 border-blue-300">
@@ -509,13 +512,13 @@ export const HeadOfficeDashboard = () => {
                   <table className="w-full text-left text-xs">
                     <thead>
                       <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px]">
-                        <th className="py-3 px-3">Center ID &amp; Name</th>
-                        <th className="py-3 px-3">Center In-Charge Officer</th>
-                        <th className="py-3 px-3">District Location</th>
-                        <th className="py-3 px-3">Current Stock Occupancy</th>
-                        <th className="py-3 px-3">Crops Handled</th>
-                        <th className="py-3 px-3">Active Volunteers</th>
-                        <th className="py-3 px-3">Center Status</th>
+                        <th className="py-3 px-3">{t("Center ID & Name")}</th>
+                        <th className="py-3 px-3">{t("Center In-Charge Officer")}</th>
+                        <th className="py-3 px-3">{t("District Location")}</th>
+                        <th className="py-3 px-3">{t("Current Stock Occupancy")}</th>
+                        <th className="py-3 px-3">{t("Crops Handled")}</th>
+                        <th className="py-3 px-3">{t("Active Volunteers")}</th>
+                        <th className="py-3 px-3">{t("Center Status")}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 font-semibold text-slate-800">
@@ -526,17 +529,15 @@ export const HeadOfficeDashboard = () => {
                             <span className="font-extrabold text-slate-900">{center.name}</span>
                           </td>
                           <td className="py-3.5 px-3 font-bold text-slate-800">{center.officer}</td>
-                          <td className="py-3.5 px-3 text-slate-600">{center.district} District</td>
+                          <td className="py-3.5 px-3 text-slate-600">{center.district}{t("District")}</td>
                           <td className="py-3.5 px-3">
                             <span className="font-black text-[#00a86b] text-sm block">
-                              {center.currentStockKg.toLocaleString()} / {center.capacityKg.toLocaleString()} kg
-                            </span>
+                              {center.currentStockKg.toLocaleString()} / {center.capacityKg.toLocaleString()}{t("kg")}</span>
                             <span className="text-[10px] text-slate-500 font-bold">
-                              ({Math.round((center.currentStockKg / center.capacityKg) * 100)}% Capacity Used)
-                            </span>
+                              ({Math.round((center.currentStockKg / center.capacityKg) * 100)}{t("% Capacity Used)")}</span>
                           </td>
                           <td className="py-3.5 px-3 text-[11px] text-slate-700 font-medium">{center.cropsHandled}</td>
-                          <td className="py-3.5 px-3 font-bold text-slate-800">{center.activeVolunteers} Volunteers</td>
+                          <td className="py-3.5 px-3 font-bold text-slate-800">{center.activeVolunteers}{t("Volunteers")}</td>
                           <td className="py-3.5 px-3">
                             <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full border bg-emerald-100 text-[#00a86b] border-emerald-300">
                               ● {center.status.toUpperCase()}
@@ -566,15 +567,17 @@ export const HeadOfficeDashboard = () => {
               {/* Crop-Wise Percentage Share Donut/Bar Visual Card */}
               <div className="lg:col-span-2 bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-6">
                 <div className="pb-3 border-b border-slate-100">
-                  <h3 className="text-lg font-black text-slate-900">Network Crop Production Share &amp; Ratio Analysis</h3>
-                  <p className="text-xs text-slate-500 font-medium">Total volume breakdown across all crop varieties in the procurement network.</p>
+                  <h3 className="text-lg font-black text-slate-900">{t("Network Crop Production Share & Ratio Analysis")}</h3>
+                  <p className="text-xs text-slate-500 font-medium">{t(
+                    "Total volume breakdown across all crop varieties in the procurement network."
+                  )}</p>
                 </div>
 
                 {/* PROGRESS BAR RATIO VISUAL */}
                 <div className="space-y-2">
                   <div className="flex justify-between items-center text-xs font-black text-slate-800">
-                    <span>Overall Network Volume: 4,85,600 kg</span>
-                    <span>100% Total Procurement</span>
+                    <span>{t("Overall Network Volume: 4,85,600 kg")}</span>
+                    <span>{t("100% Total Procurement")}</span>
                   </div>
                   <div className="w-full h-5 rounded-2xl bg-slate-100 overflow-hidden flex p-0.5 border border-slate-200">
                     {CROP_RATIO_DATA.map((crop) => (
@@ -597,7 +600,7 @@ export const HeadOfficeDashboard = () => {
                         <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider block truncate">{crop.cropName}</span>
                       </div>
                       <div className={`text-2xl font-black ${crop.textColor}`}>{crop.percentageShare}%</div>
-                      <span className="text-xs font-extrabold text-slate-900 block">{crop.totalQtyKg.toLocaleString()} kg</span>
+                      <span className="text-xs font-extrabold text-slate-900 block">{crop.totalQtyKg.toLocaleString()}{t("kg")}</span>
                     </div>
                   ))}
                 </div>
@@ -606,15 +609,15 @@ export const HeadOfficeDashboard = () => {
               {/* Category Allocation Distribution Card */}
               <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4 flex flex-col justify-between">
                 <div className="pb-3 border-b border-slate-100">
-                  <h3 className="text-base font-black text-slate-900">State Category Allocation Ratio</h3>
-                  <p className="text-xs text-slate-500 font-medium">Category distribution across all verified crop harvests</p>
+                  <h3 className="text-base font-black text-slate-900">{t("State Category Allocation Ratio")}</h3>
+                  <p className="text-xs text-slate-500 font-medium">{t("Category distribution across all verified crop harvests")}</p>
                 </div>
 
                 <div className="space-y-4 text-xs font-bold">
                   <div>
                     <div className="flex justify-between font-extrabold text-[#00a86b] mb-1">
-                      <span>Category A (&le; 5,000 kg)</span>
-                      <span>68% (3,30,208 kg)</span>
+                      <span>{t("Category A (≤ 5,000 kg)")}</span>
+                      <span>{t("68% (3,30,208 kg)")}</span>
                     </div>
                     <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
                       <div className="h-full bg-emerald-600 rounded-full" style={{ width: '68%' }} />
@@ -623,8 +626,8 @@ export const HeadOfficeDashboard = () => {
 
                   <div>
                     <div className="flex justify-between font-extrabold text-amber-800 mb-1">
-                      <span>Category B (5,001 - 10,000 kg)</span>
-                      <span>24% (1,16,544 kg)</span>
+                      <span>{t("Category B (5,001 - 10,000 kg)")}</span>
+                      <span>{t("24% (1,16,544 kg)")}</span>
                     </div>
                     <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
                       <div className="h-full bg-amber-500 rounded-full" style={{ width: '24%' }} />
@@ -633,8 +636,8 @@ export const HeadOfficeDashboard = () => {
 
                   <div>
                     <div className="flex justify-between font-extrabold text-rose-800 mb-1">
-                      <span>Category C (&gt; 10,000 kg)</span>
-                      <span>8% (38,848 kg)</span>
+                      <span>{t("Category C (> 10,000 kg)")}</span>
+                      <span>{t("8% (38,848 kg)")}</span>
                     </div>
                     <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
                       <div className="h-full bg-rose-500 rounded-full" style={{ width: '8%' }} />
@@ -643,8 +646,7 @@ export const HeadOfficeDashboard = () => {
                 </div>
 
                 <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-[11px] text-[#00a86b] font-semibold">
-                  ✓ <strong>Target Exceeded:</strong> Grade A ratio is +6% higher than state target benchmark of 62%.
-                </div>
+                  ✓ <strong>{t("Target Exceeded:")}</strong>{t("Grade A ratio is +6% higher than state target benchmark of 62%.")}</div>
               </div>
 
             </div>
@@ -656,8 +658,8 @@ export const HeadOfficeDashboard = () => {
               <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
                 <div className="pb-3 border-b border-slate-100 flex items-center justify-between">
                   <div>
-                    <h3 className="text-base font-black text-slate-900">🏆 Top Producing Farmers Leaderboard</h3>
-                    <p className="text-xs text-slate-500 font-medium">Highest volume crop contributors this season</p>
+                    <h3 className="text-base font-black text-slate-900">{t("🏆 Top Producing Farmers Leaderboard")}</h3>
+                    <p className="text-xs text-slate-500 font-medium">{t("Highest volume crop contributors this season")}</p>
                   </div>
                   <Award className="w-6 h-6 text-amber-500" />
                 </div>
@@ -666,39 +668,39 @@ export const HeadOfficeDashboard = () => {
                   <table className="w-full text-left text-xs">
                     <thead>
                       <tr className="border-b border-slate-100 text-slate-400 font-bold uppercase text-[10px]">
-                        <th className="py-2.5">Rank &amp; Farmer</th>
-                        <th className="py-2.5">Location</th>
-                        <th className="py-2.5">Crops Supplied</th>
-                        <th className="py-2.5 text-right">Total Volume</th>
+                        <th className="py-2.5">{t("Rank & Farmer")}</th>
+                        <th className="py-2.5">{t("Location")}</th>
+                        <th className="py-2.5">{t("Crops Supplied")}</th>
+                        <th className="py-2.5 text-right">{t("Total Volume")}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 font-semibold text-slate-800">
                       <tr>
                         <td className="py-3 font-extrabold text-slate-900 flex items-center space-x-2">
-                          <span className="w-6 h-6 rounded-full bg-amber-100 text-amber-900 font-black flex items-center justify-center text-xs">#1</span>
-                          <span>Ramesh Kumar</span>
+                          <span className="w-6 h-6 rounded-full bg-amber-100 text-amber-900 font-black flex items-center justify-center text-xs">{t("#1")}</span>
+                          <span>{t("Ramesh Kumar")}</span>
                         </td>
-                        <td className="py-3 text-slate-600">Sonipat Khas</td>
-                        <td className="py-3 text-emerald-800 font-bold">Wheat &amp; Mustard</td>
-                        <td className="py-3 text-right font-black text-[#00a86b] text-sm">14,200 kg</td>
+                        <td className="py-3 text-slate-600">{t("Sonipat Khas")}</td>
+                        <td className="py-3 text-emerald-800 font-bold">{t("Wheat & Mustard")}</td>
+                        <td className="py-3 text-right font-black text-[#00a86b] text-sm">{t("14,200 kg")}</td>
                       </tr>
                       <tr>
                         <td className="py-3 font-extrabold text-slate-900 flex items-center space-x-2">
-                          <span className="w-6 h-6 rounded-full bg-slate-200 text-slate-800 font-black flex items-center justify-center text-xs">#2</span>
-                          <span>Harpreet Singh</span>
+                          <span className="w-6 h-6 rounded-full bg-slate-200 text-slate-800 font-black flex items-center justify-center text-xs">{t("#2")}</span>
+                          <span>{t("Harpreet Singh")}</span>
                         </td>
-                        <td className="py-3 text-slate-600">Kotla, Ludhiana</td>
-                        <td className="py-3 text-emerald-800 font-bold">Wheat Sharbati</td>
-                        <td className="py-3 text-right font-black text-[#00a86b] text-sm">12,800 kg</td>
+                        <td className="py-3 text-slate-600">{t("Kotla, Ludhiana")}</td>
+                        <td className="py-3 text-emerald-800 font-bold">{t("Wheat Sharbati")}</td>
+                        <td className="py-3 text-right font-black text-[#00a86b] text-sm">{t("12,800 kg")}</td>
                       </tr>
                       <tr>
                         <td className="py-3 font-extrabold text-slate-900 flex items-center space-x-2">
-                          <span className="w-6 h-6 rounded-full bg-amber-700/20 text-amber-900 font-black flex items-center justify-center text-xs">#3</span>
-                          <span>Mahesh Patel</span>
+                          <span className="w-6 h-6 rounded-full bg-amber-700/20 text-amber-900 font-black flex items-center justify-center text-xs">{t("#3")}</span>
+                          <span>{t("Mahesh Patel")}</span>
                         </td>
-                        <td className="py-3 text-slate-600">Sonipat East</td>
-                        <td className="py-3 text-amber-800 font-bold">Paddy Basmati</td>
-                        <td className="py-3 text-right font-black text-[#00a86b] text-sm">11,500 kg</td>
+                        <td className="py-3 text-slate-600">{t("Sonipat East")}</td>
+                        <td className="py-3 text-amber-800 font-bold">{t("Paddy Basmati")}</td>
+                        <td className="py-3 text-right font-black text-[#00a86b] text-sm">{t("11,500 kg")}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -708,23 +710,23 @@ export const HeadOfficeDashboard = () => {
               {/* Regional District Performance Comparison */}
               <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
                 <div className="pb-3 border-b border-slate-100">
-                  <h3 className="text-base font-black text-slate-900">District Procurement &amp; Inflow Comparison</h3>
-                  <p className="text-xs text-slate-500 font-medium">Volume received and MSP disbursed across districts</p>
+                  <h3 className="text-base font-black text-slate-900">{t("District Procurement & Inflow Comparison")}</h3>
+                  <p className="text-xs text-slate-500 font-medium">{t("Volume received and MSP disbursed across districts")}</p>
                 </div>
 
                 <div className="space-y-3 text-xs">
                   {DISTRICT_PERFORMANCE.map((dist) => (
                     <div key={dist.district} className="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-1.5">
                       <div className="flex justify-between items-center font-extrabold text-slate-900">
-                        <span>{dist.district} District ({dist.centersCount} Centers)</span>
-                        <span className="text-[#00a86b] font-black">{dist.volumeKg.toLocaleString()} kg</span>
+                        <span>{dist.district}{t("District (")}{dist.centersCount}{t("Centers)")}</span>
+                        <span className="text-[#00a86b] font-black">{dist.volumeKg.toLocaleString()}{t("kg")}</span>
                       </div>
                       <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
                         <div className="h-full bg-[#00a86b] rounded-full" style={{ width: `${Math.round((dist.volumeKg / 170000) * 100)}%` }} />
                       </div>
                       <div className="flex justify-between text-[10px] text-slate-500 font-semibold">
-                        <span>Grade A Ratio: {dist.gradeARatio}%</span>
-                        <span>Total MSP Disbursed: {dist.mspDisbursed}</span>
+                        <span>{t("Grade A Ratio:")}{dist.gradeARatio}%</span>
+                        <span>{t("Total MSP Disbursed:")}{dist.mspDisbursed}</span>
                       </div>
                     </div>
                   ))}
@@ -736,31 +738,31 @@ export const HeadOfficeDashboard = () => {
             {/* FARMER -> VOLUNTEER -> CENTER FLOW PIPELINE */}
             <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-6">
               <div className="pb-3 border-b border-slate-100">
-                <h3 className="text-lg font-black text-slate-900">Farmer → Volunteer → Center Supply Pipeline Flow</h3>
-                <p className="text-xs text-slate-500 font-medium">Tracking stage-by-stage crop movement and throughput efficiency</p>
+                <h3 className="text-lg font-black text-slate-900">{t("Farmer → Volunteer → Center Supply Pipeline Flow")}</h3>
+                <p className="text-xs text-slate-500 font-medium">{t("Tracking stage-by-stage crop movement and throughput efficiency")}</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
 
                 <div className="p-6 bg-slate-50 rounded-3xl border border-slate-200 space-y-2">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">STAGE 1: FARMER HARVESTS</span>
-                  <div className="text-3xl font-black text-slate-900">5,10,000 kg</div>
-                  <span className="text-xs font-bold text-slate-500 block">Reported by 12,450 Farmers</span>
-                  <div className="pt-2 text-[10px] text-emerald-800 font-black bg-emerald-100 py-1 rounded-xl">100% Registered</div>
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">{t("STAGE 1: FARMER HARVESTS")}</span>
+                  <div className="text-3xl font-black text-slate-900">{t("5,10,000 kg")}</div>
+                  <span className="text-xs font-bold text-slate-500 block">{t("Reported by 12,450 Farmers")}</span>
+                  <div className="pt-2 text-[10px] text-emerald-800 font-black bg-emerald-100 py-1 rounded-xl">{t("100% Registered")}</div>
                 </div>
 
                 <div className="p-6 bg-slate-50 rounded-3xl border border-slate-200 space-y-2 relative">
-                  <span className="text-[10px] font-black text-blue-700 uppercase tracking-wider block">STAGE 2: VOLUNTEER TRANSPORT</span>
-                  <div className="text-3xl font-black text-blue-700">4,92,000 kg</div>
-                  <span className="text-xs font-bold text-slate-500 block">Transported by 840 Volunteers</span>
-                  <div className="pt-2 text-[10px] text-blue-800 font-black bg-blue-100 py-1 rounded-xl">96.5% Pickup Efficiency</div>
+                  <span className="text-[10px] font-black text-blue-700 uppercase tracking-wider block">{t("STAGE 2: VOLUNTEER TRANSPORT")}</span>
+                  <div className="text-3xl font-black text-blue-700">{t("4,92,000 kg")}</div>
+                  <span className="text-xs font-bold text-slate-500 block">{t("Transported by 840 Volunteers")}</span>
+                  <div className="pt-2 text-[10px] text-blue-800 font-black bg-blue-100 py-1 rounded-xl">{t("96.5% Pickup Efficiency")}</div>
                 </div>
 
                 <div className="p-6 bg-slate-50 rounded-3xl border border-slate-200 space-y-2">
-                  <span className="text-[10px] font-black text-[#00a86b] uppercase tracking-wider block">STAGE 3: CENTER VERIFIED &amp; STORED</span>
-                  <div className="text-3xl font-black text-[#00a86b]">4,85,600 kg</div>
-                  <span className="text-xs font-bold text-slate-500 block">Verified by 142 Center Hubs</span>
-                  <div className="pt-2 text-[10px] text-emerald-800 font-black bg-emerald-100 py-1 rounded-xl">₹ 1.45 Cr MSP Disbursed</div>
+                  <span className="text-[10px] font-black text-[#00a86b] uppercase tracking-wider block">{t("STAGE 3: CENTER VERIFIED & STORED")}</span>
+                  <div className="text-3xl font-black text-[#00a86b]">{t("4,85,600 kg")}</div>
+                  <span className="text-xs font-bold text-slate-500 block">{t("Verified by 142 Center Hubs")}</span>
+                  <div className="pt-2 text-[10px] text-emerald-800 font-black bg-emerald-100 py-1 rounded-xl">{t("₹ 1.45 Cr MSP Disbursed")}</div>
                 </div>
 
               </div>
@@ -772,9 +774,9 @@ export const HeadOfficeDashboard = () => {
       </main>
 
       {/* FOOTER */}
-      <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
-        © 2026 Smart Agricultural Crop Category &amp; Center Management System • Authorized Head Office Portal Session
-      </footer>
+      <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">{t(
+        "© 2026 Smart Agricultural Crop Category & Center Management System • Authorized Head Office Portal Session"
+      )}</footer>
 
     </div>
   );
