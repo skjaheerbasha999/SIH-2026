@@ -65,3 +65,11 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #043e2f;
 }
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+

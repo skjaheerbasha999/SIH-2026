@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 import {
   Sprout,
   Users,
@@ -456,6 +458,49 @@ const SAMPLE_CROP_SCANS = [
 export const VolunteerDashboard = () => {
   const { userSession, showToast, navigateTo } = useApp();
   const { t } = useTranslation();
+
+  const receiptCardRef = useRef(null);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+
+  const handleDownloadPdf = async (referenceNo) => {
+    if (!receiptCardRef.current) {
+      showToast('Receipt container not ready');
+      return;
+    }
+    setIsDownloadingPdf(true);
+    showToast('Generating official PDF receipt...');
+    try {
+      const element = receiptCardRef.current;
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        ignoreElements: (el) => el.classList && el.classList.contains('no-print')
+      });
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const margin = 10;
+      const maxPdfWidth = pdfWidth - (margin * 2);
+      const imgWidth = maxPdfWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
+      const fileName = `MSP_Receipt_${referenceNo || 'Voucher'}.pdf`;
+      pdf.save(fileName);
+      showToast('Receipt PDF downloaded successfully!');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      showToast('Failed to download PDF. Opening print window...');
+      window.print();
+    } finally {
+      setIsDownloadingPdf(false);
+    }
+  };
 
   const volunteerName = userSession?.name || 'Gurpreet Singh';
   const volunteerMandal = userSession?.mandal || 'Sonipat Mandal';
@@ -2042,7 +2087,7 @@ export const VolunteerDashboard = () => {
                                         </div>
 
                                         {/* OFFICIAL DIGITAL RECEIPT / VOUCHER CARD */}
-                                        <div className="bg-white rounded-3xl p-6 border-2 border-emerald-500/40 shadow-lg space-y-5 relative overflow-hidden">
+                                        <div ref={receiptCardRef} className="bg-white rounded-3xl p-6 border-2 border-emerald-500/40 shadow-lg space-y-5 relative overflow-hidden">
                                           {/* Watermark Seal Background Accent */}
                                           <div className="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-emerald-500/5 flex items-center justify-center pointer-events-none">
                                             <ShieldCheck className="w-24 h-24 text-emerald-600/10" />
@@ -2062,7 +2107,7 @@ export const VolunteerDashboard = () => {
                                               </div>
                                             </div>
 
-                                            <div className="flex items-center space-x-2">
+                                            <div className="flex items-center space-x-2 no-print">
                                               <button
                                                 onClick={() => {
                                                   showToast('Printing official receipt...');
@@ -2074,11 +2119,16 @@ export const VolunteerDashboard = () => {
                                                 <span>{t("Print Receipt")}</span>
                                               </button>
                                               <button
-                                                onClick={() => showToast('Receipt PDF downloaded successfully!')}
-                                                className="px-3.5 py-2 rounded-xl bg-[#00a86b] hover:bg-[#008f5a] text-white text-xs font-black transition-colors flex items-center space-x-1.5 shadow-xs"
+                                                disabled={isDownloadingPdf}
+                                                onClick={() => handleDownloadPdf(txnId)}
+                                                className="px-3.5 py-2 rounded-xl bg-[#00a86b] hover:bg-[#008f5a] text-white text-xs font-black transition-colors flex items-center space-x-1.5 shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
                                               >
-                                                <Download className="w-3.5 h-3.5 text-white" />
-                                                <span>{t("Download PDF")}</span>
+                                                {isDownloadingPdf ? (
+                                                  <RefreshCw className="w-3.5 h-3.5 text-white animate-spin" />
+                                                ) : (
+                                                  <Download className="w-3.5 h-3.5 text-white" />
+                                                )}
+                                                <span>{isDownloadingPdf ? t("Downloading...") : t("Download PDF")}</span>
                                               </button>
                                             </div>
                                           </div>
