@@ -148,7 +148,7 @@ export const CreateAccountPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/40 to-slate-100 py-10 px-4 sm:px-6 lg:px-8 flex flex-col justify-between">
-      
+
       {/* Top Header Navigation */}
       <div className="max-w-2xl w-full mx-auto flex items-center justify-between">
         <button
@@ -169,7 +169,7 @@ export const CreateAccountPage = () => {
 
       {/* Main Registration Card */}
       <div className="max-w-2xl w-full mx-auto my-auto bg-white rounded-3xl p-6 sm:p-10 shadow-xl border border-slate-200/90 space-y-6">
-        
+
         {/* Header Title */}
         <div className="text-center space-y-1">
           <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-100/80 text-[#00a86b] text-[11px] font-bold uppercase tracking-wider mb-1">
@@ -186,9 +186,9 @@ export const CreateAccountPage = () => {
 
         {/* Registration Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
+
             {/* 1. Name */}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
@@ -203,9 +203,8 @@ export const CreateAccountPage = () => {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="e.g. Ramesh Kumar"
-                  className={`w-full pl-10 pr-4 py-3 bg-slate-50 rounded-2xl border ${
-                    errors.name ? 'border-red-400 bg-red-50/30' : 'border-slate-200'
-                  } text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00a86b] focus:bg-white transition-all`}
+                  className={`w-full pl-10 pr-4 py-3 bg-slate-50 rounded-2xl border ${errors.name ? 'border-red-400 bg-red-50/30' : 'border-slate-200'
+                    } text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00a86b] focus:bg-white transition-all`}
                 />
               </div>
               {errors.name && <p className="text-[11px] font-semibold text-red-500 mt-1">{errors.name}</p>}
@@ -226,9 +225,8 @@ export const CreateAccountPage = () => {
                   value={formData.mobile}
                   onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/\D/g, '') })}
                   placeholder="10-digit phone number"
-                  className={`w-full pl-10 pr-4 py-3 bg-slate-50 rounded-2xl border ${
-                    errors.mobile ? 'border-red-400 bg-red-50/30' : 'border-slate-200'
-                  } text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00a86b] focus:bg-white transition-all`}
+                  className={`w-full pl-10 pr-4 py-3 bg-slate-50 rounded-2xl border ${errors.mobile ? 'border-red-400 bg-red-50/30' : 'border-slate-200'
+                    } text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00a86b] focus:bg-white transition-all`}
                 />
               </div>
               {errors.mobile && <p className="text-[11px] font-semibold text-red-500 mt-1">{errors.mobile}</p>}
@@ -262,7 +260,7 @@ export const CreateAccountPage = () => {
 
           {/* 4. Password & Confirm Password Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
+
             {/* Password */}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
@@ -277,9 +275,8 @@ export const CreateAccountPage = () => {
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   placeholder="At least 6 characters"
-                  className={`w-full pl-10 pr-10 py-3 bg-slate-50 rounded-2xl border ${
-                    errors.password ? 'border-red-400 bg-red-50/30' : 'border-slate-200'
-                  } text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00a86b] focus:bg-white transition-all`}
+                  className={`w-full pl-10 pr-10 py-3 bg-slate-50 rounded-2xl border ${errors.password ? 'border-red-400 bg-red-50/30' : 'border-slate-200'
+                    } text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00a86b] focus:bg-white transition-all`}
                 />
                 <button
                   type="button"
@@ -306,9 +303,8 @@ export const CreateAccountPage = () => {
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                   placeholder="Re-enter password"
-                  className={`w-full pl-10 pr-10 py-3 bg-slate-50 rounded-2xl border ${
-                    errors.confirmPassword ? 'border-red-400 bg-red-50/30' : 'border-slate-200'
-                  } text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00a86b] focus:bg-white transition-all`}
+                  className={`w-full pl-10 pr-10 py-3 bg-slate-50 rounded-2xl border ${errors.confirmPassword ? 'border-red-400 bg-red-50/30' : 'border-slate-200'
+                    } text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00a86b] focus:bg-white transition-all`}
                 />
                 <button
                   type="button"
@@ -325,7 +321,7 @@ export const CreateAccountPage = () => {
 
           {/* Location Fields: Village, Mandal, Panchayat, Ward Number */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3.5">
-            
+
             {/* 4. Village */}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
@@ -340,9 +336,8 @@ export const CreateAccountPage = () => {
                   value={formData.village}
                   onChange={(e) => setFormData({ ...formData, village: e.target.value })}
                   placeholder="Village"
-                  className={`w-full pl-8 pr-2.5 py-2.5 bg-slate-50 rounded-xl border ${
-                    errors.village ? 'border-red-400 bg-red-50/30' : 'border-slate-200'
-                  } text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00a86b] focus:bg-white transition-all`}
+                  className={`w-full pl-8 pr-2.5 py-2.5 bg-slate-50 rounded-xl border ${errors.village ? 'border-red-400 bg-red-50/30' : 'border-slate-200'
+                    } text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00a86b] focus:bg-white transition-all`}
                 />
               </div>
               {errors.village && <p className="text-[10px] font-semibold text-red-500 mt-0.5">{errors.village}</p>}
@@ -358,9 +353,8 @@ export const CreateAccountPage = () => {
                 value={formData.mandal}
                 onChange={(e) => setFormData({ ...formData, mandal: e.target.value })}
                 placeholder="Mandal / Block"
-                className={`w-full px-3 py-2.5 bg-slate-50 rounded-xl border ${
-                  errors.mandal ? 'border-red-400 bg-red-50/30' : 'border-slate-200'
-                } text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00a86b] focus:bg-white transition-all`}
+                className={`w-full px-3 py-2.5 bg-slate-50 rounded-xl border ${errors.mandal ? 'border-red-400 bg-red-50/30' : 'border-slate-200'
+                  } text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00a86b] focus:bg-white transition-all`}
               />
               {errors.mandal && <p className="text-[10px] font-semibold text-red-500 mt-0.5">{errors.mandal}</p>}
             </div>
@@ -401,7 +395,7 @@ export const CreateAccountPage = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            
+
             {/* 8. District */}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
@@ -412,9 +406,8 @@ export const CreateAccountPage = () => {
                 value={formData.district}
                 onChange={(e) => setFormData({ ...formData, district: e.target.value })}
                 placeholder="Enter District"
-                className={`w-full px-4 py-3 bg-slate-50 rounded-2xl border ${
-                  errors.district ? 'border-red-400 bg-red-50/30' : 'border-slate-200'
-                } text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00a86b] focus:bg-white transition-all`}
+                className={`w-full px-4 py-3 bg-slate-50 rounded-2xl border ${errors.district ? 'border-red-400 bg-red-50/30' : 'border-slate-200'
+                  } text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00a86b] focus:bg-white transition-all`}
               />
               {errors.district && <p className="text-[10px] font-semibold text-red-500 mt-0.5">{errors.district}</p>}
             </div>

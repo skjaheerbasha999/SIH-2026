@@ -189,14 +189,14 @@ export const HeadOfficeDashboard = () => {
             <div className="w-8.5 h-8.5 rounded-full bg-white text-[#00a86b] flex items-center justify-center font-bold shadow-xs">
               <Globe className="w-5 h-5" />
             </div>
-              <div className="flex flex-col">
-                <span className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                  {t('Head Office Dashboard')}
-                </span>
-                <span className="text-[9px] text-emerald-200 uppercase tracking-widest font-bold mt-0.5 block">
-                  {stateJurisdiction}
-                </span>
-              </div>
+            <div className="flex flex-col">
+              <span className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                {t('Head Office Dashboard')}
+              </span>
+              <span className="text-[9px] text-emerald-200 uppercase tracking-widest font-bold mt-0.5 block">
+                {stateJurisdiction}
+              </span>
+            </div>
           </div>
 
           {/* MAIN TABS SWITCHER */}
@@ -209,8 +209,8 @@ export const HeadOfficeDashboard = () => {
                 key={tab.id}
                 onClick={() => setActiveMainTab(tab.id)}
                 className={`px-4 py-2 rounded-xl transition-all ${activeMainTab === tab.id
-                    ? 'bg-white text-[#00a86b] shadow-sm font-extrabold'
-                    : 'text-emerald-100 hover:text-white hover:bg-[#007d4f]'
+                  ? 'bg-white text-[#00a86b] shadow-sm font-extrabold'
+                  : 'text-emerald-100 hover:text-white hover:bg-[#007d4f]'
                   }`}
               >
                 {tab.label}
@@ -408,8 +408,8 @@ export const HeadOfficeDashboard = () => {
                     key={tab.id}
                     onClick={() => setActiveStakeholderTab(tab.id)}
                     className={`px-4 py-2 rounded-xl transition-all ${activeStakeholderTab === tab.id
-                        ? 'bg-[#00a86b] text-white shadow-xs'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                      ? 'bg-[#00a86b] text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                       }`}
                   >
                     {tab.label}

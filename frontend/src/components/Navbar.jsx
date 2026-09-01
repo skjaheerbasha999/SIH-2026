@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import { Sprout, Menu, X, ArrowRight, Shield, Phone, HelpCircle } from 'lucide-react';
+import { Sprout, Menu, X, ArrowRight, Shield, Phone, HelpCircle, Globe } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { useTranslation } from 'react-i18next';
+import { LANGUAGES } from '../data/mockData';
 
 export const Navbar = () => {
-  const { navigateTo } = useApp();
+  const { navigateTo, selectedLanguage, setSelectedLanguage } = useApp();
+  const { t } = useTranslation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { name: 'Home', href: '#hero' },
-    { name: 'Procurement Workflow', href: '#how-it-works' },
-    { name: 'Category & MSP Rates', href: '#quality' },
+    { name: t('Home'), href: '#hero' },
+    { name: t('Procurement Workflow'), href: '#how-it-works' },
+    { name: t('Category & MSP Rates'), href: '#quality' },
   ];
 
   return (
@@ -19,15 +22,13 @@ export const Navbar = () => {
       <div className="bg-[#008f5a] text-emerald-100 py-1.5 px-4 text-[11px] font-semibold border-b border-emerald-900">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-1 text-center sm:text-left">
           <div className="flex items-center space-x-2">
-            <span>Rashtriya Krishi Procurement Portal • Ministry of Agriculture &amp; Farmers Welfare</span>
+            <span>{t("Rashtriya Krishi Procurement Portal • Ministry of Agriculture & Farmers Welfare")}</span>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             <span className="flex items-center space-x-1">
               <Phone className="w-3 h-3 text-emerald-300" />
-              <span>Kisan Toll-Free Helpline: <strong>1800-180-1551</strong></span>
+              <span>{t("Kisan Toll-Free Helpline:")} <strong>1800-180-1551</strong></span>
             </span>
-            <span className="hidden md:inline text-emerald-300">|</span>
-            <span className="hidden md:inline">Language: <strong>English / हिंदी / ਪੰਜਾਬੀ</strong></span>
           </div>
         </div>
       </div>
@@ -50,10 +51,10 @@ export const Navbar = () => {
             </div>
             <div className="flex flex-col">
               <span className="text-base font-black tracking-tight text-slate-900 leading-none">
-                Smart &amp; Fair
+                {t("Smart & Fair")}
               </span>
               <span className="text-[10px] font-bold uppercase tracking-widest text-[#00a86b] mt-0.5">
-                National MSP Crop Category &amp; Procurement System
+                {t("National MSP Crop Category & Procurement System")}
               </span>
             </div>
           </a>
@@ -62,7 +63,7 @@ export const Navbar = () => {
           <nav className="hidden md:flex items-center space-x-7">
             {navLinks.map((link) => (
               <a
-                key={link.name}
+                key={link.href}
                 href={link.href}
                 onClick={(e) => {
                   e.preventDefault();
@@ -81,14 +82,14 @@ export const Navbar = () => {
               onClick={() => navigateTo('login')}
               className="text-xs font-bold text-slate-700 hover:text-[#00a86b] px-3.5 py-2 transition-colors border border-slate-200 rounded-xl hover:border-slate-300 bg-slate-50"
             >
-              General Login
+              {t("General Login")}
             </button>
 
             <button
               onClick={() => navigateTo('create-account')}
               className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-[#00a86b] text-white text-xs font-black shadow-xs hover:bg-[#008f5a] transition-all"
             >
-              <span>Sign In / Register →</span>
+              <span>{t("Sign In / Register →")}</span>
             </button>
           </div>
 
@@ -108,9 +109,11 @@ export const Navbar = () => {
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-5 space-y-3">
+
+
           {navLinks.map((link) => (
             <a
-              key={link.name}
+              key={link.href}
               href={link.href}
               onClick={(e) => {
                 e.preventDefault();
@@ -130,7 +133,7 @@ export const Navbar = () => {
               }}
               className="w-full py-2.5 text-center text-xs font-bold text-slate-700 bg-slate-100 rounded-xl"
             >
-              General Login
+              {t("General Login")}
             </button>
             <button
               onClick={() => {
@@ -139,7 +142,7 @@ export const Navbar = () => {
               }}
               className="w-full py-2.5 text-center text-xs font-bold text-white bg-[#00a86b] rounded-xl"
             >
-              Sign In / Register →
+              {t("Sign In / Register →")}
             </button>
           </div>
         </div>

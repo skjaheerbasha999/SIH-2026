@@ -649,12 +649,12 @@ export const VolunteerDashboard = () => {
     const goodQty = Number(newFarmer.goodCropQuantity) || 0;
     const wasteQty = Number(newFarmer.wasteCropQuantity) || 0;
     const qtyKg = goodQty + wasteQty;
-    
+
     if (qtyKg <= 0) {
       showToast('Please provide crop quantities');
       return;
     }
-    
+
     const farmerName = newFarmer.name.trim();
     const cropName = newFarmer.cropType || 'Wheat';
 
@@ -2431,7 +2431,7 @@ export const VolunteerDashboard = () => {
                     <span className="text-[10px] text-slate-600 block">{t("Status:")}{allocationModalData.allocResult.statusMessage}</span>
                   </div>
                 )}
-                
+
                 {allocationModalData.wasteQty > 0 && allocationModalData.wasteResult && (
                   <div className="p-3 rounded-xl border bg-slate-100 border-slate-300">
                     <div className="flex justify-between items-center mb-1">
