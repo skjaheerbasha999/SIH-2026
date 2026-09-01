@@ -976,7 +976,7 @@ export const CenterInChargeDashboard = () => {
               <div className="pb-3 border-b border-slate-100 flex items-center justify-between">
                 <div className="flex flex-col">
                   <span className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                    {t('dashboard.center.title') || 'Center In-Charge Dashboard'}
+                    {t("Center In-Charge Dashboard")}
                   </span>
                   <span className="text-xs font-bold text-[#00a86b] uppercase tracking-wider">{t("System: Active")}</span>
                 </div>

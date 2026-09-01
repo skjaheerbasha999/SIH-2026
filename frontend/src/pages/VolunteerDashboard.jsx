@@ -1238,12 +1238,14 @@ export const VolunteerDashboard = () => {
           <div className="space-y-8">
 
             {/* HERO WELCOME BANNER */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex flex-col">
-                <span className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                  {t('dashboard.volunteer.title') || 'Procurement Mitra Dashboard'}
-                </span>
-                <span className="text-xs font-bold text-[#00a86b] uppercase tracking-wider">{t("Live Network: Active")}</span>
+            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <div className="flex items-center space-x-2">
+                  <span className="text-[10px] font-black text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full uppercase tracking-wider">{t("VOLUNTEER DASHBOARD")}</span>
+                  <span className="text-xs text-slate-400 font-semibold">• {volunteerMandal}, {volunteerDistrict}</span>
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-black text-slate-900">{t("Procurement Mitra Dashboard")}</h1>
+                <p className="text-xs text-slate-500 font-medium max-w-2xl">{t("Overview of live crop procurement network, farmer registrations, center allocations, and real-time status updates.")}</p>
               </div>
 
               <button
